@@ -205,7 +205,7 @@ export default function SignupForm() {
               )}
             </div>
     
-            <div>
+            {/* <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
                 Registered as
               </label>
@@ -232,7 +232,7 @@ export default function SignupForm() {
                   {errors.role}
                 </p>
               )}
-            </div>
+            </div> */}
     
             <div className="flex items-center">
               <input

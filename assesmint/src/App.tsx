@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AuthLayout from './components/AuthLayout';
-import LoginForm from './components/LoginForm';
-import SignupForm from './components/SignupForm';
-import Dashboard from './components/DashBoard';
+import AuthLayout from './auth/AuthLayout';
+import LoginForm from './auth/LoginForm';
+import SignupForm from './auth/SignupForm';
+import Dashboard from './components/Dashboard';
 
 function App() {
 
@@ -15,7 +15,7 @@ function App() {
           <Route path="/signup" element={<SignupForm/>} />
           <Route path="/" element={<Navigate to="/login" replace />} />
           </Route>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
