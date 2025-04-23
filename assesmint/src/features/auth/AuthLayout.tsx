@@ -1,8 +1,8 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 // import { ClipboardList } from 'lucide-react';
-import hero from "../../public/hero1.png"
-import logo from "../../public/logo.png"
+import hero from "../../../public/hero1.png"
+import logo from "../../../public/logo.png"
 
 const AuthLayout: React.FC = () => {
   return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, User, AlertCircle, ChevronDown } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle } from 'lucide-react';
 
 interface FormData {
   firstName: string;
@@ -20,12 +20,12 @@ interface FormErrors {
   agreeToTerms?: string;
 }
 
-const roles = [
-  'Student',
-  'Teacher',
-  'Teaching Assistant',
-  'Administrator'
-];
+// const roles = [
+//   'Student',
+//   'Teacher',
+//   'Teaching Assistant',
+//   'Administrator'
+// ];
 export default function SignupForm() {
     const [formData, setFormData] = useState<FormData>({
         firstName: '',
