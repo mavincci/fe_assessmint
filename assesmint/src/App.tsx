@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthLayout from './features/auth/AuthLayout';
 import LoginForm from './features/auth/LoginForm';
 import SignupForm from './features/auth/SignupForm';
-import Dashboard from './components/Dashboard';
+import Dashboard from './layouts/Dashboard';
 
 function App() {
 
@@ -15,7 +15,7 @@ function App() {
           <Route path="/signup" element={<SignupForm/>} />
           <Route path="/" element={<Navigate to="/login" replace />} />
           </Route>
-          <Route path="/dashboard" element={<Dashboard/>} />
+          <Route path="/dashboard" element={<Dashboard children={undefined}/>} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
