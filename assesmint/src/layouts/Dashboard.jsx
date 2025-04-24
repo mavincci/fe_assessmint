@@ -9,9 +9,7 @@ import Menus from "../components/Menu";
 
 const Dashboard = ({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) => {
+}) => {
   const name = "Mekdi";
   const imgSrc = "";
   const [manageprofile, setvisibleManageProfile] = useState(false);
@@ -76,3 +74,6 @@ const Dashboard = ({
 };
 
 export default Dashboard;
+
+
+

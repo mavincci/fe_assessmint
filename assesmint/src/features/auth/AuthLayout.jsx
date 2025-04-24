@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 import hero from "../../../public/hero1.png"
 import logo from "../../../public/logo.png"
 
-const AuthLayout: React.FC = () => {
+const AuthLayout= () => {
   return (
     <div className="min-h-screen w-full flex">
       {/* Left Section */}
