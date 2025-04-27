@@ -104,7 +104,7 @@ const Menus = () => {
             {
               icon: <FilePlus />,
               label: "Create Assignment",
-              href: "/create-assignment",
+              href: "create-assignment",
               visible: ["admin", "user"],
 
             },

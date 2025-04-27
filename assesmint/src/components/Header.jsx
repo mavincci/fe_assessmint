@@ -15,12 +15,12 @@ const Header = () => {
     const [currentDate] = useState(new Date());
   return (
       <>
-           <header className="bg-slate-100 border-b border-gray-200 sticky top-0 z-10 w-full">
+           <header className="bg-slate-100 border-b border-gray-200 sticky top-0 z-10 w-[90%] mx-auto mt-3 rounded-2xl">
         <div className="px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center ">
              
-              <div className="ml-4">
+              <div className="ml-4 hidden lg:block ">
                 <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
                 <p className="text-sm text-gray-500">{format(currentDate, 'dd MMMM yyyy')}</p>
               </div>

@@ -214,6 +214,12 @@ export default function SignupForm() {
         >
           {isSubmitting ? 'Creating account...' : 'Sign up'}
         </button>
+        <p className="mt-6 text-center text-sm text-gray-600">
+                  Have an account?{' '}
+                  <Link to="/login" className="font-medium text-[#8382FA] hover:text-emerald-800 transition duration-200">
+                    Sign in
+                  </Link>
+                </p>
       </form>
     </div>
   );

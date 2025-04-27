@@ -3,20 +3,19 @@ import { useState } from "react";
 import Header from "../components/Header";
 import Avatar from "@mui/material/Avatar";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, PlusCircle, Settings, User } from "lucide-react";
 import Menus from "../components/Menu";
+import { Outlet } from "react-router-dom";
 
 
-const Dashboard = ({
-  children,
-}) => {
+const Dashboard = () => {
   const name = "Mekdi";
   const imgSrc = "";
   const [manageprofile, setvisibleManageProfile] = useState(false);
   return (
-    <div className="h-full overflow-auto flex">
+    <div className="h-full top-0  flex">
       {/* left */}
-      <div className="w-[16%] md:w-[10%] lg:w-[12%] bg-base-200 p-3 bg-white  ">
+      <div className="w-[16%] md:w-[10%] lg:w-[12%] bg-base-200 p-3 bg-bg-secondary-light min-h-screen   justify-between ">
         <div className="cursor-pointer flex space-x-2 ml-4 items-center align-middle justify-center md:justify-start text-primary-blue-light font-semibold" onClick={()=>setvisibleManageProfile(!manageprofile)}>
           <Avatar
             id="image"
@@ -62,14 +61,21 @@ const Dashboard = ({
         )}
       
         <Menus />
+
+        {/* <div className="flex justify-baseline   ">
+          <div className="rounded-xl md:p-5 bg-primary-blue-light w-[90%] flex flex-col items-center">
+            <PlusCircle />
+           <span className="hidden md:block text-center"> Create Assignment</span>
+          </div>
+          
+        </div> */}
       </div>
       {/* right */}
-      <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-slate-100  ">
+      <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-bg-light  min-h-min ">
         <Header />
-        {children}
+        <Outlet />
       </div>
-      {/* {children} */}
-    </div>
+      </div>
   );
 };
 
