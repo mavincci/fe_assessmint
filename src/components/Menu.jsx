@@ -122,7 +122,7 @@ const Menus = () => {
       <div className="mt-4 text-sm">
           {menuItems.map((item) => (
               <div className="flex flex-col gap-2" key={item.title}>
-                  <span className="hidden lg:block text-gray-400 font-light my-4">
+                  <span className="hidden lg:block text-gray-200 font-light my-4">
                      {item.title}
                   </span>
                   {item.items.map((subItems) => {
@@ -130,7 +130,7 @@ const Menus = () => {
                           return (
                               <Link to={subItems.href}
                                   key={subItems.label}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-accent"
+                  className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-accent"
                               >
                                   <span>
                                   {subItems.icon}

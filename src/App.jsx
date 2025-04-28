@@ -4,6 +4,7 @@ import LoginForm from './features/auth/LoginForm';
 import SignupForm from './features/auth/SignupForm';
 import Dashboard from './layouts/Dashboard';
 import CreateAssessment from './features/assesments/CreateAssessment';
+import TakeAssessment from './features/assesments/TakeAssessment';
 
 function App() {
 
@@ -18,6 +19,8 @@ function App() {
           </Route>
           <Route  element={<Dashboard />}>
             <Route path="/create-assignment" element={<CreateAssessment />} />
+            <Route path="/take-assessment" element={<TakeAssessment />} />
+
           <Route path="/dashboard" element={<Navigate to="/dashboard" replace />} />
 
             

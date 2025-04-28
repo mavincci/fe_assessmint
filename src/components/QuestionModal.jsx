@@ -4,7 +4,7 @@ const QuestionModal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in mx-auto">
-    <div className="relative bg-white w-full h-[90%] md:w-[50%] md:h-[75%] overflow-auto p-6 animate-slide-up mx-auto rounded-xl">
+    <div className="relative bg-white w-full h-[90%] md:w-[50%] md:h-[95%] overflow-auto p-6 animate-slide-up mx-auto rounded-xl">
       {/* Close Button */}
       <button
         onClick={onClose}

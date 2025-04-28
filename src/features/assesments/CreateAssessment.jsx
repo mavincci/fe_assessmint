@@ -1,22 +1,23 @@
 import React, { useState } from 'react'
 import QuestionAccordion from '../../components/QuestionAccordion'
 import { testquestions } from '../../lib/data'
-import { Delete, Eye, PlusCircle, X } from 'lucide-react'
+import { Delete, Eye, PlusCircle, Settings, X } from 'lucide-react'
 import Button  from '../../components/Button'
 import QuestionPreview from '../../components/QuestionPreview'
 import QuestionModal from '../../components/QuestionModal'
-import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
-  IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Paper,
-} from "@mui/material"
+import AssessmentSettings from './AssessmentSetting'
+// import {
+//   Modal,
+//   Box,
+//   Typography,
+//   TextField,
+//   IconButton,
+//   FormControl,
+//   InputLabel,
+//   Select,
+//   MenuItem,
+//   Paper,
+// } from "@mui/material"
 // import CloseIcon from "@mui/icons-material/Close"
 const CreateAssessment = () => {
 
@@ -26,6 +27,7 @@ const CreateAssessment = () => {
     setSelectedQuestions(questions);
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [type, setType] = useState("")
@@ -48,9 +50,10 @@ const CreateAssessment = () => {
   return (
     <>
         
-      <div className="flex  justify-center items-center  last:ms-auto">
-        <h1 className='font-bold w-[90%] text-3xl p-7'>Create Assessment</h1>
-        <Button icon={<Eye />} label="Preview" text="gray-200" bg="white" />
+      <div className="flex  justify-center items-center gap-4 last:ms-auto mr-4">
+        <h1 className='font-bold w-[90%] text-3xl p-7'>Create Assessment</h1><Button icon={<Settings />} label="Assesment Setting" text="white" bg="bg-btn-primary" onClick={() => setIsSettingModalOpen(true)} />
+        <Button icon={<Eye />} label="Preview" text="gray-200" bg="white" /> 
+        
 
      </div>
       <div className="md:w-[95%] w-full flex flex-col md:flex-row lg:justify-center mx-auto lg:mt-5  h-3/4  gap-5 bg-white p-7">
@@ -152,7 +155,10 @@ const CreateAssessment = () => {
           </div>
    
 
-      </QuestionModal>
+        </QuestionModal>
+        <QuestionModal isOpen={isSettingModalOpen} onClose={() => setIsSettingModalOpen(false)}>
+          <AssessmentSettings/>
+        </QuestionModal>
  </div>
       
     </>
