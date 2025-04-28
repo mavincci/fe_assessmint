@@ -2,10 +2,22 @@ import React, { useState } from 'react'
 import QuestionAccordion from '../../components/QuestionAccordion'
 import { testquestions } from '../../lib/data'
 import { Delete, Eye, PlusCircle, X } from 'lucide-react'
-import Button from '../../components/Button'
+import Button  from '../../components/Button'
 import QuestionPreview from '../../components/QuestionPreview'
 import QuestionModal from '../../components/QuestionModal'
-import TextField from '@mui/material/TextField';
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Paper,
+} from "@mui/material"
+// import CloseIcon from "@mui/icons-material/Close"
 const CreateAssessment = () => {
 
   // const [selectedAnswers, setSelectedAnswers] = useState({});
@@ -14,6 +26,25 @@ const CreateAssessment = () => {
     setSelectedQuestions(questions);
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [type, setType] = useState("")
+  const [wordCount, setWordCount] = useState(0)
+
+  const handleDescriptionChange = (e) => {
+    const text = e.target.value
+    setDescription(text)
+    setWordCount(text.trim() === "" ? 0 : text.trim().split(/\s+/).length)
+  }
+  const handleChange = (event) => {
+    setType(event.target.value)
+  }
+
+  const handleSubmit = () => {
+    // Handle form submission
+    console.log({ title, description, type })
+    onClose()
+  }
   return (
     <>
         
@@ -42,11 +73,85 @@ const CreateAssessment = () => {
       <QuestionPreview questions={selectedQuestions}/>
         </div>
         <QuestionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-3xl font-bold mb-4">New section</h2>
-        {/* You can put any content here */}
-          
-          <TextField label="Title" variant="outlined" focused id='CssTextField' />
-          <CssTextField label="Custom CSS" id="custom-css-outlined-input" />
+        
+            <h1 className='text-center flex text-3xl font-semibold justify-center'> Add New Section</h1>
+
+          <div className="space-y-4">
+            <fieldset className="fieldset border border-base-300 rounded-lg p-4">
+              <legend className="fieldset-legend px-2 text-sm font-medium">Enter Title <sup className='text-red-400'>*</sup></legend>
+              <input
+                type="text"
+                className="input border-none  w-full outline outline-accent-teal-light focus:outline-accent-teal-dark"
+                placeholder="Type here"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              
+            </fieldset>
+            <fieldset className="fieldset border border-base-300 rounded-lg p-4">
+              <legend className="fieldset-legend px-2 text-sm font-medium">Enter Description/ <sup className='text-red-400'>*</sup></legend>
+              <div className="relative">
+              <textarea
+                placeholder="Enter Description more less than 30 words"
+                className="textarea textarea-accent w-full h-32 resize-none"
+                value={description}
+                onChange={handleDescriptionChange}
+              />
+              <span className="absolute bottom-2 right-4 text-sm text-gray-500">{wordCount} words</span>
+            </div>
+
+            </fieldset>
+
+            
+            <div className="form-control flex flex-col space-y-2">
+              <label className="label">
+                <span className="label-text">Select Type:</span>
+              </label>
+              <select
+  className="select select-bordered w-full  bg-[#286575] text-white text-base sm:text-sm md:text-base"
+  value={type}
+  onChange={(e) => setType(e.target.value)}
+>
+  <option disabled value="">
+    Select Type
+  </option>
+  <option value="MCQ">MCQ</option>
+  <option value="T/F">T/F</option>
+  <option value="Short Answer">Short Answer</option>
+  <option value="Code">Code (practical)</option>
+</select>
+            </div>
+            {/* <FormControl
+      fullWidth
+      sx={{
+        maxWidth: '90%',
+        backgroundColor: '#286575',
+        borderRadius: 2,
+        '@media (max-width: 640px)': {
+          fontSize: '0.8rem',  // smaller font on mobile
+        },
+      }}
+    >
+      <InputLabel sx={{ color: 'white' }}>Select Type</InputLabel>
+      <Select
+        value={type}
+        onChange={handleChange}
+        label="Select Type"
+        sx={{
+          color: 'white',
+          fontSize: { xs: '0.8rem', sm: '1rem' }, // small font on xs, normal on sm
+        }}
+      >
+        <MenuItem value="MCQ">MCQ</MenuItem>
+        <MenuItem value="T/F">T/F</MenuItem>
+        <MenuItem value="Short Answer">Short Answer</MenuItem>
+        <MenuItem value="Code">Code (practical)</MenuItem>
+      </Select>
+    </FormControl> */}
+            <Button icon={<PlusCircle />} label="Add Section" text="white" bg="bg-btn-primary" />
+          </div>
+   
+
       </QuestionModal>
  </div>
       
