@@ -26,7 +26,7 @@ const QuestionPreview = ({ questions =[] }) => {
         </div>
       </div>
     ))}
-  </div> : <span>No priview</span>}
+  </div> : <span className='alert alert-info'>Select Section To Preview </span>}
     </>
   )
 }

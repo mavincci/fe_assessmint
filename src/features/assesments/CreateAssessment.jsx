@@ -6,6 +6,10 @@ import Button  from '../../components/Button'
 import QuestionPreview from '../../components/QuestionPreview'
 import QuestionModal from '../../components/QuestionModal'
 import AssessmentSettings from './AssessmentSetting'
+
+import MultipleChoiceBuilder from '../questionTypes/MCQquestions'
+import TrueFalseBuilder from '../questionTypes/TFquestions'
+import ShortAnswerBuilder from '../questionTypes/ShortAnswer'
 // import {
 //   Modal,
 //   Box,
@@ -26,10 +30,13 @@ const CreateAssessment = () => {
   const handleSectionSelect = (questions) => {
     setSelectedQuestions(questions);
   };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  const [isMCQopen, setIsMCQopen] = useState(false);
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [sectionCreated, setsectioncreated] = useState("")
   const [type, setType] = useState("")
   const [wordCount, setWordCount] = useState(0)
 
@@ -69,8 +76,8 @@ const CreateAssessment = () => {
         <div className="w-full lg:w-1/2 bg-button-primary  rounded-xl">
           
           <div className="flex justify-start last:ms-auto ">
-            <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" />
-            <Button icon={<X />} label="Cancel" text="gray-200" bg="black"   />
+            {/* <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>isMCQopen(true)} /> */}
+            {/* <Button icon={<X />} label="Cancel" text="gray-200" bg="black"   /> */}
             
         </div>
       <QuestionPreview questions={selectedQuestions}/>
@@ -151,13 +158,26 @@ const CreateAssessment = () => {
         <MenuItem value="Code">Code (practical)</MenuItem>
       </Select>
     </FormControl> */}
-            <Button icon={<PlusCircle />} label="Add Section" text="white" bg="bg-btn-primary" />
+            <Button icon={<PlusCircle />} label={sectionCreated.length != 0 ? sectionCreated : "Add Section" } text="white" bg="bg-btn-primary" onClick={() => {
+              setsectioncreated("Section created")
+              setIsMCQopen(true)
+              setIsModalOpen(false)
+            }} />
+            
           </div>
    
 
         </QuestionModal>
         <QuestionModal isOpen={isSettingModalOpen} onClose={() => setIsSettingModalOpen(false)}>
           <AssessmentSettings/>
+        </QuestionModal>
+        <QuestionModal isOpen={isMCQopen} onClose={() => {
+          setIsMCQopen(false)
+          
+        }} >
+        {type  === "MCQ" ? <MultipleChoiceBuilder/> : type === "T/F" ? <TrueFalseBuilder/>:type === "Short Answer"?<ShortAnswerBuilder/>: "" }
+
+        
         </QuestionModal>
  </div>
       
