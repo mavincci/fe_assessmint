@@ -1,5 +1,4 @@
-export let role = "admin";
-// role can be admin or user
+// role can be admin or usere
 
 
   export const testquestions = [

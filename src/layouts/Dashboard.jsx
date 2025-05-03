@@ -9,27 +9,35 @@ import { Outlet } from "react-router-dom";
 
 
 const Dashboard = () => {
-  const name = "Mekdi";
+  const user = JSON.parse(localStorage.getItem("user"))
+  // alert(localStorage.getItem("user"))
+  console.log("user role", user.roles[0])
   const imgSrc = "";
-  const [manageprofile, setvisibleManageProfile] = useState(false);
+  const formattedName = user?.firstName
+  ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
+    : "";
+    const formattedLastName = user?.lastName
+  ? user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1).toLowerCase()
+  : "";
+  const [manageprofile, setvisibleManageProfile] = useState(false); 
   return (
     <div className="h-full top-0  flex">
       {/* left */}
-      <div className="w-[16%] md:w-[10%] lg:w-[12%] bg-base-200 p-3 bg-bg-secondary-light min-h-screen   justify-between ">
+      <div className="w-[16%] md:w-[10%] lg:w-[12%] p-3 bg-bg-secondary-light min-h-screen   justify-between ">
         <div className="cursor-pointer flex space-x-2 ml-4 items-center align-middle justify-center md:justify-start text-primary-blue-light font-semibold" onClick={()=>setvisibleManageProfile(!manageprofile)}>
           <Avatar
             id="image"
                           // src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
 
-            alt={name}
+            alt={user.firstName}
             className="border-2 border-amber-400 text-sm "
             sx={{ bgcolor: "#8380FE", width: 50, height: 50 }}
           >
-            {!imgSrc && name.charAt(0)}
+            {!imgSrc && user.firstName.charAt(0).toUpperCase() + user.lastName.charAt(0).toUpperCase()}
           </Avatar>
 {/*  */}
           <span id="name" className="hidden lg:block">
-            {name}
+            {formattedName} {formattedLastName}
           </span>
         </div>
         {manageprofile && (
@@ -60,7 +68,7 @@ const Dashboard = () => {
       </> 
         )}
       
-        <Menus />
+        <Menus  roles = {user.roles[0]}  />
 
         {/* <div className="flex justify-baseline   ">
           <div className="rounded-xl md:p-5 bg-primary-blue-light w-[90%] flex flex-col items-center">

@@ -1,5 +1,4 @@
-// import { LayoutDashboard, LibraryBig, UserCog } from "lucide-react";
-import { role } from "../lib/data";
+
 import { Link } from "react-router-dom";    import {
         LayoutDashboard,
         UserCog,
@@ -16,107 +15,112 @@ import { Link } from "react-router-dom";    import {
         FilePlus,
         LogOut,
       } from "lucide-react";
+import { logout } from "../action/Auth";
+import { connect } from "react-redux";
       
 // import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
-const Menus = () => {
-
-      const menuItems = [
+const Menus = ({roles,logout, isAuthenticated}) => {
+  function handlelogout() {
+    console.log("logging out....")
+    logout();
+  }
+  const menuItems = [
+    {
+      title: "TASKS",
+      items: [
         {
-          title: "TASKS",
-          items: [
-            {
-              icon: <LayoutDashboard />,
-              label: "Dashboard",
-              href: "/dashboard",
-              visible: ["admin", "user"],
-            },
-            {
-              icon: <UserCog />,
-              label: "User Management",
-              href: "/user-management",
-              visible: ["admin"],
-            },
-            {
-              icon: <LibraryBig />,
-              label: "Manage Assignment",
-              href: "/manage-assignment",
-              visible: ["admin"],
-            },
-            {
-              icon: <FileText />,
-              label: "My Assessments",
-              href: "/my-assessments",
-              visible: ["user"],
-            },
-            {
-              icon: <ClipboardList />,
-              label: "Take Assessment",
-              href: "/take-assessment",
-              visible: ["user"],
-            },
-            {
-              icon: <BarChart3 />,
-              label: "Reporting & Analytics",
-              href: "/reporting-analytics",
-              visible: ["admin"],
-            },
-            {
-              icon: <CalendarDays />,
-              label: "Calendar",
-              href: "/calendar",
-              visible: ["admin"],
-            },
-            {
-              icon: <History />,
-              label: "History",
-              href: "/history",
-              visible: ["user"],
-            },
-            {
-              icon: <MessageSquare />,
-              label: "Message",
-              href: "/message",
-              visible: ["admin", "user"],
-            },
-            {
-              icon: <Settings />,
-              label: "Setting",
-              href: "/settings",
-              visible: ["admin", "user"],
-            },
-            {
-              icon: <LifeBuoy />,
-              label: "Support",
-              href: "/support",
-              visible: ["admin"],
-            },
-            {
-              icon: <ShieldCheck />,
-              label: "Security",
-              href: "/security",
-              visible: ["admin"],
-            },
-          ],
+          icon: <LayoutDashboard />,
+          label: "Dashboard",
+          href: "/dashboard",
+          visible: ["EXAMINER", "EXAMINEE"],
         },
         {
-          title: "ACTIONS",
-          items: [
-            {
-              icon: <FilePlus />,
-              label: "Create Assignment",
-              href: "create-assignment",
-              visible: ["admin", "user"],
-
-            },
-            {
-              icon: <LogOut />,
-              label: "Logout",
-              href: "/",
-              visible: ["admin", "user"],
-            },
-          ],
+          icon: <UserCog />,
+          label: "User Management",
+          href: "/user-management",
+          visible: ["EXAMINER"],
         },
-      ];
+        {
+          icon: <LibraryBig />,
+          label: "Manage Assignment",
+          href: "/manage-assignment",
+          visible: ["EXAMINER"],
+        },
+        {
+          icon: <FileText />,
+          label: "My Assessments",
+          href: "/my-assessments",
+          visible: ["EXAMINEE"],
+        },
+        {
+          icon: <ClipboardList />,
+          label: "Take Assessment",
+          href: "/take-assessment",
+          visible: ["EXAMINEE"],
+        },
+        {
+          icon: <BarChart3 />,
+          label: "Reporting & Analytics",
+          href: "/reporting-analytics",
+          visible: ["EXAMINER"],
+        },
+        {
+          icon: <CalendarDays />,
+          label: "Calendar",
+          href: "/calendar",
+          visible: ["EXAMINER"],
+        },
+        {
+          icon: <History />,
+          label: "History",
+          href: "/history",
+          visible: ["EXAMINEE"],
+        },
+        {
+          icon: <MessageSquare />,
+          label: "Message",
+          href: "/message",
+          visible: ["EXAMINER", "EXAMINEE"],
+        },
+        {
+          icon: <Settings />,
+          label: "Setting",
+          href: "/settings",
+          visible: ["EXAMINER", "EXAMINEE"],
+        },
+        {
+          icon: <LifeBuoy />,
+          label: "Support",
+          href: "/support",
+          visible: ["EXAMINER"],
+        },
+        {
+          icon: <ShieldCheck />,
+          label: "Security",
+          href: "/security",
+          visible: ["EXAMINER"],
+        },
+      ],
+    },
+    {
+      title: "ACTIONS",
+      items: [
+        {
+          icon: <FilePlus />,
+          label: "Create Assignment",
+          href: "create-assignment",
+          visible: ["EXAMINER", "EXAMINEE"],
+        },
+        {
+          icon: <LogOut />,
+          label: "Logout",
+          href: "/",
+          visible: ["EXAMINER", "EXAMINEE"],
+        },
+      ],
+    },
+  ];
+  
    
   return (
       <div className="mt-4 text-sm">
@@ -126,10 +130,11 @@ const Menus = () => {
                      {item.title}
                   </span>
                   {item.items.map((subItems) => {
-                      if (subItems.visible.includes(role)) {
+                      if (subItems.visible.includes(roles)) {
                           return (
-                              <Link to={subItems.href}
-                                  key={subItems.label}
+                              <Link to={subItems.label !== "Logout"? subItems.href :subItems.href   }
+                              key={subItems.label}
+                              onClick={subItems.label === "Logout" ? handlelogout : null}
                   className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-accent"
                               >
                                   <span>
@@ -150,4 +155,7 @@ const Menus = () => {
   )
 }
 
-export default Menus
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, { logout })(Menus)

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Mail, Lock, User, AlertCircle } from 'lucide-react';
-
-export default function SignupForm() {
+import { signup } from '../../action/Auth';
+import { connect } from "react-redux";
+const SignupForm = ({signup, isAuthenticated})=> {
+  // debugger;
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
-    role: '',
+    roles: "",
     agreeToTerms: false,
   });
 
@@ -38,7 +40,7 @@ export default function SignupForm() {
       newErrors.password = 'Password must be at least 8 characters';
     }
 
-    if (!formData.role) {
+    if (!formData.roles) {
       newErrors.role = 'Please select your role';
     }
 
@@ -57,23 +59,30 @@ export default function SignupForm() {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
-
+  const {firstName, lastName,email,roles,password } = formData
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting...");
     if (validate()) {
       setIsSubmitting(true);
+      console.log("validated...");
+     
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Form submitted:', formData);
+      signup(firstName,lastName,email,roles,password)
+      console.log('Form submitted ,sent:', formData);
+
       setIsSubmitting(false);
     }
   };
-
+  if (isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2 text-center">Get Started Now</h1>
       <p className="text-gray-600 mb-8 text-center">Create your account and start grading smarter</p>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form  className="space-y-6" onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           {/* First Name */}
           <div>
@@ -169,7 +178,7 @@ export default function SignupForm() {
             <input
               id="password"
               name="password"
-              type="password"
+              type="text"
               placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
@@ -206,17 +215,55 @@ export default function SignupForm() {
             {errors.agreeToTerms}
           </p>
         )}
+<div className='flex flex-col  gap-5  justify-center items-center  align-middle '> 
+<div className="flex flex-row gap-4">
+  <button
+    type="button"
+    onClick={() => setFormData({ ...formData, roles: 'EXAMINER' })}
+    className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
+      formData.roles === 'EXAMINER'
+        ? 'bg-emerald-500 text-white'
+        : 'bg-white text-black border border-emerald-500'
+    }`}
+  >
+    Examiner
+  </button>
 
+  <button
+    type="button"
+    onClick={() => setFormData({ ...formData, roles: 'EXAMINEE' })}
+    className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
+      formData.roles === 'EXAMINEE'
+        ? 'bg-emerald-500 text-white'
+        : 'bg-white text-black border border-emerald-500'
+    }`}
+  >
+    Examinee
+  </button>
+</div>
+
+         
+
+          {errors.roles && (
+              <p className="mt-1 text-sm text-red-600 flex items-center">
+                <AlertCircle size={14} className="mr-1" />
+                {errors.roles}
+              </p>
+            )}
+        </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#8382FA] hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+         
+          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
         >
           {isSubmitting ? 'Creating account...' : 'Sign up'}
         </button>
+          
+        
         <p className="mt-6 text-center text-sm text-gray-600">
                   Have an account?{' '}
-                  <Link to="/login" className="font-medium text-[#8382FA] hover:text-emerald-800 transition duration-200">
+                  <Link to="/login" className="font-medium text-[#085c43] hover:text-emerald-800 transition duration-200">
                     Sign in
                   </Link>
                 </p>
@@ -224,3 +271,8 @@ export default function SignupForm() {
     </div>
   );
 }
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, {signup} )(SignupForm)
