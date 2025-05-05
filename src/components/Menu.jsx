@@ -17,9 +17,12 @@ import { Link } from "react-router-dom";    import {
       } from "lucide-react";
 import { logout } from "../action/Auth";
 import { connect } from "react-redux";
-      
+import { useLocation } from "react-router-dom"; // <-- make sure this is at the top
+
+
 // import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
-const Menus = ({roles,logout, isAuthenticated}) => {
+const Menus = ({ roles, logout, isAuthenticated }) => {
+  const location = useLocation()
   function handlelogout() {
     console.log("logging out....")
     logout();
@@ -31,7 +34,7 @@ const Menus = ({roles,logout, isAuthenticated}) => {
         {
           icon: <LayoutDashboard />,
           label: "Dashboard",
-          href: "/dashboard",
+          href: "/dashboard-d",
           visible: ["EXAMINER", "EXAMINEE"],
         },
         {
@@ -49,7 +52,7 @@ const Menus = ({roles,logout, isAuthenticated}) => {
         {
           icon: <FileText />,
           label: "My Assessments",
-          href: "/my-assessments",
+          href: "/assessment-results",
           visible: ["EXAMINEE"],
         },
         {
@@ -132,18 +135,17 @@ const Menus = ({roles,logout, isAuthenticated}) => {
                   {item.items.map((subItems) => {
                       if (subItems.visible.includes(roles)) {
                           return (
-                              <Link to={subItems.label !== "Logout"? subItems.href :subItems.href   }
-                              key={subItems.label}
-                              onClick={subItems.label === "Logout" ? handlelogout : null}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-accent"
-                              >
-                                  <span>
-                                  {subItems.icon}
-                                  </span>
-                                  <span className="hidden lg:block">
-                                      {subItems.label}
-                                  </span>
-                              </Link>
+                            <Link
+                            to={subItems.label !== "Logout" ? subItems.href : subItems.href}
+                            key={subItems.label}
+                            onClick={subItems.label === "Logout" ? handlelogout : null}
+                            className={`flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-accent ${
+                              location.pathname === subItems.href ? "bg-accent" : ""
+                            }`}
+                          >
+                            <span>{subItems.icon}</span>
+                            <span className="hidden lg:block">{subItems.label}</span>
+                          </Link>
                           )
                       }
                   })}

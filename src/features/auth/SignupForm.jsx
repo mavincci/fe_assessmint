@@ -97,7 +97,7 @@ const SignupForm = ({signup, isAuthenticated})=> {
                 id="firstName"
                 name="firstName"
                 type="text"
-                placeholder="John"
+                placeholder="Segni"
                 value={formData.firstName}
                 onChange={handleChange}
                 className={`w-full pl-10 pr-3 py-2 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
@@ -124,7 +124,7 @@ const SignupForm = ({signup, isAuthenticated})=> {
                 id="lastName"
                 name="lastName"
                 type="text"
-                placeholder="Doe"
+                placeholder="Asrat"
                 value={formData.lastName}
                 onChange={handleChange}
                 className={`w-full pl-10 pr-3 py-2 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
@@ -152,7 +152,7 @@ const SignupForm = ({signup, isAuthenticated})=> {
               id="email"
               name="email"
               type="email"
-              placeholder="john.doe@example.com"
+              placeholder="segni.ase@example.com"
               value={formData.email}
               onChange={handleChange}
               className={`w-full pl-10 pr-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
@@ -205,8 +205,8 @@ const SignupForm = ({signup, isAuthenticated})=> {
           />
           <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
             I agree to the{' '}
-            <a href="#" className="text-[#8382FA] hover:text-emerald-800">terms</a> and{' '}
-            <a href="#" className="text-[#8382FA] hover:text-emerald-800">policy</a>
+            <a href="#" className="text-accent-teal-light hover:text-emerald-800">terms</a> and{' '}
+            <a href="#" className="text-accent-teal-light hover:text-emerald-800">policy</a>
           </label>
         </div>
         {errors.agreeToTerms && (
@@ -215,15 +215,17 @@ const SignupForm = ({signup, isAuthenticated})=> {
             {errors.agreeToTerms}
           </p>
         )}
-<div className='flex flex-col  gap-5  justify-center items-center  align-middle '> 
+         <span className='text-start font-semibold p-1'>Register As:</span>
+        <div className='flex flex-col  gap-5  justify-center items-center  align-middle '> 
+         
 <div className="flex flex-row gap-4">
   <button
     type="button"
     onClick={() => setFormData({ ...formData, roles: 'EXAMINER' })}
     className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
       formData.roles === 'EXAMINER'
-        ? 'bg-emerald-500 text-white'
-        : 'bg-white text-black border border-emerald-500'
+        ? 'bg-btn-primary text-white'
+        : 'bg-white text-black border border-btbg-btn-primary'
     }`}
   >
     Examiner
@@ -234,8 +236,8 @@ const SignupForm = ({signup, isAuthenticated})=> {
     onClick={() => setFormData({ ...formData, roles: 'EXAMINEE' })}
     className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
       formData.roles === 'EXAMINEE'
-        ? 'bg-emerald-500 text-white'
-        : 'bg-white text-black border border-emerald-500'
+        ? 'bg-btn-primary text-white'
+        : 'bg-white text-black border border-bg-btn-primary'
     }`}
   >
     Examinee

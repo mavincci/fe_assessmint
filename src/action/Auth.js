@@ -1,9 +1,11 @@
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, SIGNUP_FAIL, SIGNUP_SUCCESS } from "./Types";
+import { Flip, toast, ToastContainer } from "react-toastify";
+import NoInternetPage from "../layouts/NoInternet";
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-
+// import { toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 // export const load_user = () => async (dispatch) => {
 //     if (localStorage.getItem("access")) {
 //       const config = {
@@ -105,10 +107,49 @@ export const checkAuthenticated = () => async (dispatch) => {
         payload: { token, refreshToken, user },
       }); 
 
-  console.log(res.data)
+      // console.log(res.data)
+     
+         toast.success('👋 Welcome Back!  you\'re Succesfully Logged in!', {
+        position: "bottom-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        });
+      
+     
       // dispatch(load_user()); // Optional, if you want to validate token later
     } catch (err) {
-      console.error(err);
+      // console.error(err.response.status);
+    console.log("err", err)
+      {err.response.status === 401 ? toast.error( "You're unauthorized! Please check your credentials and try again.", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        }) : err.response.status == 500 ?toast.error( "You're  not connected To localhost", {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+          style: {width:"400px"}
+          }) : ""}
+      
       dispatch({
         type: LOGIN_FAIL,
       });
@@ -147,13 +188,20 @@ export const checkAuthenticated = () => async (dispatch) => {
           config
         );
         if (res.status === 201) {
-          // Swal.fire({
-          //   icon: "success",
-          //   title: "Registered Succesfully!",
-          //   text: "Visit your Email",
-          //   confirmButtonText: "OK",
-          // });
-          console.log("registered")
+          toast.success("✅ Successfully created! Your item is now live.", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+          });
+          // console.log("registered");
+          //  <Navigate to="/login"/>
+          // <Navigate to="/login"/>
         }
         dispatch({
           type: SIGNUP_SUCCESS,
@@ -161,6 +209,18 @@ export const checkAuthenticated = () => async (dispatch) => {
         });
       } catch (err) {
         console.log(err);
+        {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+          style: {width:"400px"}
+          }) : ""}
         dispatch({
           type: SIGNUP_FAIL,
         });

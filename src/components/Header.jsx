@@ -10,12 +10,13 @@ import {
     LogOut,
     User,
   } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const [currentDate] = useState(new Date());
   return (
       <>
-           <header className="bg-slate-100 border-b border-gray-200 sticky top-0 z-10 w-[90%] mx-auto mt-3 rounded-2xl">
+           <header className="bg-bg-light  sticky top-0 z-10 w-[90%] mx-auto mt-3 rounded-2xl">
         <div className="px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center ">
@@ -29,31 +30,21 @@ const Header = () => {
                 <input
                   type="text"
                   placeholder="Search assignments..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-teal-light focus:border-transparent"
                 />
                 <Search className="absolute left-3 top-4 h-6 w-6 text-gray-400" />
               </div>
             <div className="flex items-center space-x-4">
              
               
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
+              
+                  <Link to="/notifications" >
                   <button className="relative p-2 text-gray-400 hover:text-gray-500">
                     <Bell className="h-6 w-6" />
                     <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
                   </button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content className="bg-white mt-7 rounded-lg shadow-lg p-2 min-w-[200px]">
-                    <DropdownMenu.Item className="text-sm text-gray-700 p-2 hover:bg-violet-50 rounded cursor-pointer">
-                      New assignment added
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item className="text-sm text-gray-700 p-2 hover:bg-violet-50 rounded cursor-pointer">
-                      Quiz due tomorrow
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
+                  </Link>
+                
               
               {/* <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>

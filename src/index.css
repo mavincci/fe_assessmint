@@ -19,6 +19,7 @@
   --color-bg-dark: #111827;
   --color-bg-secondary-light: #1D3C44DB;
   --color-btn-primary:#286575;
+  --color-gray:#D9D9D9;
   
 
 
@@ -52,4 +53,13 @@
   /* Easing */
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+}
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0px;  /* Chrome, Safari */
+  height: 0px;
 }
