@@ -1,47 +1,132 @@
 import axios from "axios";
-import { Navigate } from "react-router-dom";
-import { LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, SIGNUP_FAIL, SIGNUP_SUCCESS } from "./Types";
+import { useNavigate } from "react-router-dom";
+
+import { ADD_ASSESSMENT_FAIL, ADD_ASSESSMENT_SUCCESS, LOAD_SECTION_FAIL, LOAD_SECTION_SUCCESS, LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, QUESTION_TYPE_FAIL, QUESTION_TYPE_SUCCESS, SIGNUP_FAIL, SIGNUP_SUCCESS, USER_ASSESSMENT_FAIL, USER_ASSESSMENT_SUCCESS } from "./Types";
 import { Flip, toast, ToastContainer } from "react-toastify";
 import NoInternetPage from "../layouts/NoInternet";
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
 // import { toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
-// export const load_user = () => async (dispatch) => {
-//     if (localStorage.getItem("access")) {
-//       const config = {
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `JWT ${localStorage.getItem("access")}`,
-//           Accept: "application/json",
-//         },
-//       };
-  
-//       try {
-//         const res = await axios.get(
-//           `${process.env.REACT_APP_API_URL}/apexx/users/me/`,
-//           config
-//         );
-//         dispatch({
-//           type: USER_LOADED_SUCCESS,
-//           payload: res.data,
-//         });
-//         if (res.data.role == 1) {
-//           return rol;
-//         } else {
-//           return "";
-//         }
-//       } catch (err) {
-//         dispatch({
-//           type: USER_LOADED_FAIL,
-//         });
-//       }
-//     } else {
-//       dispatch({
-//         type: USER_LOADED_FAIL,
-//       });
-//     }
-// };
-  
+
+
+// load assesment
+export const load_my_assesment = () => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/mine`, config);
+      dispatch({
+        type: USER_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+      return res.data; // Return response instead of JSX
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: USER_ASSESSMENT_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: USER_ASSESSMENT_FAIL });
+    return null;
+  }
+};
+// load section by assessment ID
+export const load_my_section = (assessmentId) => async (dispatch) => {
+  if (localStorage.getItem("access") && assessmentId) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/get_sections/${assessmentId}`, config);
+      dispatch({
+        type: LOAD_SECTION_SUCCESS,
+        payload: res.data,
+      });
+      console.log(res.data)
+      return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: LOAD_SECTION_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: LOAD_SECTION_FAIL });
+    return null;
+  }
+};
+//  load questions
+export const load_my_questions = (sectionID) => async (dispatch) => {
+  if (localStorage.getItem("access") && sectionID) {
+    console.log("token access",localStorage.getItem("access") )
+    console.log("sectionsID",sectionID )
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/get_questions/${sectionID}`, config);
+      dispatch({
+        type: LOAD_SECTION_SUCCESS,
+        payload: res.data,
+      });
+      console.log(res.data)
+      return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: LOAD_SECTION_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: LOAD_SECTION_FAIL });
+    return null;
+  }
+};
+// load  Question Type
+export const load_question_type = () => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/config/question_types`, config);
+      dispatch({
+        type: QUESTION_TYPE_SUCCESS,
+        payload: res.data,
+      });
+      return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: QUESTION_TYPE_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: QUESTION_TYPE_FAIL });
+    return null;
+  }
+};
+
+  // check is Authenticated
 export const checkAuthenticated = () => async (dispatch) => {
     if (localStorage.getItem("access")) {
       const config = {
@@ -79,7 +164,8 @@ export const checkAuthenticated = () => async (dispatch) => {
         type: AUTHENTICATED_FAIL,
       });
     }
-  };
+};
+  // Login or sign in
   export const login = (email, password) => async (dispatch) => {
     const config = {
       headers: {
@@ -156,17 +242,8 @@ export const checkAuthenticated = () => async (dispatch) => {
     }
   };
   
-
-  
 // signup API
-  export const signup =
-    (
-      firstName,
-      lastName,
-      email,
-      role,
-      password,
-    ) =>
+  export const signup =( firstName, lastName, email, role, password, ) =>
     async (dispatch) => {
       const config = {
         headers: {
@@ -226,7 +303,227 @@ export const checkAuthenticated = () => async (dispatch) => {
         });
       }
     };
+// Create Assessment
+export const createAssessment = (title, description) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    title,
+    description
+  });
+  console.log("Auth body", body)
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/create`,
+      body,
+      config
+    );
+    if (res.status === 201) {
+      toast.success("✅ Successfully created your Assessment! Your item is now live.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+      // console.log("registered");
+      //  <Navigate to="/login"/>
+      // <Navigate to="/login"/>
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
 
+}
+    
+// Create New Section
+export const createSection = (assessmentId, title, description, questionType) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    assessmentId,
+    title,
+    description,
+    questionType
+  });
+  
+  try {
+    console.log("section body", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/add_section`,
+      body,
+      config
+    );
+    console.log("Message", res.data.message )
+    if (res.status === 201 || res.status === 200 || res.data.message == "ASSESSMENT_SECTION_ADD_SUCCESS") {
+      toast.success( `✅ Successfully created your Section ! Your item is now live.`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+    console.log(res.data)
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+
+// create Question 
+export const createquestion = (questionType, sectionId, questionText, answer) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    questionType,
+    sectionId,
+    questionText,
+    answer
+  });
+  
+  try {
+    console.log("section body", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/add_question`,
+      body,
+      config
+    );
+    console.log("Message", res.data.message )
+    if (res.status === 201 || res.status === 200 || res.data.message == "ASSESSMENT_QUESTION_ADD_SUCCESS") {
+      toast.success( `✅ Successfully created your your question !`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+    console.log(res.data)
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
 // logout
 export const logout = () => (dispatch) => {
   localStorage.clear();

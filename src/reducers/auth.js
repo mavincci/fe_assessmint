@@ -1,8 +1,7 @@
 import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    USER_LOADED_SUCCESS,
-    USER_LOADED_FAIL,
+
     AUTHENTICATED_SUCCESS,
     AUTHENTICATED_FAIL,
     PASSWORD_RESET_SUCCESS,
@@ -16,7 +15,12 @@ import {
    
  
     PASSWORD_CHANGE_FAIL,
-    PASSWORD_CHANGE_SUCCESS
+    PASSWORD_CHANGE_SUCCESS,
+    USER_ASSESSMENT_SUCCESS,
+    ADD_ASSESSMENT_SUCCESS,
+    ADD_ASSESSMENT_FAIL,
+    ADD_SECTION_FAIL,
+    ADD_SECTION_SUCCESS
   } from "../action/Types";
   
   const initialState = {
@@ -55,23 +59,23 @@ import {
           ...state,
           isAuthenticated: false,
         };
-      case USER_LOADED_SUCCESS:
-        localStorage.setItem("rolees", payload.role);
-        return {
-          ...state,
-          user: payload,
-          role: payload.role,
-        };
+      // case USER_ASSESSMENT_SUCCESS:
+      //   localStorage.setItem("roles", payload.role);
+      //   return {
+      //     ...state,
+      //     user: payload,
+      //     role: payload.role,
+      //   };
       case AUTHENTICATED_FAIL:
         return {
           ...state,
           isAuthenticated: false,
         };
-      case USER_LOADED_FAIL:
-        return {
-          ...state,
-          user: null,
-        };
+      // case USER_LOADED_FAIL:
+      //   return {
+      //     ...state,
+      //     user: null,
+      //   };
       case LOGIN_FAIL:
       case SIGNUP_FAIL:
       case LOGOUT:
@@ -93,7 +97,12 @@ import {
           ...state,
         };
      
-  
+      case ADD_ASSESSMENT_SUCCESS:
+        case ADD_SECTION_SUCCESS:
+            return " ADDED SUCCESFULLY";
+      case ADD_ASSESSMENT_FAIL:
+        case ADD_SECTION_FAIL:
+            return " ADDED FAIL";
       case PASSWORD_CHANGE_FAIL:
         return  "ERROR IN CHANGING PASSWORD"
         

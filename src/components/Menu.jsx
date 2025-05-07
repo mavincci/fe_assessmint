@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";    import {
         ShieldCheck,
         FilePlus,
         LogOut,
+        FileTextIcon,
       } from "lucide-react";
 import { logout } from "../action/Auth";
 import { connect } from "react-redux";
@@ -22,6 +23,7 @@ import { useLocation } from "react-router-dom"; // <-- make sure this is at the 
 
 // import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
 const Menus = ({ roles, logout, isAuthenticated }) => {
+  console.log("MENU user role", roles)
   const location = useLocation()
   function handlelogout() {
     console.log("logging out....")
@@ -45,15 +47,21 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         },
         {
           icon: <LibraryBig />,
-          label: "Manage Assignment",
-          href: "/manage-assignment",
+          label: "Manage Assessment",
+          href: "/manage-assessment",
           visible: ["EXAMINER"],
         },
         {
           icon: <FileText />,
-          label: "My Assessments",
+          label: "Assessments Results",
           href: "/assessment-results",
-          visible: ["EXAMINEE"],
+          visible: ["EXAMINER","EXAMINEE"],
+        },
+        {
+          icon: <FileTextIcon />,
+          label: "My Assessments",
+          href: "/assessment",
+          visible: ["EXAMINER","EXAMINEE"],
         },
         {
           icon: <ClipboardList />,

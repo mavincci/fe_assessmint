@@ -1,9 +1,11 @@
-"use client"
 
 import { useState, useRef, useEffect } from "react"
 import { Trash2, Edit, Eye, X, Check, Info } from "lucide-react"
+import { createquestion } from "../../action/Auth"
+import { connect } from "react-redux"
 
-export default function TrueFalseBuilder() {
+const TrueFalseBuilder = ({ createquestion, sectionID, sectionType }) => {
+  console.log("imported datas", sectionID, sectionType)
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState({
     id: null,
@@ -45,9 +47,11 @@ export default function TrueFalseBuilder() {
   }
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
-
+    console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  createquestion(sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
     // Validate that a correct answer is selected
     if (!currentQuestion.correctAnswer) {
       alert("Please select either True or False as the correct answer.")
@@ -104,7 +108,18 @@ export default function TrueFalseBuilder() {
     setShowModal(false)
     setPreviewQuestion(null)
   }
+  const handleCreateQuestion = async () => {
+    // setIsassessementSubmitting(true)
+    console.log("Create Question", sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
+    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // createquestion(sectionType, sectionID, , type);
+    // createAssessment(title, description)
+    console.log("Sent to Auth...")
+    // setIsassessementSubmitting(false)
+   setIsModalOpen(false)
 
+  }
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8">True/False Question Builder</h1>
@@ -307,3 +322,8 @@ export default function TrueFalseBuilder() {
     </div>
   )
 }
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, { createquestion })(TrueFalseBuilder);

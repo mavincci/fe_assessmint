@@ -11,7 +11,7 @@ import { Outlet } from "react-router-dom";
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem("user"))
   // alert(localStorage.getItem("user"))
-  console.log("user role", user.roles[0])
+  console.log("user role", user.roles[1])
   const imgSrc = "";
   const formattedName = user?.firstName
   ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
@@ -68,7 +68,7 @@ const Dashboard = () => {
       </> 
         )}
       
-        <Menus  roles = {user.roles[0]}  />
+        <Menus  roles = {user.roles = user.roles.filter(role => role !== "USER")[0]}  />
 
         {/* <div className="flex justify-baseline   ">
           <div className="rounded-xl md:p-5 bg-primary-blue-light w-[90%] flex flex-col items-center">
@@ -79,7 +79,7 @@ const Dashboard = () => {
         </div> */}
       </div>
       {/* right */}
-      <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-bg-light  min-h-min ">
+      <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-bg-light  max-h-screen overflow-auto scrollbar-hide  ">
         <Header />
         <Outlet />
       </div>
