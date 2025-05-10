@@ -14,6 +14,8 @@ import Resultpage from "./layouts/ResultPage";
 import NoInternetPage from "./layouts/NoInternet";
 import Notifications from "./components/Notification";
 import DefaultDashboard from "./layouts/DefaultDashboard";
+import UserManagement from "./layouts/User-Management";
+import AssessmentManagement from "./features/assesments/AssessmentManagement";
 function App() {
   return (
     <Provider store={store}>
@@ -29,6 +31,9 @@ function App() {
           <Route path="/assessment-results" element={<Resultpage />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/dashboard-d" element={<DefaultDashboard />} />
+          <Route path="/user-management" element={<UserManagement />} />
+          <Route path="/manage-assessment" element={<AssessmentManagement />} />
+
 
 
           {/* <Route path="/logout" element={<logout />} /> */}

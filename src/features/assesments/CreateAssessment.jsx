@@ -71,6 +71,7 @@ const CreateAssessment = ({createAssessment,createSection,isAuthenticated,create
     setSelectedId(items.id);
     setSelectedtitle(items.title)
     console.log("Selected ID:", items.id);
+    console.log("ASSESsment datas" , items)
   };
   const handleSubmit = () => {
     // Handle form submission
@@ -165,7 +166,7 @@ useEffect(() => {
               setIsassesmentcreated(true)
                setIsModalOpen(true)
               }}/>
-          <Button icon={<Settings />} label="Assesment Setting" text="white" bg="bg-btn-primary" onClick={() => setIsSettingModalOpen(true)} />
+          {selectedId !== null && <Button icon={<Settings />} label="Assesment Setting" text="white" bg="bg-btn-primary" onClick={() => setIsSettingModalOpen(true)} />}
           <Button icon={<Eye />} label="Preview" text="gray-200" bg="bg-lime-500" /> 
           <Button icon={<HelpCircle />} label="Guidance" text="gray-200" bg="bg-btn-primary"  onClick={() => setGuidanceModalOpen(true)}/> 
         
@@ -196,7 +197,7 @@ useEffect(() => {
           </div>
           <div className="min-h-[60px] bg-bg-secondary-light p-4 rounded shadow-sm">
         <h2 className="text-lime-50 text-md">
-          {hoveredItem ? hoveredItem.description : "Hover over the assessments to preview the description."}
+          {hoveredItem ? hoveredItem.description : "Hover over the assessments to preview the description."}   
         </h2>
       </div>
     </div>
@@ -313,7 +314,7 @@ useEffect(() => {
   
           </QuestionModal>
           <QuestionModal isOpen={isSettingModalOpen} onClose={() => setIsSettingModalOpen(false)}>
-            <AssessmentSettings/>
+          <AssessmentSettings assessmentID={selectedId} assessmentTitle={selectedtitle} />
         </QuestionModal>
         <QuestionModal isOpen={IsGuidanceModalOpen} onClose={() => setGuidanceModalOpen(false)}>
         <div className="p-6 max-w-4xl mx-auto bg-white rounded-2xl shadow-md space-y-6">

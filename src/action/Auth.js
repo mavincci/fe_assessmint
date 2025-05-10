@@ -66,6 +66,35 @@ export const load_my_section = (assessmentId) => async (dispatch) => {
     return null;
   }
 };
+
+export const load_all_assessment = (assessmentId) => async (dispatch) => {
+  if (localStorage.getItem("access") && assessmentId) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/get_by_id/${assessmentId}`, config);
+      dispatch({
+        type: LOAD_SECTION_SUCCESS,
+        payload: res.data,
+      });
+      console.log(res.data)
+      return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: LOAD_SECTION_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: LOAD_SECTION_FAIL });
+    return null;
+  }
+};
 //  load questions
 export const load_my_questions = (sectionID) => async (dispatch) => {
   if (localStorage.getItem("access") && sectionID) {
@@ -495,7 +524,7 @@ export const createquestion = (questionType, sectionId, questionText, answer) =>
     console.log(res.data)
   } catch (err) {
     console.log(err);
-    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+    {err.response || err.response.status === 409  ? toast.error( "Error with Adding Question", {
       position: "bottom-left",
       autoClose: 3000,
       hideProgressBar: false,
@@ -518,6 +547,82 @@ export const createquestion = (questionType, sectionId, questionText, answer) =>
         transition: Flip,
         style: {width:"400px"}
         })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+// create settings for assessment
+export const CreateSetting_for_assessment = (assessmentId, startDateTime, endDateTIme, duration,maxAttempts,isPublic) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    assessmentId,
+    startDateTime,
+    endDateTIme,
+    duration,
+    maxAttempts,
+    isPublic
+  });
+
+  try {
+    console.log("setting body in Auth", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/update_settings`,
+      body,
+      config
+    );
+    console.log("Message", res.data.message )
+    if (res.status === 201 || res.status === 200 || res.data.message == "ASSESSMENT_SETTINGS_UPDATE_SUCCESS") {
+      toast.success( `✅ Successfully set your your setting for your assessment !`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+    console.log(res.data)
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 || err.response.data.message== "VALIDATION_ERROR" ? toast.error( "Check Your Inputs and try again", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : err.response.status ==- 500 ? toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        }) : ""}
     dispatch({
       type: ADD_ASSESSMENT_FAIL,
     });

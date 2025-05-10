@@ -1,8 +1,22 @@
-import { useState } from "react"
+"use client"
 
-export default function AssessmentSettings() {
+import { useState } from "react"
+import { Calendar, Clock, Eye, EyeOff, Award, CheckCircle } from "lucide-react"
+import { connect } from "react-redux"
+import { CreateSetting_for_assessment } from "../../action/Auth"
+
+const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment }) => {
+  
+  const today = new Date();
+  const formattedToday = today.toISOString().slice(0, 16).replace("T", " ");
+  
+  // Set default end date to 2 days from now
+  const defaultEndDate = new Date(today);
+  defaultEndDate.setDate(today.getDate() + 2);
+  const formattedEndDate = defaultEndDate.toISOString().slice(0, 16).replace("T", " ");
+console.log(formattedToday, formattedEndDate)
   const [settings, setSettings] = useState({
-    title: "Math Assessment",
+    title: assessmentTitle || "Assessment Title",
     timeLimit: 30,
     enableTimeLimit: true,
     difficulty: "medium",
@@ -12,35 +26,116 @@ export default function AssessmentSettings() {
     enableRandomization: true,
     showProgressBar: true,
     notifyInstructor: false,
+    startDateTime: formattedToday,
+    endDateTime: formattedEndDate,
+    isPublic: true,
+  })
+
+  const [dateErrors, setDateErrors] = useState({
+    startDateTime: "",
+    endDateTime: "",
   })
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    setSettings({
-      ...settings,
-      [name]: type === "checkbox" ? checked : value,
-    })
+    const newValue = type === "checkbox" ? checked : value
+    const newSettings = { ...settings }
+
+    // Handle date validation
+    if (name === "startDateTime") {
+      const startDate = new Date(value)
+      const endDate = new Date(settings.endDateTime)
+      const currentDate = new Date()
+
+      // Reset error first
+      setDateErrors((prev) => ({ ...prev, startDateTime: "" }))
+
+      // Check if start date is before current date
+      if (startDate < currentDate && startDate.toDateString() !== currentDate.toDateString()) {
+        setDateErrors((prev) => ({
+          ...prev,
+          startDateTime: "Start date cannot be in the past",
+        }))
+        return // Don't update state with invalid date
+      }
+
+      // If end date is now before start date, update end date
+      if (endDate < startDate) {
+        // Set end date to start date + 1 hour
+        const newEndDate = new Date(startDate)
+        newEndDate.setHours(newEndDate.getHours() + 1)
+        newSettings.endDateTime = newEndDate.toISOString().slice(0, 16)
+      }
+    }
+
+    if (name === "endDateTime") {
+      const startDate = new Date(settings.startDateTime)
+      const endDate = new Date(value)
+
+      // Reset error first
+      setDateErrors((prev) => ({ ...prev, endDateTime: "" }))
+
+      // Check if end date is before start date
+      if (endDate < startDate) {
+        setDateErrors((prev) => ({
+          ...prev,
+          endDateTime: "End date must be after start date",
+        }))
+        return // Don't update state with invalid date
+      }
+    }
+
+    // Update the settings with the new value
+    newSettings[name] = newValue
+    setSettings(newSettings)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    // Validate dates before submitting
+    const startDate = new Date(settings.startDateTime)
+    const endDate = new Date(settings.endDateTime)
+    const currentDate = new Date()
+
+    let hasErrors = false
+    const newDateErrors = { startDateTime: "", endDateTime: "" }
+
+    if (startDate < currentDate && startDate.toDateString() !== currentDate.toDateString()) {
+      newDateErrors.startDateTime = "Start date cannot be in the past"
+      hasErrors = true
+    }
+
+    if (endDate < startDate) {
+      newDateErrors.endDateTime = "End date must be after start date"
+      hasErrors = true
+    }
+
+    setDateErrors(newDateErrors)
+
+    if (hasErrors) {
+      return 
+    }
+    console.log("startTime", settings.startDateTime.replace("T", " "))
+    CreateSetting_for_assessment(assessmentID,settings.startDateTime.replace("T", " "),settings.endDateTime.replace("T", " "),settings.timeLimit,settings.attemptsAllowed, settings.isPublic )
+console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDateTime,settings.timeLimit,settings.attemptsAllowed, settings.isPublic)
     console.log("Saved settings:", settings)
     // Here you would save the settings to your backend
     document.getElementById("save-modal").showModal()
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
+    <div className="min-h-screen bg-base-200 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="card bg-base-100 shadow-xl">
           {/* Header */}
-          <div className="bg-[#286575] text-white p-6">
-            <h1 className="text-2xl font-bold">Assessment Settings</h1>
-            <p className="opacity-80 mt-1">Configure your assessment parameters</p>
+          <div className="card-body bg-primary text-primary-content rounded-t-box">
+            <h1 className="card-title text-2xl md:text-3xl font-bold">Assessment Settings</h1>
+            <p className="opacity-90">Configure your assessment parameters</p>
           </div>
 
           {/* Main Content */}
-          <form onSubmit={handleSubmit} className="p-6">
+          <form onSubmit={handleSubmit} className="card-body pt-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left Column */}
               <div className="space-y-6">
@@ -49,20 +144,27 @@ export default function AssessmentSettings() {
                   <label className="label">
                     <span className="label-text font-medium">Assessment Title</span>
                   </label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={settings.title}
-                    onChange={handleChange}
-                    className="input input-bordered w-full"
-                  />
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      name="title"
+                      disabled
+                      value={settings.title}
+                      onChange={handleChange}
+                      className="input input-bordered w-full"
+                    />
+                    <span className="badge badge-primary">Locked</span>
+                  </div>
                 </div>
 
                 {/* Time Settings */}
-                <div className="card bg-base-100 border border-gray-200">
+                <div className="card bg-base-100 border border-base-300">
                   <div className="card-body p-4">
-                    <h2 className="card-title text-lg">Time Settings</h2>
-
+                    <h2 className="card-title text-lg flex items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      Time Settings
+                    </h2>
+                    {/* 
                     <div className="form-control">
                       <label className="label cursor-pointer justify-start gap-4">
                         <input
@@ -74,13 +176,25 @@ export default function AssessmentSettings() {
                         />
                         <span className="label-text">Enable time limit</span>
                       </label>
-                    </div>
+                    </div> */}
 
-                    {settings.enableTimeLimit && (
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text">Time limit (minutes)</span>
-                        </label>
+                    {/* {settings.enableTimeLimit && ( */}
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Time limit (minutes)</span>
+                      </label>
+                      <div className="join mx-4">
+                        <button
+                          type="button"
+                          className="btn join-item"
+                          onClick={() => {
+                            if (settings.timeLimit > 1) {
+                              setSettings({ ...settings, timeLimit: settings.timeLimit - 5 })
+                            }
+                          }}
+                        >
+                          -
+                        </button>
                         <input
                           type="number"
                           name="timeLimit"
@@ -88,15 +202,30 @@ export default function AssessmentSettings() {
                           onChange={handleChange}
                           min="1"
                           max="180"
-                          className="input input-bordered w-full"
+                          className="input input-bordered join-item w-full text-center"
                         />
+                        <button
+                          type="button"
+                          className="btn join-item"
+                          onClick={() => {
+                            if (settings.timeLimit < 180) {
+                              setSettings({ ...settings, timeLimit: settings.timeLimit + 5 })
+                            }
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
-                    )}
+                      <div className="mt-2">
+                        <div className="badge badge-neutral">{settings.timeLimit} minutes</div>
+                      </div>
+                    </div>
+                    {/* )} */}
                   </div>
                 </div>
 
                 {/* Difficulty Level */}
-                <div className="card bg-base-100 border border-gray-200">
+                {/* <div className="card bg-base-100 border border-gray-200">
                   <div className="card-body p-4">
                     <h2 className="card-title text-lg">Difficulty Level</h2>
 
@@ -117,13 +246,116 @@ export default function AssessmentSettings() {
                       </select>
                     </div>
                   </div>
+                </div> */}
+
+                {/* Schedule Settings */}
+                <div className="card bg-base-100 border border-base-300">
+                  <div className="card-body p-4">
+                    <h2 className="card-title text-lg flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Schedule Settings
+                    </h2>
+
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Start Date & Time</span>
+                      </label>
+                      <div className="input-group">
+                        <span className="bg-primary text-primary-content">
+                          <Calendar className="h-4 w-4" />
+                        </span>
+                        <input
+                          type="datetime-local"
+                          name="startDateTime"
+                          value={settings.startDateTime}
+                          onChange={handleChange}
+                          min={formattedToday}
+                          className={`input input-bordered w-full ${dateErrors.startDateTime ? "input-error" : ""}`}
+                        />
+                      </div>
+                      {dateErrors.startDateTime && (
+                        <div className="label">
+                          <span className="label-text-alt text-error">{dateErrors.startDateTime}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="form-control mt-2">
+                      <label className="label">
+                        <span className="label-text">End Date & Time</span>
+                      </label>
+                      <div className="input-group">
+                        <span className="bg-primary text-primary-content">
+                          <Calendar className="h-4 w-4" />
+                        </span>
+                        <input
+                          type="datetime-local"
+                          name="endDateTime"
+                          value={settings.endDateTime}
+                          onChange={handleChange}
+                          min={settings.startDateTime}
+                          className={`input input-bordered w-full ${dateErrors.endDateTime ? "input-error" : ""}`}
+                        />
+                      </div>
+                      {dateErrors.endDateTime && (
+                        <div className="label">
+                          <span className="label-text-alt text-error">{dateErrors.endDateTime}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-2">
+                      <div className="badge badge-secondary">
+                        Duration: {calculateDuration(settings.startDateTime, settings.endDateTime)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Right Column */}
               <div className="space-y-6">
+                {/* Visibility Settings */}
+                <div className="card bg-base-100 border border-base-300">
+                  <div className="card-body p-4">
+                    <h2 className="card-title text-lg flex items-center gap-2">
+                      {settings.isPublic ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                      Visibility Settings
+                    </h2>
+
+                    <div className="form-control">
+                      <label className="label cursor-pointer justify-start gap-4">
+                        <input
+                          type="checkbox"
+                          name="isPublic"
+                          checked={settings.isPublic}
+                          onChange={handleChange}
+                          className="toggle toggle-accent"
+                        />
+                        <span className="label-text font-medium">Make assessment public</span>
+                      </label>
+                      <div className="label">
+                        <span className="label-text-alt">Public assessments are visible to all users</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 p-3 bg-base-200 rounded-box">
+                      <div className="flex items-center gap-2">
+                        <div className={`badge ${settings.isPublic ? "badge-success" : "badge-warning"}`}>
+                          {settings.isPublic ? "Public" : "Private"}
+                        </div>
+                        <span className="text-sm">
+                          {settings.isPublic
+                            ? "Anyone can access this assessment"
+                            : "Only invited users can access this assessment"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Feedback Settings */}
-                <div className="card bg-base-100 border border-gray-200">
+                {/* <div className="card bg-base-100 border border-gray-200">
                   <div className="card-body p-4">
                     <h2 className="card-title text-lg">Feedback Settings</h2>
 
@@ -143,14 +375,17 @@ export default function AssessmentSettings() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Scoring Settings */}
-                <div className="card bg-base-100 border border-gray-200">
+                <div className="card bg-base-100 border border-base-300">
                   <div className="card-body p-4">
-                    <h2 className="card-title text-lg">Scoring Settings</h2>
+                    <h2 className="card-title text-lg flex items-center gap-2">
+                      <Award className="h-5 w-5" />
+                      Scoring Settings
+                    </h2>
 
-                    <div className="form-control">
+                    {/* <div className="form-control">
                       <label className="label">
                         <span className="label-text">Passing score (%)</span>
                       </label>
@@ -163,9 +398,58 @@ export default function AssessmentSettings() {
                         max="100"
                         className="input input-bordered w-full"
                       />
-                    </div>
+                    </div> */}
 
-                    <div className="form-control mt-2">
+                    {/* pasing Score */}
+
+                    {/* <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Passing score (%)</span>
+                      </label>
+                      <div className="join mx-5">
+                        <button
+                          type="button"
+                          className="btn join-item"
+                          onClick={() => {
+                            if (settings.passingScore > 0) {
+                              setSettings({ ...settings, passingScore: settings.passingScore - 5 })
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          name="passingScore"
+                          value={settings.passingScore}
+                          onChange={handleChange}
+                          min="0"
+                          max="100"
+                          className="input outline outline-accent join-item w-full text-center"
+                        />
+                        <button
+                          type="button"
+                          className="btn join-item"
+                          onClick={() => {
+                            if (settings.passingScore < 100) {
+                              setSettings({ ...settings, passingScore: settings.passingScore + 1 })
+                            }
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="mt-2">
+                        <progress
+                          className="progress progress-accent w-full"
+                          value={settings.passingScore}
+                          max="100"
+                        ></progress>
+                        <div className="text-center text-sm mt-1">{settings.passingScore}% to pass</div>
+                      </div>
+                    </div> */}
+
+                    <div className="form-control mt-4">
                       <label className="label">
                         <span className="label-text">Attempts allowed</span>
                       </label>
@@ -180,12 +464,19 @@ export default function AssessmentSettings() {
                         <option value="3">3 attempts</option>
                         <option value="0">Unlimited</option>
                       </select>
+                      <div className="mt-2">
+                        <div className="badge badge-outline">
+                          {settings.attemptsAllowed === "0"
+                            ? "Unlimited attempts"
+                            : `${settings.attemptsAllowed} attempt${settings.attemptsAllowed > 1 ? "s" : ""}`}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Additional Options */}
-                <div className="card bg-base-100 border border-gray-200">
+                {/* <div className="card bg-base-100 border border-gray-200" aria-disabled>
                   <div className="card-body p-4">
                     <h2 className="card-title text-lg">Additional Options</h2>
 
@@ -230,16 +521,17 @@ export default function AssessmentSettings() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 mt-8">
-              <button type="button" className="btn btn-outline">
+              {/* <button type="button" className="btn btn-outline">
                 Cancel
-              </button>
-              <button type="submit" className="btn bg-[#286575] text-white hover:bg-[#1d4e5a]">
+              </button> */}
+              <button type="submit" className="btn bg-btn-primary text-white gap-2">
+                <CheckCircle className="h-5 w-5" />
                 Save Settings
               </button>
             </div>
@@ -250,11 +542,14 @@ export default function AssessmentSettings() {
       {/* Success Modal */}
       <dialog id="save-modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Settings Saved!</h3>
+          <h3 className="font-bold text-lg flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-success" />
+            Settings Saved!
+          </h3>
           <p className="py-4">Your assessment settings have been successfully updated.</p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Close</button>
+              <button className="btn btn-primary">Close</button>
             </form>
           </div>
         </div>
@@ -262,3 +557,29 @@ export default function AssessmentSettings() {
     </div>
   )
 }
+
+// Helper function to calculate duration between two dates
+function calculateDuration(startDateTime, endDateTime) {
+  const start = new Date(startDateTime)
+  const end = new Date(endDateTime)
+
+  const durationMs = end - start
+  const days = Math.floor(durationMs / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((durationMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+
+  let result = ""
+  if (days > 0) {
+    result += `${days} day${days > 1 ? "s" : ""} `
+  }
+  if (hours > 0 || days === 0) {
+    result += `${hours} hour${hours !== 1 ? "s" : ""}`
+  }
+
+  return result.trim()
+}
+
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, {CreateSetting_for_assessment})(AssessmentSettings)
