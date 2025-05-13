@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { Search, MoreHorizontal, ChevronLeft, ChevronRight, PlusCircle } from "lucide-react"
-
+import { useEffect, useState } from "react"
+import { Search, MoreHorizontal, ChevronLeft, ChevronRight, PlusCircle} from "lucide-react"
+import { Calendar, Clock, FileText, Users } from "lucide-react"
+import { Link } from "react-router-dom"
+import { load_my_assesment } from "../../action/Auth"
+import { useDispatch } from "react-redux"
 // Sample assignment data
 const assignments = [
   {
@@ -108,12 +111,15 @@ const assignments = [
 ]
 
 export default function AssessmentManagement() {
+  const user = JSON.parse(localStorage.getItem("user"))
+
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState("All Types")
   const [statusFilter, setStatusFilter] = useState("All Status")
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState("Assessments")
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [AssessmentData, setAssessmentData] =useState([])
   const itemsPerPage = 10
 
   // Filter assignments based on search query and filters
@@ -166,9 +172,99 @@ export default function AssessmentManagement() {
         return "badge"
     }
   }
-
+   const dispatch = useDispatch();
+  useEffect(() => {
+     const fetchAssessment = async () => {
+        const res = await dispatch(load_my_assesment());
+        if (res?.body) {
+          setAssessmentData(res.body);
+  console.log(res.body)
+        }
+    };
+    fetchAssessment()
+},[])
   return (
-    <div className="w-full bg-bg-light rounded-lg p-6">
+    <>
+      {/* if Examinees */}
+      {user.roles = user.roles.find(role => role !== "USER") ? <>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 gap-4">
+          {AssessmentData.map((items, index) => (
+             <div className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden" key={items.id}>
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-primary-blue-light to-bg-secondary-light text-white p-6 rounded-t-lg h-32">
+          <div className="flex justify-between items-start">
+                  <h2 className="text-2xl font-bold">{items.title}</h2>
+            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
+              Assessment
+            </span>
+          </div>
+          <p className="text-blue-100 mt-2 text-sm">
+           {items.description.slice(0,50)}...
+          </p>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Clock className="h-5 w-5 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Duration</p>
+                <p className="font-medium">40 minutes</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Calendar className="h-5 w-5 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Available</p>
+                <p className="font-medium">May 11-12, 2025</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Users className="h-5 w-5 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Attempts</p>
+                <p className="font-medium">Maximum 2 attempts</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <FileText className="h-5 w-5 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Content</p>
+                <p className="font-medium">1 section • 1 question</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Footer */}
+        <div className="bg-gray-50 border-t px-6 py-4">
+          <div className="w-full flex justify-between items-center">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+              <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+              <div className="w-2 h-2 rounded-full bg-blue-300"></div>
+            </div>
+                <Link to={`/take-assessment/`} className="rounded-xl bg-gradient-to-r from-bg-dark to-bg-secondary-light text-white p-3">
+                Take Assessment</Link>
+          </div>
+        </div>
+      </div>
+          ))}
+     
+    </div>
+      </> :   <div className="w-full bg-bg-light rounded-lg p-6">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold">Assignment Management</h1>
@@ -442,5 +538,12 @@ export default function AssessmentManagement() {
         </form>
       </dialog>
     </div>
+      
+      }
+
+      {/* if not Examines */}
+
+     
+    </>
   )
 }

@@ -16,6 +16,8 @@ import Notifications from "./components/Notification";
 import DefaultDashboard from "./layouts/DefaultDashboard";
 import UserManagement from "./layouts/User-Management";
 import AssessmentManagement from "./features/assesments/AssessmentManagement";
+import Full from "./features/assesments/FullScreen";
+import ExamUI from "./features/assesments/EXamUI";
 function App() {
   return (
     <Provider store={store}>
@@ -28,11 +30,14 @@ function App() {
         <Route element={<Dashboard />}>
           <Route path="/create-assignment" element={<CreateAssessment />} />
           <Route path="/take-assessment" element={<TakeAssessment />} />
+          {/* <Route path="/take-assessment/:assessmentId" element={<TakeAssessment />} /> */}
           <Route path="/assessment-results" element={<Resultpage />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/dashboard-d" element={<DefaultDashboard />} />
           <Route path="/user-management" element={<UserManagement />} />
           <Route path="/manage-assessment" element={<AssessmentManagement />} />
+          <Route path="/fullscreen" element={<Full />} />
+          <Route path="/assessment" element={<ExamUI />} />
 
 
 

@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { Trash2, Plus, Edit, Eye, Info, PlusCircle } from "lucide-react"
-import Button from "../../components/Button"
+// import Button from "../../components/Button"
+import { createquestion } from "../../action/Auth"
+import { connect } from "react-redux"
 
-export default function MultipleChoiceBuilder() {
+const MultipleChoiceBuilder =({createquestion, sectionID, sectionType})=> {
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState({
     id: null,
@@ -17,8 +19,10 @@ export default function MultipleChoiceBuilder() {
       { id: 3, text: "", isCorrect: false },
       { id: 4, text: "", isCorrect: false },
     ],
+    answer :[]
   })
   const [isEditing, setIsEditing] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [previewQuestion, setPreviewQuestion] = useState(null)
 
   // Handle question text change
@@ -40,14 +44,23 @@ export default function MultipleChoiceBuilder() {
   }
 
   // Handle toggling correct MCQ option
-  const handleCorrectOption = (id) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      options: currentQuestion.options.map((option) =>
-        option.id === id ? { ...option, isCorrect: !option.isCorrect } : option,
-      ),
-    })
-  }
+const handleCorrectOption = (id) => {
+  setCurrentQuestion((prev) => {
+    const updatedOptions = prev.options.map((option) =>
+      option.id === id ? { ...option, isCorrect: !option.isCorrect } : option
+    )
+
+    const correctAnswers = updatedOptions
+      .filter((option) => option.isCorrect)
+      .map((option) => option.text)
+
+    return {
+      ...prev,
+      options: updatedOptions,
+      answer: correctAnswers,
+    }
+  })
+}
 
   // Add new MCQ option
   const addOption = () => {
@@ -92,7 +105,13 @@ export default function MultipleChoiceBuilder() {
         ...currentQuestion,
         id: Date.now(),
       }
+      setIsSubmitting(true)
+      // console.log("New Questins", newQuestion)
+console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, newQuestion.options, newQuestion.answer)
+    // await new Promise((resolve) => setTimeout(resolve, 1500));
+  createquestion(sectionType, sectionID, currentQuestion.text,newQuestion.options.map((options)=>options.text), currentQuestion.answer)
       setQuestions([...questions, newQuestion])
+      setIsSubmitting(false)
     }
 
     // Reset form
@@ -112,6 +131,7 @@ export default function MultipleChoiceBuilder() {
         { id: 3, text: "", isCorrect: false },
         { id: 4, text: "", isCorrect: false },
       ],
+      answer:[]
     })
     setIsEditing(false)
   }
@@ -228,8 +248,11 @@ export default function MultipleChoiceBuilder() {
           {/* Submit and Cancel Buttons */}
           <div className="flex gap-4">
             <button type="submit" className="btn  bg-btn-primary text-white roundxl">
-              {isEditing ? "Update Question" : "Add Question"}
+              {isSubmitting ? "Adding..." : "Add Question"}
             </button>
+            {isEditing &&    <button type="submit" className="btn  bg-btn-primary text-white roundxl">
+             Update Question
+            </button>}
             {isEditing && (
               <button type="button" className="btn btn-outline" onClick={resetForm}>
                 Cancel
@@ -320,3 +343,7 @@ export default function MultipleChoiceBuilder() {
     </div>
   )
 }
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, {createquestion})(MultipleChoiceBuilder)

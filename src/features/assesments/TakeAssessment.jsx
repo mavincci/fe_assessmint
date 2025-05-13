@@ -1,12 +1,18 @@
-   import { useState, useEffect } from "react"
+   import { useState, useEffect, useRef } from "react"
 import { testquestions } from "../../lib/data"
 import Button from "../../components/Button"
 import { BookmarkCheck, ListStartIcon, LogOut } from "lucide-react"
+import { load_my_assesment_by_Id } from "../../action/Auth"
+import { useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
 
 
 
 const TakeAssessment = () => {
+  const { assessmentId } = useParams();
+  const dispatch = useDispatch()
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
+    const [FetchedQuestions, setFetchedQuestions] = useState([])
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [userAnswers, setUserAnswers] = useState({})
     const [timeLeft, setTimeLeft] = useState(140) // 2:20 in seconds
@@ -29,7 +35,17 @@ const TakeAssessment = () => {
     }
   
     const currentOverallQuestionNumber = calculateOverallQuestionNumber()
+   const fetchquestions = async () => {
+    //  console.log("selectedSectionId", selectedSectionID)
 
+     const res = await dispatch(load_my_assesment_by_Id("3e575686-19dc-44d3-9a67-1427d31784a1"));
+     if (res?.body) {
+       console.log(res.body)
+       setFetchedQuestions(res.body);
+     }
+    
+ };
+ 
     useEffect(() => {
         setTimeLeft(totalQuestions * 60)
       }, [totalQuestions,startAssesment===true])
@@ -111,6 +127,42 @@ const TakeAssessment = () => {
       return String.fromCharCode(97 + index) 
     }
     
+  // full screen logic
+  const assessmentRef = useRef(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+  const handleEnterFullscreen = () => {
+     
+      if (assessmentRef.current.requestFullscreen) {
+        assessmentRef.current.requestFullscreen();
+      } else if (assessmentRef.current.webkitRequestFullscreen) {
+        assessmentRef.current.webkitRequestFullscreen();
+      } else if (assessmentRef.current.msRequestFullscreen) {
+        assessmentRef.current.msRequestFullscreen();
+      }
+      setIsFullscreen(true);
+    };
+  
+  
+    // Function to handle fullscreen state from the child
+    const handleFullscreenChange = (isFull) => {
+      setIsFullscreen(isFull);
+    };
+  
+  
+    const handleExitFullscreen = () => {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+  };
+  const handleFetching = () => {
+    console.log("here in fetching")
+    fetchquestions()
+                          setStartAssesment(!startAssesment)
+  }
     return (
         <>
             {!startAssesment && <div className="flex flex-col items-center justify-center max-h-full text-center px-4 py-8 ">
@@ -134,7 +186,10 @@ const TakeAssessment = () => {
     <Button 
       icon={<ListStartIcon />} 
       label="Start Assessment" 
-                        onClick={() => setStartAssesment(!startAssesment)}
+              onClick={() => {
+                handleFetching()
+                
+                        }}
                         bg="bg-white"
     //   className="mt-8 bg-accent-teal-light hover:bg-accent-teal-dark text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-300"
     />

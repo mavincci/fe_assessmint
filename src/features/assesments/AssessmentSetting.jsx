@@ -5,7 +5,7 @@ import { Calendar, Clock, Eye, EyeOff, Award, CheckCircle } from "lucide-react"
 import { connect } from "react-redux"
 import { CreateSetting_for_assessment } from "../../action/Auth"
 
-const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment }) => {
+const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment , assessment_setting_data}) => {
   
   const today = new Date();
   const formattedToday = today.toISOString().slice(0, 16).replace("T", " ");
@@ -14,21 +14,21 @@ const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_a
   const defaultEndDate = new Date(today);
   defaultEndDate.setDate(today.getDate() + 2);
   const formattedEndDate = defaultEndDate.toISOString().slice(0, 16).replace("T", " ");
-console.log(formattedToday, formattedEndDate)
+console.log("ASSESSEMENT SETTING DATA",assessment_setting_data.isPublic )
   const [settings, setSettings] = useState({
     title: assessmentTitle || "Assessment Title",
-    timeLimit: 30,
+    timeLimit: parseInt(assessment_setting_data?.duration) || 30,
     enableTimeLimit: true,
     difficulty: "medium",
     showAnswersImmediately: true,
     passingScore: 70,
-    attemptsAllowed: 2,
+    attemptsAllowed: assessment_setting_data?.maxAttempts || 1,
     enableRandomization: true,
     showProgressBar: true,
     notifyInstructor: false,
-    startDateTime: formattedToday,
-    endDateTime: formattedEndDate,
-    isPublic: true,
+    startDateTime: assessment_setting_data?.startDateTime,
+    endDateTime: assessment_setting_data?.endDateTIme ,
+    isPublic: assessment_setting_data?.isPublic || true,
   })
 
   const [dateErrors, setDateErrors] = useState({

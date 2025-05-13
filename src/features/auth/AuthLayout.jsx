@@ -8,7 +8,7 @@ const AuthLayout= () => {
   return (
     <div className="min-h-screen w-full flex">
       {/* Left Section */}
-      <div className="md:w-1/2 w-full p-8 bg-white flex items-center justify-center">
+      <div className="md:w-1/2 w-full p-8 bg-bg-light flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8">
            <img src={logo} alt="logo"    className="absolute inset-0 w-24  h-24 top-7 left-7 rounded-full" />

@@ -37,6 +37,64 @@ export const load_my_assesment = () => async (dispatch) => {
     return null;
   }
 };
+// load assessment by ID
+export const load_my_assesment_by_Id = (assessmentId) => async (dispatch) => {
+  console.log("trying.....")
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/get_by_id/${assessmentId}`, config);
+      dispatch({
+        type: USER_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+      // console.log(res.data)
+      return res.data; // Return response instead of JSX
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: USER_ASSESSMENT_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: USER_ASSESSMENT_FAIL });
+    return null;
+  }
+};
+// load assessment setting
+export const load_my_assesment_setting = (assessmentId) => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/basic_info/${assessmentId}`, config);
+      dispatch({
+        type: USER_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+      return res.data; // Return response instead of JSX
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: USER_ASSESSMENT_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: USER_ASSESSMENT_FAIL });
+    return null;
+  }
+};
 // load section by assessment ID
 export const load_my_section = (assessmentId) => async (dispatch) => {
   if (localStorage.getItem("access") && assessmentId) {
@@ -449,7 +507,7 @@ export const createSection = (assessmentId, title, description, questionType) =>
     console.log(res.data)
   } catch (err) {
     console.log(err);
-    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+    {err.response && err.response.status === 409 ? toast.error( "Confilicting INPUT", {
       position: "bottom-left",
       autoClose: 3000,
       hideProgressBar: false,
@@ -480,7 +538,7 @@ export const createSection = (assessmentId, title, description, questionType) =>
 }
 
 // create Question 
-export const createquestion = (questionType, sectionId, questionText, answer) => async (dispatch) => {
+export const createquestion = (questionType, sectionId, questionText,options, answers) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -488,13 +546,21 @@ export const createquestion = (questionType, sectionId, questionText, answer) =>
       Accept: "application/json",
     },
   };
-  const body = JSON.stringify({
+
+  const bodyData = {
     questionType,
     sectionId,
     questionText,
-    answer
-  });
-  
+    answers,
+  };
+console.log("BodyData", bodyData)
+  if (options) {
+    bodyData.options = options;
+    bodyData.answers = answers
+  }
+
+  const body = JSON.stringify(bodyData);
+  console.log("here inauth", bodyData , body)
   try {
     console.log("section body", body)
     const res = await axios.post(
@@ -568,7 +634,7 @@ export const CreateSetting_for_assessment = (assessmentId, startDateTime, endDat
     endDateTIme,
     duration,
     maxAttempts,
-    isPublic
+    isPublic: typeof isPublic === "boolean" ? isPublic : isPublic === "true"
   });
 
   try {
@@ -612,6 +678,81 @@ export const CreateSetting_for_assessment = (assessmentId, startDateTime, endDat
       transition: Flip,
       style: {width:"400px"}
       }) : err.response.status ==- 500 ? toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        }) : ""}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+// create settings for assessment
+export const Create_do_answer = (assessmentId, sectionId, questionId, questionType,answer) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    assessmentId,
+    sectionId,
+    questionId,
+    questionType,
+    answer,
+  });
+
+  try {
+    console.log("setting body in Auth", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/attempts/do_answer`,
+      body,
+      config
+    );
+    console.log("Message", res.data.message )
+    if (res.status === 201 || res.status === 200 || res.data.message == "ASSESSMENT_ANSWER_SUCCESS") {
+      toast.success( `✅ your answer Updated successfully !`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+    console.log(res.data)
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 || err.response.data.message== "VALIDATION_ERROR" ? toast.error( "Re try please", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : err.response.status ==- 500 ? toast.error( "SERVER ERROR", {
         position: "bottom-left",
         autoClose: 3000,
         hideProgressBar: false,

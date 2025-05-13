@@ -49,7 +49,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <LibraryBig />,
           label: "Manage Assessment",
           href: "/manage-assessment",
-          visible: ["EXAMINER"],
+          visible: ["EXAMINER", "EXAMINEE"],
         },
         {
           icon: <FileText />,
@@ -67,7 +67,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <ClipboardList />,
           label: "Take Assessment",
           href: "/take-assessment",
-          visible: ["EXAMINEE"],
+          visible: ["EXAMINEE", "EXAMINER"],
         },
         {
           icon: <BarChart3 />,

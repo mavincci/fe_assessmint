@@ -1,0 +1,46 @@
+
+  .exam-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .exam-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .exam-main {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  .question-container {
+    margin: 20px 0;
+  }
+  .true-false-options, .mcq-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .next-button {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .next-button:hover {
+    background: #0056b3;
+  }
+  @media (max-width: 600px) {
+    .exam-container {
+      padding: 10px;
+    }
+    .exam-header {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }

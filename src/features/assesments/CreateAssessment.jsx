@@ -10,7 +10,7 @@ import AssessmentSettings from './AssessmentSetting'
 import MultipleChoiceBuilder from '../questionTypes/MCQquestions'
 import TrueFalseBuilder from '../questionTypes/TFquestions'
 import ShortAnswerBuilder from '../questionTypes/ShortAnswer'
-import { createquestion, createSection, load_my_assesment, load_my_questions, load_my_section, load_question_type } from '../../action/Auth'
+import { createquestion, createSection, load_my_assesment, load_my_assesment_setting, load_my_questions, load_my_section, load_question_type } from '../../action/Auth'
 import { useNavigate } from 'react-router-dom'
 import { connect, useDispatch } from 'react-redux'
 import Step from '../../components/Step'
@@ -43,6 +43,7 @@ const CreateAssessment = ({createAssessment,createSection,isAuthenticated,create
   const [QuestionType, setQuestionType] = useState([]);
   const [FetchedSection, setFetchedSection] = useState([]);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
+  const [fetchedAssessmentSettings, setfetchedAssessmentSettings] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedtitle, setSelectedtitle] = useState(null);
@@ -71,7 +72,9 @@ const CreateAssessment = ({createAssessment,createSection,isAuthenticated,create
     setSelectedId(items.id);
     setSelectedtitle(items.title)
     console.log("Selected ID:", items.id);
-    console.log("ASSESsment datas" , items)
+    console.log("ASSESsment datas", items)
+    console.log("Settings", items.settings)
+    setfetchedAssessmentSettings(items.settings)
   };
   const handleSubmit = () => {
     // Handle form submission
@@ -97,7 +100,14 @@ useEffect(() => {
 
       }
   };
-
+  
+//   const fetchassessment_settings = async () => {
+//     console.log("selected assessment ID", selectedId)
+//     const res = await dispatch(load_my_assesment_setting(selectedId));
+//     if (res?.body) {
+//       setfetchedAssessmentSettings(res.body);
+//     }
+// };
     const fetchquestionType = async () => {
       const res = await dispatch(load_question_type());
       if (res?.body) {
@@ -109,6 +119,7 @@ useEffect(() => {
     console.log("selectedSectionId", selectedSectionID)
     const res = await dispatch(load_my_questions(selectedSectionID));
     if (res?.body) {
+      console.log("res.body", res.body)
       setFetchedQuestions(res.body);
     }
 };
@@ -145,6 +156,9 @@ useEffect(() => {
   if (setIsModalOpen) {
     fetchAssessment();
   }
+  // if (isSettingModalOpen) {
+  //   fetchassessment_settings()
+  // }
  
 }, [dispatch, isModalOpen,selectedId,setIsModalOpen, selectedSectionID]);
   
@@ -228,7 +242,7 @@ useEffect(() => {
             <div className="flex justify-start last:ms-auto ">
               {selectedquestioType != null ? <> <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>setIsMCQopen(true)} />  <Button icon={<X />} label="Cancel" text="gray-200" bg="black"   /></>: ""}
              
-              
+              <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>setIsMCQopen(true)} /> 
           </div>
         <QuestionPreview questions={fetchedQuestions}/>
         </div>
@@ -314,7 +328,7 @@ useEffect(() => {
   
           </QuestionModal>
           <QuestionModal isOpen={isSettingModalOpen} onClose={() => setIsSettingModalOpen(false)}>
-          <AssessmentSettings assessmentID={selectedId} assessmentTitle={selectedtitle} />
+          <AssessmentSettings assessmentID={selectedId} assessmentTitle={selectedtitle} assessment_setting_data={fetchedAssessmentSettings} />
         </QuestionModal>
         <QuestionModal isOpen={IsGuidanceModalOpen} onClose={() => setGuidanceModalOpen(false)}>
         <div className="p-6 max-w-4xl mx-auto bg-white rounded-2xl shadow-md space-y-6">
@@ -349,7 +363,7 @@ useEffect(() => {
             setIsMCQopen(false)
             
           }} >
-          {selectedquestioType  === "MULTIPLE_CHOICE" ? <MultipleChoiceBuilder/> : selectedquestioType === "TRUE_OR_FALSE" ? <TrueFalseBuilder sectionID={selectedSectionID} sectionType={selectedquestioType} />:selectedquestioType === "ESSAY"?<ShortAnswerBuilder/>: "" }
+          {selectedquestioType  === "MULTIPLE_CHOICE" ? <MultipleChoiceBuilder sectionID={selectedSectionID} sectionType={selectedquestioType}/> : selectedquestioType === "TRUE_OR_FALSE" ? <TrueFalseBuilder sectionID={selectedSectionID} sectionType={selectedquestioType} />:selectedquestioType === "ESSAY"?<ShortAnswerBuilder/>: "" }
   
           
           </QuestionModal>
