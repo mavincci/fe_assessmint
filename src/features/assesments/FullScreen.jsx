@@ -3,8 +3,11 @@ import TakeAssessment from "./TakeAssessment";
 import Button from "../../components/Button";
 import { BookmarkCheck, ListStartIcon, LogOut, PowerOff } from "lucide-react";
 import EXamUI from "./EXamUI";
+import { useParams } from "react-router-dom";
 
 const AssessmentPage = () => {
+  const assessmentId = useParams()
+
     const assessmentRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [startAssesment, setstartAssesment] = useState(false);
@@ -15,6 +18,8 @@ const AssessmentPage = () => {
       assessmentRef.current.webkitRequestFullscreen();
     } else if (assessmentRef.current.msRequestFullscreen) {
       assessmentRef.current.msRequestFullscreen();
+    } else if (KeyboardEvent == "Escape") {
+       assessmentRef.current.msRequestFullscreen();
     }
     setIsFullscreen(true);
   };
@@ -90,7 +95,7 @@ const AssessmentPage = () => {
       </div>
 
       <div className="w-full h-full bg-white rounded-lg shadow-lg p-5 overflow-auto">
-        <EXamUI/>
+          <EXamUI assessmentId={assessmentId} isStartAssessment={startAssesment} />
       </div>
 
       <div className="flex flex-col gap-4">

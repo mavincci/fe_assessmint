@@ -187,14 +187,15 @@ export default function AssessmentManagement() {
     <>
       {/* if Examinees */}
       {user.roles = user.roles.find(role => role !== "USER") ? <>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 gap-4">
+        <div className="min-h-screen bg-gray-50 flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full ">
           {AssessmentData.map((items, index) => (
-             <div className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden" key={items.id}>
+             <div className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl  transition-shadow duration-300 overflow-hidden" key={items.id}>
         {/* Card Header */}
-        <div className="bg-gradient-to-r from-primary-blue-light to-bg-secondary-light text-white p-6 rounded-t-lg h-32">
+        <div className="bg-gradient-to-r from-btn-primary to-accent-teal-light text-white p-6 rounded-t-lg h-32">
           <div className="flex justify-between items-start">
-                  <h2 className="text-2xl font-bold">{items.title}</h2>
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
+                  <h2 className="text-xl font-bold">{items.title}
+                  </h2>
+            <span className="hidden md:block px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
               Assessment
             </span>
           </div>
@@ -256,7 +257,7 @@ export default function AssessmentManagement() {
               <div className="w-2 h-2 rounded-full bg-blue-400"></div>
               <div className="w-2 h-2 rounded-full bg-blue-300"></div>
             </div>
-                <Link to={`/take-assessment/`} className="rounded-xl bg-gradient-to-r from-bg-dark to-bg-secondary-light text-white p-3">
+                <Link to={`/assessment/${items.id}`} className="rounded-xl bg-gradient-to-r from-bg-dark to-bg-secondary-light text-white p-3">
                 Take Assessment</Link>
           </div>
         </div>

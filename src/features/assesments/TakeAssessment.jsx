@@ -3,13 +3,12 @@ import { testquestions } from "../../lib/data"
 import Button from "../../components/Button"
 import { BookmarkCheck, ListStartIcon, LogOut } from "lucide-react"
 import { load_my_assesment_by_Id } from "../../action/Auth"
-import { useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
 
 
-const TakeAssessment = () => {
-  const { assessmentId } = useParams();
+const TakeAssessment = ({assessmentId}) => {
+
   const dispatch = useDispatch()
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
     const [FetchedQuestions, setFetchedQuestions] = useState([])
@@ -35,16 +34,21 @@ const TakeAssessment = () => {
     }
   
     const currentOverallQuestionNumber = calculateOverallQuestionNumber()
-   const fetchquestions = async () => {
+  useEffect(() => {
+       const fetchquestions = async () => {
     //  console.log("selectedSectionId", selectedSectionID)
 
-     const res = await dispatch(load_my_assesment_by_Id("3e575686-19dc-44d3-9a67-1427d31784a1"));
+     const res = await dispatch(load_my_assesment_by_Id(assessmentId));
      if (res?.body) {
        console.log(res.body)
        setFetchedQuestions(res.body);
      }
     
  };
+    if (assessmentId) {
+    fetchquestions()
+  }
+})
  
     useEffect(() => {
         setTimeLeft(totalQuestions * 60)

@@ -49,9 +49,9 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType }) => {
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault()
-    console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
+    console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
     await new Promise((resolve) => setTimeout(resolve, 1500));
-  createquestion(sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
+  createquestion(sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
     // Validate that a correct answer is selected
     if (!currentQuestion.correctAnswer) {
       alert("Please select either True or False as the correct answer.")

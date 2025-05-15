@@ -5,7 +5,7 @@ import { Calendar, Clock, Eye, EyeOff, Award, CheckCircle } from "lucide-react"
 import { connect } from "react-redux"
 import { CreateSetting_for_assessment } from "../../action/Auth"
 
-const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment , assessment_setting_data}) => {
+const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment, assessment_setting_data }) => {
   
   const today = new Date();
   const formattedToday = today.toISOString().slice(0, 16).replace("T", " ");
@@ -14,7 +14,7 @@ const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_a
   const defaultEndDate = new Date(today);
   defaultEndDate.setDate(today.getDate() + 2);
   const formattedEndDate = defaultEndDate.toISOString().slice(0, 16).replace("T", " ");
-console.log("ASSESSEMENT SETTING DATA",assessment_setting_data.isPublic )
+  console.log("ASSESSEMENT SETTING DATA", assessment_setting_data.isPublic)
   const [settings, setSettings] = useState({
     title: assessmentTitle || "Assessment Title",
     timeLimit: parseInt(assessment_setting_data?.duration) || 30,
@@ -26,8 +26,8 @@ console.log("ASSESSEMENT SETTING DATA",assessment_setting_data.isPublic )
     enableRandomization: true,
     showProgressBar: true,
     notifyInstructor: false,
-    startDateTime: assessment_setting_data?.startDateTime,
-    endDateTime: assessment_setting_data?.endDateTIme ,
+    startDateTime: assessment_setting_data?.startDateTime || today.getUTCDate(),
+    endDateTime: assessment_setting_data?.endDateTIme || defaultEndDate.getUTCDate() ,
     isPublic: assessment_setting_data?.isPublic || true,
   })
 
@@ -125,7 +125,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
   }
 
   return (
-    <div className="min-h-screen bg-base-200 p-4 md:p-6">
+    <div className="max-h-fit bg-base-200 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
         <div className="card bg-base-100 shadow-xl">
           {/* Header */}
@@ -135,8 +135,8 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
           </div>
 
           {/* Main Content */}
-          <form onSubmit={handleSubmit} className="card-body pt-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="card-body pt-2 ">
+            <div className="flex flex-col  gap-6 overflow-y-auto scrollbar-hide h-[500px]">
               {/* Left Column */}
               <div className="space-y-6">
                 {/* Assessment Title */}

@@ -546,18 +546,24 @@ export const createquestion = (questionType, sectionId, questionText,options, an
       Accept: "application/json",
     },
   };
-
-  const bodyData = {
+console.log("options",options)
+console.log("answers",answers)
+   const bodyData = {
     questionType,
     sectionId,
     questionText,
-    answers,
   };
-console.log("BodyData", bodyData)
+
+  if (questionType === "TRUE_OR_FALSE") {
+    bodyData.answer = answers;
+  } else {
+    bodyData.answers = answers;
+  }
+
   if (options) {
     bodyData.options = options;
-    bodyData.answers = answers
   }
+
 
   const body = JSON.stringify(bodyData);
   console.log("here inauth", bodyData , body)
@@ -704,13 +710,19 @@ export const Create_do_answer = (assessmentId, sectionId, questionId, questionTy
       Accept: "application/json",
     },
   };
-  const body = JSON.stringify({
-    assessmentId,
+  const bodyData = {
+     assessmentId,
     sectionId,
     questionId,
     questionType,
-    answer,
-  });
+  }
+if (questionType === "TRUE_OR_FALSE") {
+    bodyData.answer = answer;
+  } else {
+    bodyData.answers = answer ;
+  }
+
+  const body = JSON.stringify(bodyData);
 
   try {
     console.log("setting body in Auth", body)
@@ -742,6 +754,153 @@ export const Create_do_answer = (assessmentId, sectionId, questionId, questionTy
   } catch (err) {
     console.log(err);
     {err.response && err.response.status === 409 || err.response.data.message== "VALIDATION_ERROR" ? toast.error( "Re try please", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : err.response.status ==- 500 ? toast.error( "SERVER ERROR", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        }) : ""}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+// STart Assessment 
+export const Create_start_assessment = (assessmentID) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+ const body = JSON.stringify({
+ assessmentId:assessmentID.assessmentId
+  });
+  // Log to check the ID and the Authorization token
+  console.log("Assessment ID:", assessmentID.assessmentId);
+  console.log("Authorization Token:", localStorage.getItem("access"));
+
+  try {
+    // Ensure assessmentId is correctly passed and used
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/start_assessment`,body,
+      config
+    );
+
+    console.log("Message", res);
+
+    if (res.status === 201 || res.status === 200 || res.data.message === "ASSESSMENT_START_SUCCESS") {
+      toast.success("✅ Your answer updated successfully!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+    }
+
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+return res
+  } catch (err) {
+    console.log("ERROR", err);
+
+    const errorMessage =
+      err.response?.data.statusCode === 409
+        ? "Retry, please"
+        : err.response?.status === 500
+        ? "SERVER ERROR"
+        : "Something went wrong";
+
+    toast.error(errorMessage, {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: { width: "400px" },
+    });
+
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+    return err
+  }
+};
+
+
+// finish Attemt
+export const Create_finish_attempt = (assessmentID) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+ const body = JSON.stringify({
+ assessmentId:assessmentID
+  });
+
+  try {
+    console.log("setting body in Auth create finish attempt", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/attempts/finish`,body,
+      config
+    );
+    console.log("Message", res )
+    if (res.status === 201 || res.status === 200 || res.data.message == "ASSESSMENT_FINISHED_SUCCESS") {
+      toast.success( `✅ you sumbitted you assessment Successfully . Wait you response in Result page soon`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+      
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+    console.log("res, res", res)
+    return res.data
+  } catch (err) {
+    console.log("ERROR",err);
+    {err.response && err.response?.statusCode === 409 || err.data?.message == "NOT_AUTHORIZED"  ? toast.error( "Re try please", {
       position: "bottom-left",
       autoClose: 3000,
       hideProgressBar: false,

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertCircle } from 'lucide-react';
+import { Clock, AlertCircle, SpellCheck, SkipForward, Shield, ShieldX, Timer } from 'lucide-react';
 import { shuffleArray } from '../../lib/Shuffle';
-import { load_my_assesment_by_Id ,Create_do_answer} from '../../action/Auth';
+import { load_my_assesment_by_Id ,Create_do_answer, Create_start_assessment, Create_finish_attempt} from '../../action/Auth';
 import { connect, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 // Mock function to simulate the Redux dispatch and API call
 // const mockLoadAssessment = async (id) => {
@@ -93,7 +94,7 @@ const submitAnswer = async (examId, questionId,sectionID,currentSectionTYPE, ans
   
     // Simulate API response
      await new Promise((resolve) => setTimeout(resolve, 1500));
-    Create_do_answer(examId, sectionID, questionId, currentSectionTYPE, answer)
+    // Create_do_answer(examId, sectionID, questionId, currentSectionTYPE, answer)
     console.log("SENT")
   return {
     success: true,
@@ -101,10 +102,16 @@ const submitAnswer = async (examId, questionId,sectionID,currentSectionTYPE, ans
   };
 };
 
-function ExamPage({Create_do_answer}) {
+function ExamPage({ Create_do_answer,assessmentId,Create_start_assessment,Create_finish_attempt,isStartAssessment }) {
+  // const assessmentId = useParams()
   const [currentSection, setCurrentSection] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [responses, setresponses] = useState({
+    rightanswer: 0,
+    wronganswer: 0,
+    skipped:0
+  });
   const [examCompleted, setExamCompleted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(40 * 60); // Default 40 minutes in seconds
   const [isLoading, setIsLoading] = useState(true);
@@ -115,14 +122,43 @@ function ExamPage({Create_do_answer}) {
   const [transitionTimeLeft, setTransitionTimeLeft] = useState(6); // 60 seconds transition time
   const dispatch = useDispatch()
   // Fetch exam data and shuffle questions
-  useEffect(() => {
-    const fetchExamData = async () => {
+useEffect(() => {
+   console.log("ASSESSMENT ID", assessmentId);
+    const start_assessment = async () => {
       try {
         setIsLoading(true);
-        const data = await dispatch(load_my_assesment_by_Id("3e575686-19dc-44d3-9a67-1427d31784a1"));
+        const res = await Create_start_assessment(assessmentId);
+        console.log("Sent Start to ASSESSMENT", res);
+        if (res?.data?.message === "ASSESSMENT_START_SUCCESS") {
+          console.log("HERE in Success")
+          await fetchExamData(res.data.body.assessmentId);
+        } else if(res?.response?.data?.message === "MAX_ATTEMPTS_REACHED") {
+          setError(res?.response?.data?.message.replaceAll("_", " "));
+        }
+        else if(res?.response?.data?.message === "ASSESSMENT_NOT_STARTED_YET") {
+          setError(res?.response?.data?.message.replaceAll("_", " "));
+        }
+        else if(res?.response?.data?.message === "ASSESSMENT_ALREADY_ENDED") {
+          setError(res?.response?.data?.message.replaceAll("_", " "));
+        }
+        else if(res?.response?.data?.message === "ASSESSMENT_NOT_PUBLISHED") {
+          setError(res?.response?.data?.message.replaceAll("_", " "));
+        }
+      } catch (err) {
+        console.error("Error in starting assessment:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const fetchExamData = async (assessmentID) => {
+      try {
+        setIsLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        console.log("assessmentId in fetchExam", assessmentID);
+        const data = await dispatch(load_my_assesment_by_Id(assessmentID));
 
         if (data) {
-          // Shuffle questions in each section
           const shuffledData = {
             ...data.body,
             sections: data.body.sections.map(section => ({
@@ -133,7 +169,6 @@ function ExamPage({Create_do_answer}) {
 
           setExamData(shuffledData);
 
-          // Find the first section with questions
           let initialSection = 0;
           let initialQuestion = 0;
           let foundQuestion = false;
@@ -152,7 +187,6 @@ function ExamPage({Create_do_answer}) {
             setCurrentQuestion(initialQuestion);
           }
 
-          // Set timer based on fetched data if available
           if (shuffledData.settings?.duration) {
             setTimeRemaining(shuffledData.settings.duration * 60);
           }
@@ -167,8 +201,10 @@ function ExamPage({Create_do_answer}) {
       }
     };
 
-    fetchExamData();
+    start_assessment();
   }, []);
+
+
 
   // Timer effect - separate from data fetching
   useEffect(() => {
@@ -252,20 +288,11 @@ function ExamPage({Create_do_answer}) {
 
     setIsSubmitting(true);
     try {
-      const response = await submitAnswer(
-          examData.id,
-          currentQuestionData.id,
-          currentSectionData.id,
-          currentSectionData.questionType,
-        
-        answers[currentQuestionData.id] || []
-        );
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+     
+        await new Promise((resolve) => setTimeout(resolve, 100));
         console.log("answers" , answers[currentQuestionData.id][0])
     Create_do_answer(examData.id, currentSectionData.id,currentQuestionData.id,currentSectionData.questionType,currentSectionData.questionType === "TRUE_OR_FALSE" ? answers[currentQuestionData.id][0] :  answers[currentQuestionData.id] || [])
-      if (!response.success) {
-        throw new Error(response.message || 'Failed to submit answer');
-      }
+    
 
       // Show a brief success message
       const notification = document.createElement('div');
@@ -342,8 +369,17 @@ function ExamPage({Create_do_answer}) {
       }
 
       // Here you would typically make a final API call to mark the exam as completed
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+      const payload = await Create_finish_attempt(assessmentId.assessmentId)
+
+      // const payload = await dispatch(Create_finish_attempt(assessmentId.assessmentId));
+      console.log("Payload", payload)
+      setresponses({
+        rightanswer: payload?.body?.successCount,
+        wronganswer: payload?.body?.failureCount,
+        skipped:payload?.body?.skippedCount
+
+       })
       setExamCompleted(true);
     } catch (err) {
       console.error('Error submitting exam:', err);
@@ -514,7 +550,13 @@ function ExamPage({Create_do_answer}) {
                   <div>{totalQuestions}</div>
                   <div>Questions Answered:</div>
                   <div>{Object.keys(answers).length}</div>
-                  <div>Time Taken:</div>
+                    <div className='flex gap-3 items-center p-2 '><SpellCheck/> correct Answers:</div>
+                  <div>{responses.rightanswer}</div>
+                   <div className='flex gap-3 items-center p-2 '><SkipForward/> Skipped Questions:</div>
+                  <div>{responses.skipped}</div>
+                   <div className='flex gap-3 items-center p-2 '><ShieldX/>  Wrong Answers:</div>
+                  <div>{responses.wronganswer}</div>
+                  <div className='flex gap-3 items-center p-2 '><Timer/>Time Taken:</div>
                   <div>{examData.settings.duration * 60 - timeRemaining} seconds</div>
                 </div>
               </div>
@@ -698,4 +740,4 @@ function ExamPage({Create_do_answer}) {
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, {Create_do_answer})(ExamPage)
+export default connect(mapStateToProps, {Create_start_assessment,Create_do_answer,Create_finish_attempt})(ExamPage)
