@@ -1,17 +1,21 @@
 // import Avatar from "@mui/material/Avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Avatar from "@mui/material/Avatar";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { LogOut, PlusCircle, Settings, User } from "lucide-react";
 import Menus from "../components/Menu";
 import { Outlet } from "react-router-dom";
+import useAuthCheck from "../hooks/useAuthCheck";
 
 
 const Dashboard = () => {
+    // useAuthCheck()
+  console.log("use authnitce runnig")
   const user = JSON.parse(localStorage.getItem("user"))
+  
   // alert(localStorage.getItem("user"))
-  console.log("user role", user.roles[1])
+
   const imgSrc = "";
   const formattedName = user?.firstName
   ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
@@ -23,13 +27,13 @@ const Dashboard = () => {
   return (
     <div className="h-full top-0  flex">
       {/* left */}
-      <div className="w-[16%] md:w-[10%] lg:w-[12%] p-3 bg-bg-secondary-light min-h-screen   justify-between ">
+      <div className="w-[16%] md:w-[10%] lg:w-[14%] p-3 bg-bg-secondary-light min-h-screen   justify-between ">
         <div className="cursor-pointer flex space-x-2 ml-4 items-center align-middle justify-center md:justify-start text-primary-blue-light font-semibold" onClick={()=>setvisibleManageProfile(!manageprofile)}>
           <Avatar
             id="image"
                           // src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
 
-            alt={user.firstName}
+            alt={user?.firstName}
             className="border-2 border-amber-400 text-sm "
             sx={{ bgcolor: "#8380FE", width: 50, height: 50 }}
           >

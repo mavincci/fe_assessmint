@@ -15,6 +15,10 @@ import { Link } from "react-router-dom";    import {
         FilePlus,
         LogOut,
         FileTextIcon,
+        FileQuestion,
+        TreeDeciduous,
+        TreePalm,
+        FolderTree,
       } from "lucide-react";
 import { logout } from "../action/Auth";
 import { connect } from "react-redux";
@@ -36,7 +40,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         {
           icon: <LayoutDashboard />,
           label: "Dashboard",
-          href: "/dashboard-d",
+          href: "/home-dashboard",
           visible: ["EXAMINER", "EXAMINEE"],
         },
         {
@@ -62,6 +66,18 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           label: "My Assessments",
           href: "/assessment",
           visible: ["EXAMINER","EXAMINEE"],
+        },
+          {
+          icon: <FileQuestion />,
+          label: "Question Bank",
+          href: "/question-bank",
+          visible: ["EXAMINER","ADMIN"],
+        },
+              {
+          icon: <FolderTree />,
+          label: "Categories",
+          href: "/categories",
+          visible: ["EXAMINER","ADMIN"],
         },
         {
           icon: <ClipboardList />,
@@ -147,12 +163,12 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
                             to={subItems.label !== "Logout" ? subItems.href : subItems.href}
                             key={subItems.label}
                             onClick={subItems.label === "Logout" ? handlelogout : null}
-                            className={`flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-accent ${
+                            className={`flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2 rounded-md w-full  hover:bg-accent ${
                               location.pathname === subItems.href ? "bg-accent" : ""
                             }`}
                           >
                             <span>{subItems.icon}</span>
-                            <span className="hidden lg:block">{subItems.label}</span>
+                            <span className="hidden lg:block p-1">{subItems.label}</span>
                           </Link>
                           )
                       }

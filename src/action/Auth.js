@@ -213,6 +213,10 @@ export const load_question_type = () => async (dispatch) => {
   }
 };
 
+
+
+
+
   // check is Authenticated
 export const checkAuthenticated = () => async (dispatch) => {
     if (localStorage.getItem("access")) {
@@ -328,7 +332,15 @@ export const checkAuthenticated = () => async (dispatch) => {
       });
     }
   };
+  // logout
+export const logout = () => (dispatch) => {
+  localStorage.clear();
   
+
+  dispatch({
+    type: LOGOUT,
+  });
+};
 // signup API
   export const signup =( firstName, lastName, email, role, password, ) =>
     async (dispatch) => {
@@ -389,7 +401,11 @@ export const checkAuthenticated = () => async (dispatch) => {
           type: SIGNUP_FAIL,
         });
       }
-    };
+  };
+    
+
+
+
 // Create Assessment
 export const createAssessment = (title, description) => async (dispatch) => {
   const config = {
@@ -929,12 +945,106 @@ export const Create_finish_attempt = (assessmentID) => async (dispatch) => {
   }
 
 }
-// logout
-export const logout = () => (dispatch) => {
-  localStorage.clear();
-  
 
-  dispatch({
-    type: LOGOUT,
+
+// create Question Bank , categories , fetch
+// create categories
+export const create_question_bank_category = (name, description) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    name,
+    description
   });
+  console.log("Auth body", body)
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/bank/categories/create`,
+      body,
+      config
+    );
+    if (res.status === 201) {
+      toast.success("✅ Successfully created your Category! Your item is now live.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+      // console.log("registered");
+      //  <Navigate to="/login"/>
+      // <Navigate to="/login"/>
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+
+// get all categories
+  export const load_my_categories = () => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/bank/categories/get_all`, config);
+      dispatch({
+        type: USER_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+      return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: USER_ASSESSMENT_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: USER_ASSESSMENT_FAIL });
+    return null;
+  }
 };

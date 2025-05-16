@@ -181,12 +181,15 @@ export default function AssessmentManagement() {
   console.log(res.body)
         }
     };
-    fetchAssessment()
+    if (user) {
+   
+      fetchAssessment()
+    }
 },[])
   return (
     <>
       {/* if Examinees */}
-      {user.roles = user.roles.find(role => role !== "USER") ? <>
+      {user.roles = user.roles.find(role => role !== "EXAMINEE") ? <>
         <div className="min-h-screen bg-gray-50 flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full ">
           {AssessmentData.map((items, index) => (
              <div className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl  transition-shadow duration-300 overflow-hidden" key={items.id}>
