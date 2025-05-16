@@ -1,5 +1,10 @@
-import React, { useState, useMemo } from 'react'; // Import useMemo
+import React, { useState, useMemo, useEffect } from 'react'; // Import useMemo
 import { MoreHorizontal, Plus, FileText, Search } from 'lucide-react';
+import { load_my_question_Bank } from '../../action/Auth';
+import { useDispatch } from 'react-redux';
+import MCQquestions from '../questionTypes/MCQquestions';
+import QuestionModal from '../../components/QuestionModal';
+import TFquestions from '../questionTypes/TFquestions';
 // Import statements for ShadCN/UI components are removed
 
 
@@ -21,7 +26,10 @@ const Questions = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState("all-difficulty");
   const [selectedCategory, setSelectedCategory] = useState("all-categories");
   const [expandedQuestionId, setExpandedQuestionId] = useState(null);
-
+  const [SelectedQuestionType, setQuestionType] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [questionsData, setQuestionBank] = useState([]);
+  const dispatch = useDispatch()
   // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5); // State for items per page
@@ -30,102 +38,24 @@ const Questions = () => {
 
   // Mock data for questions with added type property
   // Casting to the type implicitly or explicitly is good practice if you remove the type alias
-  const questionsData /*: Question[]*/ = [
-    {
-      id: 1,
-      question: "What is JavaScript?",
-      lastModified: "May 12, 2025",
-      difficulty: "Medium",
-      category: "JavaScript",
-      usedIn: "3 assignments",
-      type: "MCQ"
-    },
-    {
-      id: 2,
-      question: "Explain closures in JavaScript",
-      lastModified: "May 10, 2025",
-      difficulty: "Hard",
-      category: "JavaScript",
-      usedIn: "4 assignments",
-      type: "Subjective"
-    },
-    {
-      id: 3,
-      question: "What is the difference between Java and JavaScript?",
-      lastModified: "May 09, 2025",
-      difficulty: "Easy",
-      category: "Java",
-      usedIn: "5 assignments",
-      type: "MCQ"
-    },
-    {
-      id: 4,
-      question: "Write a function to check if a string is a palindrome",
-      lastModified: "May 05, 2025",
-      difficulty: "Medium",
-      category: "JavaScript",
-      usedIn: "6 assignments",
-      type: "Coding"
-    },
-    {
-      id: 5,
-      question: "Implement a binary search algorithm",
-      lastModified: "May 03, 2025",
-      difficulty: "Hard",
-      category: "Algorithms",
-      usedIn: "5 assignments",
-      type: "Coding"
-    },
-    {
-      id: 6,
-      question: "Describe the MVC architecture pattern",
-      lastModified: "Apr 29, 2025",
-      difficulty: "Easy",
-      category: "Software Design",
-      usedIn: "3 assignments",
-      type: "Subjective"
-    },
-    {
-      id: 7,
-      question: "How does CSS specificity work?",
-      lastModified: "Apr 25, 2025",
-      difficulty: "Medium",
-      category: "CSS",
-      usedIn: "2 assignments",
-      type: "MCQ"
-    },
-     {
-      id: 8,
-      question: "Implement a Queue using two Stacks",
-      lastModified: "Apr 20, 2025",
-      difficulty: "Hard",
-      category: "Data Structures",
-      usedIn: "3 assignments",
-      type: "Coding"
-    },
-     {
-      id: 9,
-      question: "Explain the concept of hoisting in JavaScript",
-      lastModified: "Apr 18, 2025",
-      difficulty: "Medium",
-      category: "JavaScript",
-      usedIn: "1 assignment",
-      type: "Subjective"
-    },
-    {
-      id: 10,
-      question: "What is JSX?",
-      lastModified: "Apr 15, 2025",
-      difficulty: "Easy",
-      category: "React",
-      usedIn: "4 assignments",
-      type: "MCQ"
-    }
-     // Add more mock data if you want more pages
-  ];
+ 
+    
+    
+        useEffect(() => {
+               const fetch_my_question_bank = async () => {
+           const res = await dispatch(load_my_question_Bank());
+           if (res?.body) {
+             setQuestionBank(res.body);
+     
+           }
+            };
+            fetch_my_question_bank();
+           
+        },[])
 
+    console.log("Question bank", questionsData)
   // Get unique categories from the data
-  const categories = ['all-categories', ...Array.from(new Set(questionsData.map(q => q.category)))];
+  const categories = ['all-categories', ...Array.from(new Set(questionsData.map(q => q.category.name)))];
 
   // Function to render difficulty badge with appropriate color (using Tailwind classes)
   const renderDifficultyBadge = (difficulty) => {
@@ -146,10 +76,12 @@ const Questions = () => {
   const renderTypeBadge = (type) => {
     const baseClasses = "badge border-0 ";
     switch (type) {
-      case 'MCQ':
-        return <span className={`${baseClasses} bg-blue-100 text-blue-700 hover:bg-blue-200`}>{type}</span>;
-      case 'Subjective':
-        return <span className={`${baseClasses} bg-purple-100 text-purple-700 hover:bg-purple-200`}>{type}</span>;
+      case 'MULTIPLE_CHOICE':
+        return <span className={`${baseClasses} bg-blue-100 text-blue-700 hover:bg-blue-200`}>{type.toLowerCase().replaceAll("_", " ")}</span>;
+      case 'TRUE_OR_FALSE':
+        return <span className={`${baseClasses} bg-purple-100 text-purple-700 hover:bg-purple-200`}>{type.toLowerCase().replaceAll("_", " ")}</span>;
+         case 'Subjective':
+        return <span className={`${baseClasses} bg-purple-100 text-purple-700 hover:bg-purple-200`}>{type.toLowerCase().replaceAll("_", " ")}</span>;
       case 'Coding':
         return <span className={`${baseClasses} bg-teal-100 text-teal-700 hover:bg-teal-200`}>{type}</span>;
       default:
@@ -158,11 +90,12 @@ const Questions = () => {
   };
 
   // Toggle expanded question
-  const toggleExpandQuestion = (id) => {
+  const toggleExpandQuestion = (id,type) => {
     if (expandedQuestionId === id) {
       setExpandedQuestionId(null);
     } else {
-      setExpandedQuestionId(id);
+        setExpandedQuestionId(id);
+        setQuestionType(type)
     }
   };
 
@@ -170,19 +103,16 @@ const Questions = () => {
   const filteredQuestions = useMemo(() => {
       console.log("Filtering questions..."); // Log to see when filtering happens
       return questionsData.filter(question => {
-      const matchesSearch =
-        question.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        question.category.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesType = selectedType === 'All' || question.type === selectedType;
+      const matchesSearch = question.category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||question.name.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesType = selectedType === 'All' || question.questionType === selectedType;
 
       const matchesDifficulty =
         selectedDifficulty === 'all-difficulty' ||
-        question.difficulty.toLowerCase() === selectedDifficulty.toLowerCase();
+        question.difficultyLevel.toLowerCase() === selectedDifficulty.toLowerCase();
 
       const matchesCategory =
         selectedCategory === 'all-categories' ||
-        question.category === selectedCategory;
+        question.category.name === selectedCategory;
 
       return matchesSearch && matchesType && matchesDifficulty && matchesCategory;
     });
@@ -243,10 +173,17 @@ const Questions = () => {
             >
               <FileText className="h-4 w-4" />
               All Types
+                      </button>
+                       <button
+              className={`btn ${selectedType === "TRUE_OR_FALSE" ? "btn-neutral" : "btn-outline"} flex items-center gap-2`}
+              onClick={() => setSelectedType("TRUE_OR_FALSE")}
+            >
+              <FileText className="h-4 w-4" />
+              True Or False
             </button>
             <button
-              className={`btn ${selectedType === "MCQ" ? "btn-neutral" : "btn-outline"} flex items-center gap-2`}
-              onClick={() => setSelectedType("MCQ")}
+              className={`btn ${selectedType === "MULTIPLE_CHOICE" ? "btn-neutral" : "btn-outline"} flex items-center gap-2`}
+              onClick={() => setSelectedType("MULTIPLE_CHOICE")}
             >
               <FileText className="h-4 w-4" />
               MCQ
@@ -313,7 +250,7 @@ const Questions = () => {
             <table className="table w-full">
               <thead>
                 <tr>
-                  <th className="text-left">Question</th>
+                  <th className="text-left">Bank</th>
                   <th>Type</th>
                   <th>Difficulty</th>
                   <th>Category</th>
@@ -327,18 +264,19 @@ const Questions = () => {
                   <React.Fragment key={question.id}>
                     <tr
                       className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => toggleExpandQuestion(question.id)}
+                      onClick={() => toggleExpandQuestion(question.id, question.questionType)}
                     >
                       <td className="font-medium">
                         <div>
-                          {question.question}
-                          <div className="text-xs text-gray-500">Last modified: {question.lastModified}</div>
+                                    {question.name}
+                                    
+                          <div className="text-xs text-gray-500">description: {question.description.slice(0,120)}</div>
                         </div>
                       </td>
-                      <td>{renderTypeBadge(question.type)}</td>
-                      <td>{renderDifficultyBadge(question.difficulty)}</td>
-                      <td>{question.category}</td>
-                      <td>{question.usedIn}</td>
+                      <td>{renderTypeBadge(question.questionType)}</td>
+                      <td>{renderDifficultyBadge(question.difficultyLevel)}</td>
+                      <td>{question.category.name}</td>
+                      <td>{question.usedIn || "3 assessment"} </td>
                       <td className="text-right">
                          {/* DaisyUI Dropdown */}
                          <div className="dropdown dropdown-left">
@@ -359,24 +297,16 @@ const Questions = () => {
                        </td>
                     </tr>
                     {/* Expanded content */}
-                    {expandedQuestionId === question.id && (
+                        {expandedQuestionId === question.id && (
+                           
                       <tr className="bg-gray-50">
                         <td colSpan={6} className="p-4">
                           <div className="p-2">
-                            <h4 className="font-medium mb-2">Question Details</h4>
-                            {question.type === 'MCQ' && (
-                              <div className="space-y-2">
-                                <p>Options:</p>
-                                <ul className="list-disc pl-5">
-                                  <li>Option A: JavaScript is a programming language</li>
-                                  <li>Option B: JavaScript is a markup language</li>
-                                  <li>Option C: JavaScript is a styling language</li>
-                                  <li>Option D: None of the above</li>
-                                </ul>
-                                <p className="font-medium text-green-700">Correct Answer: Option A</p>
-                              </div>
+                                        <h4 className="font-medium mb-2">Add Question under <span className='uppercase text-bold bg-accent-teal-light p-1 rounded text-white'>{question.name}</span> </h4>
+                            {question.questionType === 'MULTIPLE_CHOICE' && (
+                              <MCQquestions bankId={question.id} sectionType={question.questionType}/>
                             )}
-                            {question.type === 'Subjective' && (
+                            {question.questionType === 'Subjective' && (
                               <div className="space-y-2">
                                 <p>Expected Answer Points:</p>
                                 <ul className="list-disc pl-5">
@@ -390,27 +320,8 @@ const Questions = () => {
                                 </p>
                               </div>
                             )}
-                            {question.type === 'Coding' && (
-                              <div className="space-y-2">
-                                <p>Problem Statement:</p>
-                                <div className="bg-slate-800 text-white p-3 rounded-md overflow-x-auto">
-                                  <pre>
-                                    <code className="text-sm">
-                                      {question.id === 4 ?
-                                        "Write a function isPalindrome(str) that returns true if the given string is a palindrome, false otherwise." :
-                                        "Implement a function binarySearch(arr, target) that returns the index of target in sorted array arr or -1 if not found."}
-                                    </code>
-                                  </pre>
-                                </div>
-                                <div className="mt-3">
-                                  <p className="font-medium">Test Cases:</p>
-                                  <ul className="list-disc pl-5">
-                                    <li>Basic functionality</li>
-                                    <li>Edge cases (empty input)</li>
-                                    <li>Performance with large inputs</li>
-                                  </ul>
-                                </div>
-                              </div>
+                            {question.questionType === 'TRUE_OR_FALSE' && (
+                           <TFquestions bankId={question.id} sectionType={question.questionType}/>
                             )}
                           </div>
                         </td>

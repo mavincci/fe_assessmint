@@ -3,10 +3,10 @@
 import { useState } from "react"
 import { Trash2, Plus, Edit, Eye, Info, PlusCircle } from "lucide-react"
 // import Button from "../../components/Button"
-import { createquestion } from "../../action/Auth"
+import { createquestion ,createquestion_for_question_bank} from "../../action/Auth"
 import { connect } from "react-redux"
 
-const MultipleChoiceBuilder =({createquestion, sectionID, sectionType})=> {
+const MultipleChoiceBuilder =({createquestion,createquestion_for_question_bank, sectionID, sectionType, bankId})=> {
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState({
     id: null,
@@ -108,8 +108,17 @@ const handleCorrectOption = (id) => {
       setIsSubmitting(true)
       // console.log("New Questins", newQuestion)
 console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, newQuestion.options, newQuestion.answer)
-    // await new Promise((resolve) => setTimeout(resolve, 1500));
+      // await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (bankId !== null) {
+        console.log("sending to question bank")
+        createquestion_for_question_bank(bankId, sectionType, currentQuestion.text,newQuestion.options.map((options)=>options.text), currentQuestion.answer )
+      } 
+      else {
+        console.log("sending to normal question")
+
   createquestion(sectionType, sectionID, currentQuestion.text,newQuestion.options.map((options)=>options.text), currentQuestion.answer)
+        
+      }
       setQuestions([...questions, newQuestion])
       setIsSubmitting(false)
     }
@@ -346,4 +355,4 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, {createquestion})(MultipleChoiceBuilder)
+export default connect(mapStateToProps, {createquestion, createquestion_for_question_bank})(MultipleChoiceBuilder)

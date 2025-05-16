@@ -1020,7 +1020,7 @@ export const create_question_bank_category = (name, description) => async (dispa
 
 }
 
-// get all categories
+// get all current user categories
   export const load_my_categories = () => async (dispatch) => {
   if (localStorage.getItem("access")) {
     const config = {
@@ -1048,3 +1048,192 @@ export const create_question_bank_category = (name, description) => async (dispa
     return null;
   }
 };
+// create question bank under a category
+export const create_question_bank = (name, description,questionType,categoryId,difficultyLevel) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    name,
+    description,
+    questionType,
+    categoryId,
+    difficultyLevel
+  });
+  console.log("Auth body", body)
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/bank/create`,
+      body,
+      config
+    );
+    if (res.status === 201) {
+      toast.success("✅ Successfully created your Bank! Your Bank  is now live.", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+  
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+// load current user   question bank
+  export const load_my_question_Bank = () => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/bank/mine`, config);
+      dispatch({
+        type: USER_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+      return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: USER_ASSESSMENT_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: USER_ASSESSMENT_FAIL });
+    return null;
+  }
+};
+
+// create Question Bank Question
+export const createquestion_for_question_bank = (bankId, questionType, questionText,options, answers) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+console.log("options",options)
+console.log("answers",answers)
+  const bodyData = {
+     bankId,
+    questionType,
+    questionText,
+  };
+
+  if (questionType === "TRUE_OR_FALSE") {
+    bodyData.answer = answers;
+  } else {
+    bodyData.answers = answers;
+  }
+
+  if (options) {
+    bodyData.options = options;
+  }
+
+
+  const body = JSON.stringify(bodyData);
+  console.log("here inauth bank", bodyData )
+  try {
+    console.log("section body", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/bank/add_question`,
+      body,
+      config
+    );
+    console.log("Message", res.data.message )
+    if (res.status === 201 || res.status === 200 || res.data.message == "QUESTION_BANK_ADD_QUESTION_SUCCESS") {
+      toast.success( `✅ Successfully created your your question !`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+    console.log(res.data)
+  } catch (err) {
+    console.log(err);
+    {err.response || err.response.status === 409  ? toast.error( "Error with Adding Question", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}

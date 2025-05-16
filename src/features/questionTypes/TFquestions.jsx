@@ -1,10 +1,10 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Trash2, Edit, Eye, X, Check, Info } from "lucide-react"
-import { createquestion } from "../../action/Auth"
+import { createquestion,createquestion_for_question_bank } from "../../action/Auth"
 import { connect } from "react-redux"
 
-const TrueFalseBuilder = ({ createquestion, sectionID, sectionType }) => {
+const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,createquestion_for_question_bank}) => {
   console.log("imported datas", sectionID, sectionType)
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState({
@@ -51,7 +51,14 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType }) => {
     e.preventDefault()
     console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
     await new Promise((resolve) => setTimeout(resolve, 1500));
+    if (bankId !== null) {
+        console.log("sending to question bank")
+        createquestion_for_question_bank(bankId, sectionType, currentQuestion.text,null, currentQuestion.correctAnswer)
+    } else {
+      console.log("Sending to normal TF ")
   createquestion(sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
+      
+      }
     // Validate that a correct answer is selected
     if (!currentQuestion.correctAnswer) {
       alert("Please select either True or False as the correct answer.")
@@ -326,4 +333,4 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType }) => {
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, { createquestion })(TrueFalseBuilder);
+export default connect(mapStateToProps, { createquestion ,createquestion_for_question_bank})(TrueFalseBuilder);

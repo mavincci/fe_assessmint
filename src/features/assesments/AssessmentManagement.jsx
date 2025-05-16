@@ -7,111 +7,112 @@ import { Link } from "react-router-dom"
 import { load_my_assesment } from "../../action/Auth"
 import { useDispatch } from "react-redux"
 // Sample assignment data
-const assignments = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    type: "Technical",
-    questions: 25,
-    duration: "45 min",
-    difficulty: "Medium",
-    status: "Active",
-    created: "Apr 28, 2025",
-  },
-  {
-    id: 2,
-    title: "Python Programming",
-    type: "Coding",
-    questions: 15,
-    duration: "45 min",
-    difficulty: "Easy",
-    status: "Active",
-    created: "Apr 25, 2025",
-  },
-  {
-    id: 3,
-    title: "UX Design Challenge",
-    type: "Practical",
-    questions: 5,
-    duration: "120 min",
-    difficulty: "Hard",
-    status: "Draft",
-    created: "Apr 22, 2025",
-  },
-  {
-    id: 4,
-    title: "Technical Interview",
-    type: "Technical",
-    questions: 20,
-    duration: "90 min",
-    difficulty: "Hard",
-    status: "Active",
-    created: "Apr 20, 2025",
-  },
-  {
-    id: 5,
-    title: "JavaScript Algorithms",
-    type: "Coding",
-    questions: 10,
-    duration: "60 min",
-    difficulty: "Medium",
-    status: "Inactive",
-    created: "Apr 15, 2025",
-  },
-  {
-    id: 6,
-    title: "Data Structures",
-    type: "Coding",
-    questions: 12,
-    duration: "75 min",
-    difficulty: "Hard",
-    status: "Active",
-    created: "Apr 10, 2025",
-  },
-  {
-    id: 7,
-    title: "System Design",
-    type: "Technical",
-    questions: 8,
-    duration: "120 min",
-    difficulty: "Hard",
-    status: "Draft",
-    created: "Apr 8, 2025",
-  },
-  {
-    id: 8,
-    title: "Mobile App Development",
-    type: "Practical",
-    questions: 15,
-    duration: "90 min",
-    difficulty: "Medium",
-    status: "Active",
-    created: "Apr 5, 2025",
-  },
-  {
-    id: 9,
-    title: "Database Fundamentals",
-    type: "Technical",
-    questions: 20,
-    duration: "60 min",
-    difficulty: "Medium",
-    status: "Active",
-    created: "Apr 3, 2025",
-  },
-  {
-    id: 10,
-    title: "UI Component Library",
-    type: "Practical",
-    questions: 10,
-    duration: "90 min",
-    difficulty: "Medium",
-    status: "Inactive",
-    created: "Mar 30, 2025",
-  },
-]
+// const assignments = [
+//   {
+//     id: 1,
+//     title: "Frontend Developer",
+//     type: "Technical",
+//     questions: 25,
+//     duration: "45 min",
+//     difficulty: "Medium",
+//     status: "Active",
+//     created: "Apr 28, 2025",
+//   },
+//   {
+//     id: 2,
+//     title: "Python Programming",
+//     type: "Coding",
+//     questions: 15,
+//     duration: "45 min",
+//     difficulty: "Easy",
+//     status: "Active",
+//     created: "Apr 25, 2025",
+//   },
+//   {
+//     id: 3,
+//     title: "UX Design Challenge",
+//     type: "Practical",
+//     questions: 5,
+//     duration: "120 min",
+//     difficulty: "Hard",
+//     status: "Draft",
+//     created: "Apr 22, 2025",
+//   },
+//   {
+//     id: 4,
+//     title: "Technical Interview",
+//     type: "Technical",
+//     questions: 20,
+//     duration: "90 min",
+//     difficulty: "Hard",
+//     status: "Active",
+//     created: "Apr 20, 2025",
+//   },
+//   {
+//     id: 5,
+//     title: "JavaScript Algorithms",
+//     type: "Coding",
+//     questions: 10,
+//     duration: "60 min",
+//     difficulty: "Medium",
+//     status: "Inactive",
+//     created: "Apr 15, 2025",
+//   },
+//   {
+//     id: 6,
+//     title: "Data Structures",
+//     type: "Coding",
+//     questions: 12,
+//     duration: "75 min",
+//     difficulty: "Hard",
+//     status: "Active",
+//     created: "Apr 10, 2025",
+//   },
+//   {
+//     id: 7,
+//     title: "System Design",
+//     type: "Technical",
+//     questions: 8,
+//     duration: "120 min",
+//     difficulty: "Hard",
+//     status: "Draft",
+//     created: "Apr 8, 2025",
+//   },
+//   {
+//     id: 8,
+//     title: "Mobile App Development",
+//     type: "Practical",
+//     questions: 15,
+//     duration: "90 min",
+//     difficulty: "Medium",
+//     status: "Active",
+//     created: "Apr 5, 2025",
+//   },
+//   {
+//     id: 9,
+//     title: "Database Fundamentals",
+//     type: "Technical",
+//     questions: 20,
+//     duration: "60 min",
+//     difficulty: "Medium",
+//     status: "Active",
+//     created: "Apr 3, 2025",
+//   },
+//   {
+//     id: 10,
+//     title: "UI Component Library",
+//     type: "Practical",
+//     questions: 10,
+//     duration: "90 min",
+//     difficulty: "Medium",
+//     status: "Inactive",
+//     created: "Mar 30, 2025",
+//   },
+// ]
 
 export default function AssessmentManagement() {
   const user = JSON.parse(localStorage.getItem("user"))
+
 
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState("All Types")
@@ -119,7 +120,7 @@ export default function AssessmentManagement() {
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState("Assessments")
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [AssessmentData, setAssessmentData] =useState([])
+  const [assignments, setAssessmentData] =useState([])
   const itemsPerPage = 10
 
   // Filter assignments based on search query and filters
@@ -132,7 +133,7 @@ export default function AssessmentManagement() {
 
     return matchesSearch && matchesType && matchesStatus
   })
-
+console.log(assignments)
   // Calculate pagination
   const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -172,6 +173,8 @@ export default function AssessmentManagement() {
         return "badge"
     }
   }
+  const isExaminee = user.roles.some(role => role === "EXAMINEE");
+  const isExaminer = user.roles.some(role => role === "EXAMINER");
    const dispatch = useDispatch();
   useEffect(() => {
      const fetchAssessment = async () => {
@@ -179,19 +182,21 @@ export default function AssessmentManagement() {
         if (res?.body) {
           setAssessmentData(res.body);
   console.log(res.body)
-        }
+        } 
     };
-    if (user) {
+    if (isExaminer) {
    
       fetchAssessment()
     }
-},[])
+  }, [])
+  
+  
   return (
     <>
       {/* if Examinees */}
-      {user.roles = user.roles.find(role => role !== "EXAMINEE") ? <>
+      {isExaminee  && <>
         <div className="min-h-screen bg-gray-50 flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full ">
-          {AssessmentData.map((items, index) => (
+          {assignments.map((items, index) => (
              <div className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl  transition-shadow duration-300 overflow-hidden" key={items.id}>
         {/* Card Header */}
         <div className="bg-gradient-to-r from-btn-primary to-accent-teal-light text-white p-6 rounded-t-lg h-32">
@@ -259,16 +264,24 @@ export default function AssessmentManagement() {
               <div className="w-2 h-2 rounded-full bg-blue-600"></div>
               <div className="w-2 h-2 rounded-full bg-blue-400"></div>
               <div className="w-2 h-2 rounded-full bg-blue-300"></div>
-            </div>
+                  </div>
+                  
                 <Link to={`/assessment/${items.id}`} className="rounded-xl bg-gradient-to-r from-bg-dark to-bg-secondary-light text-white p-3">
-                Take Assessment</Link>
+                    Take Assessment</Link>
+             
+                  
           </div>
         </div>
       </div>
           ))}
      
-    </div>
-      </> :   <div className="w-full bg-bg-light rounded-lg p-6">
+        </div>
+        
+      </>   
+      }
+
+      {/* if not Examines */}
+{isExaminer &&  <div className="w-full bg-bg-light rounded-lg p-6">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold">Assignment Management</h1>
@@ -337,12 +350,14 @@ export default function AssessmentManagement() {
           <thead>
             <tr>
               <th>Title</th>
-              <th>Type</th>
               <th>Questions</th>
               <th>Duration</th>
-              <th>Difficulty</th>
-              <th>Status</th>
+              <th>Attempt</th>
+                <th>Status</th>
+                <th>Access</th>
+                
               <th>Created</th>
+              <th>Published</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>
@@ -351,14 +366,16 @@ export default function AssessmentManagement() {
               paginatedAssignments.map((assignment) => (
                 <tr key={assignment.id} className="hover">
                   <td className="font-medium">{assignment.title}</td>
-                  <td>{assignment.type}</td>
-                  <td>{assignment.questions}</td>
-                  <td>{assignment.duration}</td>
-                  <td>{assignment.difficulty}</td>
+                  <td>{assignment.questions || "-"}</td>
+                  <td>{assignment.settings.duration}</td>
+                  <td>{assignment.settings.maxAttempts}</td>
                   <td>
-                    <span className={getStatusBadgeClass(assignment.status)}>{assignment.status}</span>
+                    <span className={getStatusBadgeClass(assignment.status)}>{assignment.status || "-"}</span>
                   </td>
-                  <td>{assignment.created}</td>
+                  <td>{assignment.settings.isPublic == true ? "Public" : "Private"}</td>
+
+                  <td>{assignment.created || "-"}</td>
+                  <td>{assignment.published || "-"}</td>
                   <td className="text-right">
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="btn btn-ghost btn-xs">
@@ -541,12 +558,7 @@ export default function AssessmentManagement() {
           <button onClick={() => setIsModalOpen(false)}>close</button>
         </form>
       </dialog>
-    </div>
-      
-      }
-
-      {/* if not Examines */}
-
+    </div>}
      
     </>
   )

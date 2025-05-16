@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, MoreHorizontal } from 'lucide-react'; // Import Lucide icons
 import QuestionModal from '../../components/QuestionModal';
-import { create_question_bank_category, load_my_categories } from '../../action/Auth';
+import { create_question_bank, create_question_bank_category, load_my_categories, load_question_type } from '../../action/Auth';
 import { connect, useDispatch } from 'react-redux';
 
 
 
-const QuestionCategories = ({create_question_bank_category}) => {
+const QuestionCategories = ({create_question_bank_category,create_question_bank}) => {
     const dispatch = useDispatch()
     const  [isModalOpen, setIsModalOpen]= useState(false)
     const  [IsBankModalOpen, setIsBankModalOpen]= useState(false)
@@ -15,22 +15,62 @@ const QuestionCategories = ({create_question_bank_category}) => {
     const [description, setDescription] = useState("")
     const [wordCount, setWordCount] = useState(0)
     const [Categories, setCastegories] = useState([])
+    const [QuestionType, setQuestionType] = useState([])
     const [SelectedCategories, setSelectedCastegories] = useState({
         "category_id": null,
         "category_name": null
     })
-
-      const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    questionType: 'MULTIPLE_CHOICE', // Default value
-    // categoryId: '', // Assuming this might be handled outside the form or as a select
-    difficultyLevel: 'EASY', // Default value
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    };
+   const [formData, setFormData] = useState({
+          name: '',
+    description:'',
+    questionType: 'MULTIPLE_CHOICE', 
+    categoryId:  '', 
+    difficultyLevel: 'EASY', 
   });
+     useEffect(() => {
+    if (SelectedCategories.category_id) {
+      setFormData({
+        name:  '',
+        description: '',
+        questionType: 'MULTIPLE_CHOICE',
+        categoryId: SelectedCategories.category_id ||'',
+        difficultyLevel: 'EASY',
+      });
+    } else {
+       // Reset form if no initial data is provided (for creation)
+       setFormData({
+         name: '',
+         description: '',
+         questionType: 'MULTIPLE_CHOICE',
+         categoryId: '',
+         difficultyLevel: 'EASY',
+       });
+    }
+  }, [SelectedCategories]);
+    const handleBanksubmission = () => {
+        setiscategorysubmitting(true)
+        console.log("Data to send", formData)
+        create_question_bank(formData.name, formData.description, formData.questionType, formData.categoryId, formData.difficultyLevel)
+        console.log("Sent data", formData)
+        
+        setiscategorysubmitting(false)
+
+    }
+   
       const handleDescriptionChange = (e) => {
-    const text = e.target.value
-    setDescription(text)
-    setWordCount(text.trim() === "" ? 0 : text.trim().split(/\s+/).length)
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setWordCount(value.trim() === "" ? 0 : value.trim().split(/\s+/).length)
     }
 
     useEffect(() => {
@@ -42,8 +82,19 @@ const QuestionCategories = ({create_question_bank_category}) => {
        }
         };
         fetch_my_categories();
+       
     },[])
-        
+    useEffect(() => {
+           const fetchquestionType = async () => {
+        const res = await dispatch(load_question_type());
+        if (res?.body) {
+          setQuestionType(res.body);
+        }
+        }
+            fetchquestionType();
+    }, [])
+    
+          
   // Mock data for the question categories based on the image
   const categories /*: Category[]*/ = [
     {
@@ -93,7 +144,7 @@ const QuestionCategories = ({create_question_bank_category}) => {
     setiscategorysubmitting(true)
     console.log("Create Assessment", title, description)
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    create_question_bank_category(title, description)
+    create_question_bank_category(formData.name, formData.description)
     console.log("Sent to Auth...")
     setiscategorysubmitting(false)
    setIsModalOpen(false)
@@ -121,11 +172,11 @@ const QuestionCategories = ({create_question_bank_category}) => {
 
         {/* Grid of Category Cards */}
         {/* Using Tailwind grid for responsive layout */}
-       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       <div className="flex flex-wrap md:grid-cols-2 lg:grid-cols-3 gap-6 ">
   {Categories.map((category) => (
     <div
       key={category.id}
-      className={`card bg-base-100 shadow-xl cursor-pointer transition-colors duration-300 `}
+      className={`card bg-base-100 shadow-xl cursor-pointer transition-colors duration-300 min-w-fit max-w-[30%] `}
       onClick={() =>setSelectedCastegories({
     category_id: category.id,
     category_name: category.name,
@@ -160,11 +211,11 @@ const QuestionCategories = ({create_question_bank_category}) => {
         <p className=" mb-4">{category.description}</p>
 
         {/* Question Count and Created Date */}
-        <div className="flex flex-wrap items-center justify-between gap-4 text-sm mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-sm mb-6">
           <div className="badge badge-outline">
             {category.questionsCount} questions
           </div>
-          <span>Created: {new Date().toDateString()}</span>
+          <span>Created:{new Date().toDateString()}</span>
         </div>
 
         {/* Manage Question Button */}
@@ -187,16 +238,19 @@ const QuestionCategories = ({create_question_bank_category}) => {
           setIsModalOpen(false)
           }}>
                     <h1 className='text-center flex text-3xl font-semibold justify-center'> Add New  {SelectedCategories.category_id !== null ? "Bank": "Category"} </h1>
-  
-            <div className="space-y-4">
-              <fieldset className="fieldset border border-base-300 rounded-lg p-4">
+    
+              <div className="space-y-4">
+              
+                  <fieldset className="fieldset border border-base-300 rounded-lg p-4">
+                      
                 <legend className="fieldset-legend px-2 text-sm font-medium">Enter Title <sup className='text-red-400'>*</sup></legend>
                 <input
-                  type="text"
+                          type="text"
+                          name='name'
                   className="input border-none  w-full outline outline-accent-teal-light focus:outline-accent-teal-dark"
                   placeholder="Type here"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={formData.name}
+                  onChange={handleInputChange}
                 />
                 
               </fieldset>
@@ -205,8 +259,9 @@ const QuestionCategories = ({create_question_bank_category}) => {
                 <div className="relative">
                 <textarea
                   placeholder="Enter Description more less than 30 words"
-                  className="textarea textarea-accent w-full h-32 resize-none"
-                  value={description}
+                              className="textarea textarea-accent w-full h-32 resize-none"
+                              name='description'
+                  value={formData.description}
                   onChange={handleDescriptionChange}
                 />
                 <span className="absolute bottom-2 right-4 text-sm text-gray-500">{wordCount} words</span>
@@ -219,13 +274,19 @@ const QuestionCategories = ({create_question_bank_category}) => {
           <select
             name="questionType"
             className="select select-bordered  select-accent w-full" // DaisyUI select classes
-            // value={formData.questionType}
-            // onChange={handleInputChange}
-            required // HTML5 validation
-          >
-            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-            <option value="SUBJECTIVE">Subjective</option>
-            <option value="CODING">Coding</option>
+            value={formData.questionType}
+            onChange={handleInputChange}
+            required 
+                              >
+                                 {QuestionType.map((qType) => (
+    <option key={qType} value={qType}>
+      {qType
+        .replaceAll("_", " ")
+        .toLowerCase()
+        .replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())}
+    </option>
+  ))}
+           
           </select>
         </div>
 
@@ -236,8 +297,8 @@ const QuestionCategories = ({create_question_bank_category}) => {
           <select
             name="difficultyLevel"
             className="select select-bordered select-accent w-full" // DaisyUI select classes
-            // value={formData.difficultyLevel}
-            // onChange={handleInputChange}
+            value={formData.difficultyLevel}
+            onChange={handleInputChange}
             required // HTML5 validation
           >
             <option value="EASY">Easy</option>
@@ -262,15 +323,23 @@ const QuestionCategories = ({create_question_bank_category}) => {
         >
           clear
         </button>
-       
-              <button
+                      {SelectedCategories.category_id === null &&
+                          <button
+                              type="button"
+                              disabled={IscategorySubmitting}
+                              onClick={() => handleCreateCategory()}
+                              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-accent-teal-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${IscategorySubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+                          >
+                              {IscategorySubmitting ? 'Creating Category ...' : 'Add Category'}
+                          </button>}
+                            {SelectedCategories.category_id !== null &&   <button
           type="button"
           disabled={IscategorySubmitting}
-          onClick={() => handleCreateCategory()}
+          onClick={() => handleBanksubmission()}
           className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-accent-teal-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${IscategorySubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
         >
-          {IscategorySubmitting ? 'Creating Category ...' : 'Add Category'}
-        </button>
+          {IscategorySubmitting ? 'Creating Bank ...' : 'Add Bank'}
+        </button>}
               </div>
               
             </div>
@@ -286,4 +355,4 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, {create_question_bank_category})(QuestionCategories)
+export default connect(mapStateToProps, {create_question_bank_category,create_question_bank})(QuestionCategories)

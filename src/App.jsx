@@ -24,6 +24,7 @@ import useAuthCheck from "./hooks/useAuthCheck";
 import MyAssessment from "./features/assesments/MyAssessment";
 import Questions from "./features/questionBank/QuestionBank";
 import QuestionCategories from "./features/questionBank/QuestionCategories";
+import InvitePeople from "./features/assesments/Invitation";
 // import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -47,7 +48,7 @@ function App() {
             <Route path="/take-assessment/:assessmentId" element={<TakeAssessment />} />
             <Route path="/assessment-results" element={<Resultpage />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/home-dashboard" element={<ExaminerDashboard />} />
+            <Route path="/dashboard" element={<ExaminerDashboard />} />
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/manage-assessment" element={<AssessmentManagement />} />
             <Route path="/assessment/:assessmentId" element={<Full />} />
@@ -55,6 +56,7 @@ function App() {
           <Route path="/assessment" element={<MyAssessment/>}/>
           <Route path="/question-bank" element={<Questions/>}/>
           <Route path="/categories" element={<QuestionCategories/>}/>
+          <Route path="/invitiation" element={<InvitePeople/>}/>
           </Route>
         {/* </Route> */}
 
