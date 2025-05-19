@@ -25,6 +25,8 @@ import MyAssessment from "./features/assesments/MyAssessment";
 import Questions from "./features/questionBank/QuestionBank";
 import QuestionCategories from "./features/questionBank/QuestionCategories";
 import InvitePeople from "./features/assesments/Invitation";
+import ScreenReaderComponent from "./features/assesments/CheckVoice";
+import ManageRepository from "./features/questionBank/ManageRepository";
 // import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -56,7 +58,12 @@ function App() {
           <Route path="/assessment" element={<MyAssessment/>}/>
           <Route path="/question-bank" element={<Questions/>}/>
           <Route path="/categories" element={<QuestionCategories/>}/>
-          <Route path="/invitiation" element={<InvitePeople/>}/>
+          <Route path="/invitiation" element={<InvitePeople />} />
+          <Route path="/checkvoice" element={<ScreenReaderComponent />} />
+          <Route path="/my-question-repository/:categoryId" element={<ManageRepository />} />
+
+
+          
           </Route>
         {/* </Route> */}
 

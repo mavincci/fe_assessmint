@@ -40,8 +40,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         {
           icon: <LayoutDashboard />,
           label: "Dashboard",
-          href: "/home-dashboard",
-          visible: ["EXAMINER", "EXAMINEE"],
+          href: "/dashboard",
+          visible: ["EXAMINER"],
         },
         {
           icon: <UserCog />,
@@ -59,32 +59,21 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <FileText />,
           label: "Assessments Results",
           href: "/assessment-results",
-          visible: ["EXAMINER","EXAMINEE"],
+          visible: ["EXAMINER"],
         },
-        {
-          icon: <FileTextIcon />,
-          label: "My Assessments",
-          href: "/assessment",
-          visible: ["EXAMINER","EXAMINEE"],
-        },
-          {
-          icon: <FileQuestion />,
-          label: "Question Bank",
-          href: "/question-bank",
-          visible: ["EXAMINER","ADMIN"],
-        },
-              {
-          icon: <FolderTree />,
-          label: "Categories",
-          href: "/categories",
-          visible: ["EXAMINER","ADMIN"],
-        },
-        {
-          icon: <ClipboardList />,
-          label: "Take Assessment",
-          href: "/take-assessment",
-          visible: ["EXAMINEE", "EXAMINER"],
-        },
+        // {
+        //   icon: <FileTextIcon />,
+        //   label: "My Assessments",
+        //   href: "/assessment",
+        //   visible: ["EXAMINER","EXAMINEE"],
+        // },
+     
+        // {
+        //   icon: <ClipboardList />,
+        //   label: "Take Assessment",
+        //   href: "/take-assessment",
+        //   visible: ["EXAMINEE", "EXAMINER"],
+        // },
         {
           icon: <BarChart3 />,
           label: "Reporting & Analytics",
@@ -95,19 +84,19 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <CalendarDays />,
           label: "Calendar",
           href: "/calendar",
-          visible: ["EXAMINER"],
+          visible: ["EXAMINER", ],
         },
         {
           icon: <History />,
           label: "History",
           href: "/history",
-          visible: ["EXAMINEE"],
+          visible: ["EXAMINER","EXAMINEE"],
         },
         {
           icon: <MessageSquare />,
           label: "Message",
           href: "/message",
-          visible: ["EXAMINER", "EXAMINEE"],
+          visible: ["EXAMINER"],
         },
         {
           icon: <Settings />,
@@ -129,6 +118,29 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         },
       ],
     },
+     {
+      title: "QUESTION BANK",
+      items: [
+       {
+          icon: <FileQuestion />,
+          label: "All Repositories",
+          href: "/question-bank",
+          visible: ["EXAMINER","ADMIN"],
+        },
+          {
+          icon: <FileQuestion />,
+          label: "My Repositories",
+          href: "/my-question-repository",
+          visible: ["EXAMINER","ADMIN"],
+        },
+              {
+          icon: <FolderTree />,
+          label: "Categories",
+          href: "/categories",
+          visible: ["EXAMINER","ADMIN"],
+        },
+      ],
+    },
     {
       title: "ACTIONS",
       items: [
@@ -136,7 +148,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <FilePlus />,
           label: "Create Assignment",
           href: "create-assignment",
-          visible: ["EXAMINER", "EXAMINEE"],
+          visible: ["EXAMINER"],
         },
         {
           icon: <LogOut />,
@@ -150,7 +162,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
   
    
   return (
-      <div className="mt-4 text-sm">
+      <div className="mt-4 text-sm h-[100vh] overflow-y-auto scrollbar-hide">
           {menuItems.map((item) => (
               <div className="flex flex-col gap-2" key={item.title}>
                   <span className="hidden lg:block text-gray-200 font-light my-4">

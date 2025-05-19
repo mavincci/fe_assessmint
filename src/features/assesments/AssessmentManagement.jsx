@@ -281,7 +281,7 @@ console.log(assignments)
       }
 
       {/* if not Examines */}
-{isExaminer &&  <div className="w-full bg-bg-light rounded-lg p-6">
+{isExaminer &&  <div className="w-full bg-bg-light rounded-lg p-6 h-full">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold">Assignment Management</h1>
@@ -345,7 +345,7 @@ console.log(assignments)
         </select>
       </div>
 
-      <div className="overflow-x-auto h-full">
+      <div className="overflow-x-auto h-fit">
         <table className="table bg-white">
           <thead>
             <tr>

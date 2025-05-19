@@ -63,3 +63,13 @@
   width: 0px;  /* Chrome, Safari */
   height: 0px;
 }
+
+.backgroundimg{
+  background-image: url("./assets/TestNest.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.3;
+  justify-content: center;
+  position: sticky;
+  /* overlay: rgb(255,35,45); */
+}

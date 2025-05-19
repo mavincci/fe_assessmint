@@ -157,7 +157,7 @@ useEffect(() => {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         console.log("assessmentId in fetchExam", assessmentID);
         const data = await dispatch(load_my_assesment_by_Id(assessmentID));
-
+          console.log(data.body)
         if (data) {
           const shuffledData = {
             ...data.body,

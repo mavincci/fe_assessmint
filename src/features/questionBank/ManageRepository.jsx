@@ -6,6 +6,7 @@ import MCQquestions from '../questionTypes/MCQquestions';
 import QuestionModal from '../../components/QuestionModal';
 import TFquestions from '../questionTypes/TFquestions';
 import QuestionBankQuestionPreview from './Managequestion';
+import { useParams } from 'react-router-dom';
 // Import statements for ShadCN/UI components are removed
 
 
@@ -21,7 +22,8 @@ import QuestionBankQuestionPreview from './Managequestion';
 //   type: QuestionType;
 // };
 
-const Questions = () => {
+const ManageRepository = () => {
+  const categoryId = useParams()
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all-difficulty");
@@ -163,6 +165,8 @@ const Questions = () => {
             <Plus className="mr-1 h-4 w-4" />
             Create Question
           </button>
+
+
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -413,4 +417,4 @@ const Questions = () => {
   );
 };
 
-export default Questions;
+export default ManageRepository;
