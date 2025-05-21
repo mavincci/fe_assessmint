@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import QuestionAccordion from '../../components/QuestionAccordion'
 import { testquestions } from '../../lib/data'
 import { ClipboardList, Delete, Eye, FileType, HelpCircle, Lightbulb, Plus, PlusCircle, Save, Settings, X } from 'lucide-react'
@@ -6,167 +6,152 @@ import Button  from '../../components/Button'
 import QuestionPreview from '../../components/QuestionPreview'
 import QuestionModal from '../../components/QuestionModal'
 import AssessmentSettings from './AssessmentSetting'
-
 import MultipleChoiceBuilder from '../questionTypes/MCQquestions'
 import TrueFalseBuilder from '../questionTypes/TFquestions'
 import ShortAnswerBuilder from '../questionTypes/ShortAnswer'
 import { createquestion, createSection, load_my_assesment, load_my_assesment_setting, load_my_questions, load_my_section, load_question_type } from '../../action/Auth'
 import { useNavigate } from 'react-router-dom'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import Step from '../../components/Step'
 import { createAssessment } from '../../action/Auth'
 import { toast } from 'react-toastify'
 import SelectableAccordion from '../../components/AssessmentList'
 import NoElements from '../../components/NoElements'
+import LoadingPage from '../../components/Loading'
+import NoDataAvailable from '../../components/NoDataAvailable'
+import { useLoadAssessment } from '../../hooks/useLoadMyAssessment'
 
 const CreateAssessment = ({createAssessment,createSection,isAuthenticated,createquestion }) => {
+const initialState = {
+  selectedSectionID: null,
+  selectedQuestionType: null,
+  isModalOpen: false,
+  isSettingModalOpen: false,
+  isMCQOpen: false,
+  isAssessmentSubmitting: false,
+  isAssessmentCreated: false,
+  isGuidanceModalOpen: false,
+  title: "",
+  description: "",
+  type: "",
+  wordCount: 0,
+  hoveredItem: null,
+  selectedId: null,
+  selectedTitle: null,
+  sectionCreated: "",
+  fetchedSettings:{}
+};
 
-  // const [selectedAnswers, setSelectedAnswers] = useState({});
+  
+function reducer(state, action) {
+  return { ...state, [action.type]: action.payload };
+}
+
+  const [state, Dispatch] = useReducer(reducer, initialState);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const handleSectionSelect = (questions) => { setSelectedQuestions(questions); };
   const [selectedSectionID, setSelectedSectionID] = useState(null);
-  const [selectedquestioType, setselectedquestioType] = useState(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
-  const [isMCQopen, setIsMCQopen] = useState(false);
-  const [AllQuestions, setIsAllQuestions] = useState([])
-  const [IsassessementSubmitting, setIsassessementSubmitting] = useState(false);
-  const [Isassessmentcreated, setIsassesmentcreated] = useState(false);
-  const [IsGuidanceModalOpen, setGuidanceModalOpen] = useState(false);
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
   const [sectionCreated, setsectioncreated] = useState("")
-  const [type, setType] = useState("")
-  const [wordCount, setWordCount] = useState(0)
-  const [assessmentData, setAssessmentData] = useState([]);
-  const [QuestionType, setQuestionType] = useState([]);
   const [FetchedSection, setFetchedSection] = useState([]);
-  const [fetchedQuestions, setFetchedQuestions] = useState([]);
-  const [fetchedAssessmentSettings, setfetchedAssessmentSettings] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedtitle, setSelectedtitle] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleDescriptionChange = (e) => {
     const text = e.target.value
-    setDescription(text)
-    setWordCount(text.trim() === "" ? 0 : text.trim().split(/\s+/).length)
+    // setDescription(text)
+     Dispatch({ type: "description", payload:text});
+     Dispatch({ type: "wordCount", payload:text.trim() === "" ? 0 : text.trim().split(/\s+/).length});
+
   }
   const sectionCache = useRef({});
-  const handleChange = (event) => {
-    setType(event.target.value)
-  }
+ 
   const handleCreateAssessment = async () => {
-    setIsassessementSubmitting(true)
-    console.log("Create Assessment", title, description)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    createAssessment(title, description)
+
+    // setIsassessementSubmitting(true)
+    Dispatch({ type: "isAssessmentSubmitting", payload:true });
+    
+    console.log("Create assessment reducers", state.title, state.description)
+
+    createAssessment(state.title, state.description)
     console.log("Sent to Auth...")
-    setIsassessementSubmitting(false)
-   setIsModalOpen(false)
+    Dispatch({ type: "isAssessmentSubmitting", payload:false });
+    Dispatch({ type: "isModalOpen", payload:false });
+
 
   }
   const handleSelect = (items) => {
-    setSelectedId(items.id);
-    setSelectedtitle(items.title)
-    console.log("Selected ID:", items.id);
-    console.log("ASSESsment datas", items)
-    console.log("Settings", items.settings)
-    setfetchedAssessmentSettings(items.settings)
+  
+    Dispatch({ type: "selectedId", payload: items.id });
+    Dispatch({ type: "fetchedSettings", payload: items.settings });
+    Dispatch({ type: "selectedTitle", payload: items.title });
+    console.log("initial", state.selectedId)
+    console.log("initial", state.fetchedSettings)
+    console.log("Initial",initialState)
   };
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log({ title, description, type })
-    onClose()
-  }
+
   const handleCreateSection = async () => {
-    // setIsassessementSubmitting(true)
-    console.log("Create Assessment",selectedId, title, description,type)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    createSection(selectedId, title, description, type);
-    // createAssessment(title, description)
-    console.log("Sent to Auth...")
-    // setIsassessementSubmitting(false)
-   setIsModalOpen(false)
+    createSection(state.selectedId, state.title, state.description, state.type);
+    Dispatch({ type: "isModalOpen", payload:false });
+   
 
   }
-useEffect(() => {
-    const fetchAssessment = async () => {
-      const res = await dispatch(load_my_assesment());
-      if (res?.body) {
-        setAssessmentData(res.body);
 
-      }
-  };
+  // all returns from loading
+useLoadAssessment()
+  const Assess = useSelector((state) => state.assessment.Assessments?.body)
+  const Questiontype = useSelector((state) => state.assessment.QuestionType.body)
+  const fetchedQuestions = useSelector((state)=> state.assessment.SectionsQuestions?.body)
+  const loading = useSelector((state) => state.assessment.loading);
+  console.log("Questiontype", fetchedQuestions)
+  useEffect(() => {
+
   
-//   const fetchassessment_settings = async () => {
-//     console.log("selected assessment ID", selectedId)
-//     const res = await dispatch(load_my_assesment_setting(selectedId));
-//     if (res?.body) {
-//       setfetchedAssessmentSettings(res.body);
-//     }
-// };
+// fetch question type
     const fetchquestionType = async () => {
-      const res = await dispatch(load_question_type());
-      if (res?.body) {
-        setQuestionType(res.body);
-      }
+      await dispatch(load_question_type());
+   
   };
   
+    // fetch questions of a given sections
   const fetchquestions = async () => {
-    console.log("selectedSectionId", selectedSectionID)
-    const res = await dispatch(load_my_questions(selectedSectionID));
-    if (res?.body) {
-      console.log("res.body", res.body)
-      setFetchedQuestions(res.body);
-    }
+   await dispatch(load_my_questions(selectedSectionID));
+ 
 };
-
-
-
-  
+// fetch Sections 
   const fetchSection = async () => {
-    if (sectionCache.current[selectedId]) {
-      setFetchedSection(sectionCache.current[selectedId]);
+    if (sectionCache.current[state.selectedId]) {
+      setFetchedSection(sectionCache.current[state.selectedId]);
       return;
     }
 
     // Else fetch from API
-    const res = await dispatch(load_my_section(selectedId));
+    const res = await dispatch(load_my_section(state.selectedId));
     if (res?.body) {
-      sectionCache.current[selectedId] = res.body; 
+      sectionCache.current[state.selectedId] = res.body; 
       setFetchedSection(res.body);
       console.log("FetchedSection", res.body)
     }
   };
   
 
-  if (selectedId ) {
+  if (state.selectedId ) {
     fetchSection();
   }
-  if (isModalOpen) {
+  if (state.isModalOpen) {
     fetchquestionType();
   
   }
-  if (setIsMCQopen  ) {
+  if (state.isMCQOpen === false  ) {
     fetchquestions();
   }
-  if (setIsModalOpen) {
-    fetchAssessment();
-  }
-  // if (isSettingModalOpen) {
-  //   fetchassessment_settings()
-  // }
+
  
-}, [dispatch, isModalOpen,selectedId,setIsModalOpen, selectedSectionID]);
+}, [ state.isModalOpen,state.selectedId, selectedSectionID]);
   
 
  
-  console.log("SEctionID", selectedSectionID)
-  console.log("selected Type", selectedquestioType)
-  console.log("fetchedquestions", fetchedQuestions)
+ 
   
   return (
     <>
@@ -177,12 +162,21 @@ useEffect(() => {
        
         <h1 className='font-bold w-[90%] text-3xl p-7'>Create Assessment</h1>
         <Button icon={<PlusCircle />} label="Add Assessment" text="white" bg="bg-secondary" onClick={() => {
-              setIsassesmentcreated(true)
-               setIsModalOpen(true)
+          // setIsassesmentcreated(true)
+          Dispatch({ type: "isAssessmentCreated", payload: true });
+          Dispatch({ type: "isModalOpen", payload: true });
+
+              //  setIsModalOpen(true)
               }}/>
-          {selectedId !== null && <Button icon={<Settings />} label="Assesment Setting" text="white" bg="bg-btn-primary" onClick={() => setIsSettingModalOpen(true)} />}
+        {state.selectedId !== null && <Button icon={<Settings />} label="Assesment Setting" text="white" bg="bg-btn-primary" onClick={() => {
+              Dispatch({ type: "isSettingModalOpen", payload:true });
+
+          }} />}
           <Button icon={<Eye />} label="Preview" text="gray-200" bg="bg-lime-500" /> 
-          <Button icon={<HelpCircle />} label="Guidance" text="gray-200" bg="bg-btn-primary"  onClick={() => setGuidanceModalOpen(true)}/> 
+        <Button icon={<HelpCircle />} label="Guidance" text="gray-200" bg="bg-btn-primary" onClick={() => {
+              Dispatch({ type: "isGuidanceModalOpen", payload:true });
+
+          }}/> 
         
         
    
@@ -195,19 +189,24 @@ useEffect(() => {
   
       {/* Row of buttons (Assessment list) */}
       <div className="flex flex-wrap gap-3">
-        {assessmentData.map((item) => (
+            {loading ? <LoadingPage /> : Assess?.length > 0 ? <>
+               {Assess?.map((item) => (
           <button
             key={item.id}
             onClick={() => handleSelect(item)}
             onMouseEnter={() => setHoveredItem(item)}
             onMouseLeave={() => setHoveredItem(null)}
             className={`text-sm px-3 py-1 rounded transition-colors ${
-              selectedId === item.id ? "bg-btn-primary text-white" : "outline outline-accent-teal-light text-black font-semibold hover:bg-accent-teal-dark"
+              state.selectedId === item.id ? "bg-btn-primary text-white" : "outline outline-accent-teal-light text-black font-semibold hover:bg-accent-teal-dark"
             }`}
           >
             {item.title}
           </button>
         ))}
+            </> : <div> No Assessments found</div>
+            
+          }
+       
           </div>
           <div className="min-h-[60px] bg-bg-secondary-light p-4 rounded shadow-sm">
         <h2 className="text-lime-50 text-md">
@@ -227,12 +226,16 @@ useEffect(() => {
        
           
             <div className="w-[90%] rounded-xl   p-2 flex flex-col mx-auto">
-            {FetchedSection.length !== 0 && <QuestionAccordion items={FetchedSection} onSectionSelect={handleSectionSelect} selectedID={setSelectedSectionID} selected_type={setselectedquestioType} count={fetchedQuestions?.length} />}
+            {FetchedSection.length !== 0 && <QuestionAccordion items={FetchedSection} onSectionSelect={handleSectionSelect} selectedID={setSelectedSectionID} selected_type={(types)=>  Dispatch({ type: "selectedQuestionType", payload:types })} count={fetchedQuestions?.length} />}
         {/* <QuestionAccordion items={testquestions} onSectionSelect={handleSectionSelect}/> */}
             </div>
               <div className="flex ">
             
-             {selectedId &&  <Button icon={<PlusCircle />} label="Add Section" text="white" bg="bg-btn-primary" onClick={() => setIsModalOpen(true)}/>}
+            {state.selectedId && <Button icon={<PlusCircle />} label="Add Section" text="white" bg="bg-btn-primary" onClick={() => {
+                Dispatch({ type: "isModalOpen", payload:true });
+
+              
+             }}/>}
            </div>
           </div>
       
@@ -240,20 +243,28 @@ useEffect(() => {
           <div className="w-full lg:w-1/2 bg-button-primary  rounded-xl">
             
             <div className="flex justify-start last:ms-auto ">
-              {selectedquestioType != null ? <> <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>setIsMCQopen(true)} />  <Button icon={<X />} label="Cancel" text="gray-200" bg="black"   /></>: ""}
+              {state.selectedQuestionType != null ? <> <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>{
+                    Dispatch({ type: "isMCQOpen", payload:true });
+
+              }} />  <Button icon={<X />} label="Cancel" text="gray-200" bg="black"   /></>: ""}
              
-              <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>setIsMCQopen(true)} /> 
+            <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={() => {
+                Dispatch({ type: "isMCQOpen", payload:true });
+              }} /> 
           </div>
         <QuestionPreview questions={fetchedQuestions}/>
         </div>
         
         {/* Create ASsessment or Section */}
-        <QuestionModal isOpen={isModalOpen} onClose={() => {
-          setIsModalOpen(false)
-          setIsassesmentcreated(false)
+        <QuestionModal isOpen={state.isModalOpen} onClose={() => {
+                Dispatch({ type: "isModalOpen", payload:false });
+                Dispatch({ type: "isAssessmentCreated", payload:false });
+                Dispatch({ type: "title", payload: "" });
+                Dispatch({ type: "description", payload: "" });
+          
           }}>
           
-          <h1 className='text-center flex text-3xl font-semibold justify-center'> Add New {Isassessmentcreated ? "Assessment" : "Section"} for {!Isassessmentcreated ? selectedtitle : ""} </h1>
+          <h1 className='text-center flex text-3xl font-semibold justify-center'> Add New {state.isAssessmentCreated ? "Assessment" : "Section for"}  {!state.isAssessmentCreated ? state.selectedTitle : ""} </h1>
   
             <div className="space-y-4">
               <fieldset className="fieldset border border-base-300 rounded-lg p-4">
@@ -262,8 +273,11 @@ useEffect(() => {
                   type="text"
                   className="input border-none  w-full outline outline-accent-teal-light focus:outline-accent-teal-dark"
                   placeholder="Type here"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={state.title}
+                onChange={(e) => {
+                  // setTitle(e.target.value)
+                      Dispatch({ type: "title", payload:e.target.value});
+                  }}
                 />
                 
               </fieldset>
@@ -273,29 +287,32 @@ useEffect(() => {
                 <textarea
                   placeholder="Enter Description more less than 30 words"
                   className="textarea textarea-accent w-full h-32 resize-none"
-                  value={description}
+                  value={state.description}
                   onChange={handleDescriptionChange}
                 />
-                <span className="absolute bottom-2 right-4 text-sm text-gray-500">{wordCount} words</span>
+                <span className="absolute bottom-2 right-4 text-sm text-gray-500">{state.wordCount} words</span>
               </div>
   
               </fieldset>
   
               
-            {!Isassessmentcreated && <>
+            {!state.isAssessmentCreated && <>
               <div className="form-control flex flex-col space-y-2">
                 <label className="label">
                   <span className="label-text">Select Type:</span>
                 </label>
                 <select
   className="select select-bordered w-full bg-[#286575] text-white text-base sm:text-sm md:text-base"
-  value={type}
-  onChange={(e) => setType(e.target.value)}
+  value={state.type}
+                  onChange={(e) => {
+    
+          Dispatch({ type: "type", payload: e.target.value });
+  }}
 >
   <option disabled value="">
     Select Type
   </option>
-  {QuestionType.map((qType) => (
+  {Questiontype?.map((qType) => (
     <option key={qType} value={qType}>
       {qType
         .replaceAll("_", " ")
@@ -309,28 +326,33 @@ useEffect(() => {
               <Button icon={<PlusCircle />} label={sectionCreated.length != 0 ? sectionCreated : "Add Section"} text="white" bg="bg-btn-primary" onClick={() => {
                 handleCreateSection()
                 setsectioncreated("Section created")
-                setIsMCQopen(true)
-                setIsModalOpen(false)
+                          Dispatch({ type: "isMCQOpen", payload: true });
+
+                // setIsMCQopen(true)
+                          Dispatch({ type: "isModalOpen", payload: false });
+
+                // setIsModalOpen(false)
               }} />
             </>}
        
-            {Isassessmentcreated &&      <button
+            {state.isAssessmentCreated &&      <button
           type="button"
-          disabled={IsassessementSubmitting}
+          disabled={state.isAssessmentSubmitting}
           onClick={() => handleCreateAssessment()}
-          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${IsassessementSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${state.isAssessmentSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
         >
-          {IsassessementSubmitting ? 'Creating Assessment ...' : 'Add Assessment'}
+              {state.isAssessmentSubmitting
+                ? 'Creating Assessment ...' : 'Add Assessment'}
         </button>}
               
             </div>
      
   
           </QuestionModal>
-          <QuestionModal isOpen={isSettingModalOpen} onClose={() => setIsSettingModalOpen(false)}>
-          <AssessmentSettings assessmentID={selectedId} assessmentTitle={selectedtitle} assessment_setting_data={fetchedAssessmentSettings} />
+          <QuestionModal isOpen={state.isSettingModalOpen} onClose={() =>Dispatch({ type: "isSettingModalOpen", payload: false })}>
+          <AssessmentSettings assessmentID={state.selectedId} assessmentTitle={state.selectedTitle} assessment_setting_data={state.fetchedSettings} />
         </QuestionModal>
-        <QuestionModal isOpen={IsGuidanceModalOpen} onClose={() => setGuidanceModalOpen(false)}>
+        <QuestionModal isOpen={state.isGuidanceModalOpen} onClose={() => Dispatch({ type: "isGuidanceModalOpen", payload: false })}>
         <div className="p-6 max-w-4xl mx-auto bg-white rounded-2xl shadow-md space-y-6">
       <h1 className="text-3xl font-bold text-gray-800">How to Create an Assessment</h1>
 
@@ -359,11 +381,11 @@ useEffect(() => {
 
     </div>
           </QuestionModal>
-          <QuestionModal isOpen={isMCQopen} onClose={() => {
-            setIsMCQopen(false)
+          <QuestionModal isOpen={state.isMCQOpen} onClose={() => {
+            Dispatch({ type: "isMCQOpen", payload: false })
             
           }} >
-          {selectedquestioType  === "MULTIPLE_CHOICE" ? <MultipleChoiceBuilder sectionID={selectedSectionID} sectionType={selectedquestioType}/> : selectedquestioType === "TRUE_OR_FALSE" ? <TrueFalseBuilder sectionID={selectedSectionID} sectionType={selectedquestioType} />:selectedquestioType === "ESSAY"?<ShortAnswerBuilder/>: "" }
+          {state.selectedQuestionType  === "MULTIPLE_CHOICE" ? <MultipleChoiceBuilder sectionID={selectedSectionID} sectionType={state.selectedQuestionType}/> : state.selectedQuestionType === "TRUE_OR_FALSE" ? <TrueFalseBuilder sectionID={selectedSectionID} sectionType={state.selectedQuestionType} />:state.selectedQuestionType === "ESSAY"?<ShortAnswerBuilder/>: "" }
   
           
           </QuestionModal>

@@ -45,7 +45,7 @@ function App() {
         {/* Protected Routes */}
         {/* <Route element={<ProtectedRoute />}> */}
           <Route element={<Dashboard />}>
-            <Route path="/create-assignment" element={<CreateAssessment />} />
+            <Route path="/create-assessment" element={<CreateAssessment />} />
             <Route path="/take-assessment" element={<TakeAssessment />} />
             <Route path="/take-assessment/:assessmentId" element={<TakeAssessment />} />
             <Route path="/assessment-results" element={<Resultpage />} />
@@ -58,9 +58,9 @@ function App() {
           <Route path="/assessment" element={<MyAssessment/>}/>
           <Route path="/question-bank" element={<Questions/>}/>
           <Route path="/categories" element={<QuestionCategories/>}/>
-          <Route path="/invitiation" element={<InvitePeople />} />
+          <Route path="/invitiation/:assessmentId/:name" element={<InvitePeople />} />
           <Route path="/checkvoice" element={<ScreenReaderComponent />} />
-          <Route path="/my-question-repository/:categoryId" element={<ManageRepository />} />
+          <Route path="/my-question-repository/:categoryName/:categoryId" element={<ManageRepository />} />
 
 
           

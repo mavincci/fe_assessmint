@@ -132,26 +132,11 @@ const Dashboard = () => {
 
         <div className="max-h-[100vh] flex flex-col lg:flex-row w-full">
           {/* Main Content */}
-          <div className={`${chatVisible ? "w-2/3" : "w-full"} h-full transition-all duration-300 overflow-auto`}>
+          <div className={`w-full h-full transition-all duration-300 overflow-auto`}>
             <Outlet />
           </div>
 
-          {/* Chat Section */}
-          <AnimatePresence>
-            {chatVisible && (
-              <motion.div
-                key="chatAi"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.3 }}
-                className="w-1/3 overflow-auto h-full "
-                
-              >
-                <ChatAi />
-              </motion.div>
-            )}
-          </AnimatePresence>
+   
         </div>
       </div>
     </div>

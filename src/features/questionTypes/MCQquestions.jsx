@@ -109,7 +109,7 @@ const handleCorrectOption = (id) => {
       // console.log("New Questins", newQuestion)
 console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, newQuestion.options, newQuestion.answer)
       // await new Promise((resolve) => setTimeout(resolve, 1500));
-      if (bankId !== null) {
+      if (bankId) {
         console.log("sending to question bank")
         createquestion_for_question_bank(bankId, sectionType, currentQuestion.text,newQuestion.options.map((options)=>options.text), currentQuestion.answer )
       } 

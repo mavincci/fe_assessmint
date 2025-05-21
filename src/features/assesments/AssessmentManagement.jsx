@@ -184,13 +184,22 @@ console.log(assignments)
   console.log(res.body)
         } 
     };
+
+   
     if (isExaminer) {
    
       fetchAssessment()
     }
   }, [])
-  
-  
+ 
+  const handlePublished = () => {
+    // publish API
+
+  }
+
+  const handleunPublished = () => {
+    // unpublish API
+  }
   return (
     <>
       {/* if Examinees */}
@@ -287,10 +296,10 @@ console.log(assignments)
           <h1 className="text-2xl font-bold">Assignment Management</h1>
           <p className="text-base-content/70">Create and manage assessments and question banks</p>
         </div>
-        <button className="btn bg-bg-secondary-light text-white" onClick={() => setIsModalOpen(true)}>
+        <Link to="/create-assessment" className="btn bg-bg-secondary-light text-white" onClick={() => setIsModalOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Create Assignment
-        </button>
+        </Link>
       </div>
 
       <div className="tabs mb-6">
@@ -349,15 +358,15 @@ console.log(assignments)
         <table className="table bg-white">
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Questions</th>
+              <th>Assessment</th>
+              {/* <th>Questions</th> */}
               <th>Duration</th>
               <th>Attempt</th>
-                <th>Status</th>
                 <th>Access</th>
                 
               <th>Created</th>
-              <th>Published</th>
+                <th>Published</th>
+                <th>Invite</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>
@@ -366,16 +375,27 @@ console.log(assignments)
               paginatedAssignments.map((assignment) => (
                 <tr key={assignment.id} className="hover">
                   <td className="font-medium">{assignment.title}</td>
-                  <td>{assignment.questions || "-"}</td>
+                  {/* <td>{assignment.questions || "-"}</td> */}
                   <td>{assignment.settings.duration}</td>
                   <td>{assignment.settings.maxAttempts}</td>
-                  <td>
+                  {/* <td>
                     <span className={getStatusBadgeClass(assignment.status)}>{assignment.status || "-"}</span>
-                  </td>
+                  </td> */}
                   <td>{assignment.settings.isPublic == true ? "Public" : "Private"}</td>
 
-                  <td>{assignment.created || "-"}</td>
-                  <td>{assignment.published || "-"}</td>
+                  <td>{ new Date(assignment.createdAt ).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })|| "-"}</td>
+                  <td>{assignment.isPublished  ? <button className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800" onClick={handlePublished}>published</button> : <button className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800" onClick={handleunPublished}>Unpublished</button> 
+ || "-"}</td>
+                  <td ><Link className="outline outline-accent-teal-light text-center p-2 rounded-xl w-fit font-semibold hover:bg-accent-teal-light hover:text-white" to={`/invitiation/${assignment.id}/${assignment.title}`} >
+                    Invite Cand.
+                  </Link></td>
                   <td className="text-right">
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="btn btn-ghost btn-xs">

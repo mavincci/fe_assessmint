@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { ADD_ASSESSMENT_FAIL, ADD_ASSESSMENT_SUCCESS, LOAD_SECTION_FAIL, LOAD_SECTION_SUCCESS, LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, QUESTION_TYPE_FAIL, QUESTION_TYPE_SUCCESS, SIGNUP_FAIL, SIGNUP_SUCCESS, USER_ASSESSMENT_FAIL, USER_ASSESSMENT_SUCCESS } from "./Types";
+import { ADD_ASSESSMENT_FAIL, ADD_ASSESSMENT_SUCCESS, ADD_CATEGORY_FOR_BANK_FAIL, ADD_CATEGORY_FOR_BANK_SUCCESS, LOAD_ASSESSMENT_BY_ID_FAIL, LOAD_ASSESSMENT_BY_ID_SUCCESS, LOAD_ASSESSMENT_SETTING_FAIL, LOAD_ASSESSMENT_SETTING_SUCCESS, LOAD_BANK_CATEGORIES_FAIL, LOAD_BANK_CATEGORIES_SUCCESS, LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_FAIL, LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_SUCCESS, LOAD_BANK_REPOSITORY_SUCCESS, LOAD_QUESTION_FAIL, LOAD_QUESTION_SUCCESS, LOAD_REPOSITORY_QUESTIONS_FAIL, LOAD_REPOSITORY_QUESTIONS_SUCCESS, LOAD_SECTION_FAIL, LOAD_SECTION_SUCCESS, LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, QUESTION_TYPE_FAIL, QUESTION_TYPE_SUCCESS, SIGNUP_FAIL, SIGNUP_SUCCESS, USER_ASSESSMENT_FAIL, USER_ASSESSMENT_SUCCESS } from "./Types";
 import { Flip, toast, ToastContainer } from "react-toastify";
 import NoInternetPage from "../layouts/NoInternet";
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -52,18 +52,18 @@ export const load_my_assesment_by_Id = (assessmentId) => async (dispatch) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/assessments/get_by_id/${assessmentId}`, config);
       dispatch({
-        type: USER_ASSESSMENT_SUCCESS,
+        type: LOAD_ASSESSMENT_BY_ID_SUCCESS,
         payload: res.data,
       });
       // console.log(res.data)
       return res.data; // Return response instead of JSX
     } catch (err) {
       console.log(err)
-      dispatch({ type: USER_ASSESSMENT_FAIL });
+      dispatch({ type: LOAD_ASSESSMENT_BY_ID_FAIL });
       return null;
     }
   } else {
-    dispatch({ type: USER_ASSESSMENT_FAIL });
+    dispatch({ type: LOAD_ASSESSMENT_BY_ID_FAIL });
     return null;
   }
 };
@@ -81,17 +81,17 @@ export const load_my_assesment_setting = (assessmentId) => async (dispatch) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/assessments/basic_info/${assessmentId}`, config);
       dispatch({
-        type: USER_ASSESSMENT_SUCCESS,
+        type: LOAD_ASSESSMENT_SETTING_SUCCESS,
         payload: res.data,
       });
       return res.data; // Return response instead of JSX
     } catch (err) {
       console.log(err)
-      dispatch({ type: USER_ASSESSMENT_FAIL });
+      dispatch({ type: LOAD_ASSESSMENT_SETTING_FAIL });
       return null;
     }
   } else {
-    dispatch({ type: USER_ASSESSMENT_FAIL });
+    dispatch({ type: LOAD_ASSESSMENT_SETTING_FAIL });
     return null;
   }
 };
@@ -157,7 +157,6 @@ export const load_all_assessment = (assessmentId) => async (dispatch) => {
 export const load_my_questions = (sectionID) => async (dispatch) => {
   if (localStorage.getItem("access") && sectionID) {
     console.log("token access",localStorage.getItem("access") )
-    console.log("sectionsID",sectionID )
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -169,18 +168,18 @@ export const load_my_questions = (sectionID) => async (dispatch) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/assessments/get_questions/${sectionID}`, config);
       dispatch({
-        type: LOAD_SECTION_SUCCESS,
+        type: LOAD_QUESTION_SUCCESS,
         payload: res.data,
       });
       console.log(res.data)
       return res.data; 
     } catch (err) {
       console.log(err)
-      dispatch({ type: LOAD_SECTION_FAIL });
+      dispatch({ type: LOAD_QUESTION_FAIL });
       return null;
     }
   } else {
-    dispatch({ type: LOAD_SECTION_FAIL });
+    dispatch({ type: LOAD_QUESTION_FAIL });
     return null;
   }
 };
@@ -1034,17 +1033,17 @@ export const create_question_bank_category = (name, description) => async (dispa
     try {
       const res = await axios.get(`${API_BASE_URL}/assessments/bank/categories/get_all`, config);
       dispatch({
-        type: USER_ASSESSMENT_SUCCESS,
+        type: LOAD_BANK_CATEGORIES_SUCCESS,
         payload: res.data,
       });
       return res.data; 
     } catch (err) {
       console.log(err)
-      dispatch({ type: USER_ASSESSMENT_FAIL });
+      dispatch({ type: LOAD_BANK_CATEGORIES_FAIL });
       return null;
     }
   } else {
-    dispatch({ type: USER_ASSESSMENT_FAIL });
+    dispatch({ type: LOAD_BANK_CATEGORIES_FAIL });
     return null;
   }
 };
@@ -1134,20 +1133,78 @@ export const create_question_bank = (name, description,questionType,categoryId,d
     try {
       const res = await axios.get(`${API_BASE_URL}/assessments/bank/mine`, config);
       dispatch({
-        type: USER_ASSESSMENT_SUCCESS,
+        type: LOAD_BANK_REPOSITORY_SUCCESS,
         payload: res.data,
       });
       return res.data; 
     } catch (err) {
       console.log(err)
-      dispatch({ type: USER_ASSESSMENT_FAIL });
+      dispatch({ type: LOAD_BANK_REPOSITORY_FAIL });
       return null;
     }
   } else {
-    dispatch({ type: USER_ASSESSMENT_FAIL });
+    dispatch({ type: LOAD_BANK_REPOSITORY_FAIL });
     return null;
   }
 };
+// load current user   question bank
+  export const load_my_question_Bank_by_CategoryId = (categoryId) => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/bank/categories/get_banks/${categoryId}`, config);
+      dispatch({
+        type: LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_SUCCESS,
+        payload: res.data,
+      });
+      // return res.data; 
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_FAIL });
+    return null;
+  }
+};
+
+  export const load_my_question_Bank_by_BankId = (bankId) => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/assessments/bank/get_by_id/${bankId}`, config);
+      dispatch({
+        type: LOAD_REPOSITORY_QUESTIONS_SUCCESS,
+        payload: res.data,
+      });
+      // return res.data; 
+      
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: LOAD_REPOSITORY_QUESTIONS_FAIL });
+      return null;
+    }
+  } else {
+    dispatch({ type: LOAD_REPOSITORY_QUESTIONS_FAIL });
+    return null;
+  }
+};
+
 
 // create Question Bank Question
 export const createquestion_for_question_bank = (bankId, questionType, questionText,options, answers) => async (dispatch) => {
@@ -1189,6 +1246,80 @@ console.log("answers",answers)
     console.log("Message", res.data.message )
     if (res.status === 201 || res.status === 200 || res.data.message == "QUESTION_BANK_ADD_QUESTION_SUCCESS") {
       toast.success( `✅ Successfully created your your question !`, {
+        position: "top-center",
+        autoClose: 500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+     
+    }
+    dispatch({
+      type: ADD_CATEGORY_FOR_BANK_SUCCESS,
+      payload: res.data,
+    });
+    console.log(res.data)
+  } catch (err) {
+    console.log(err);
+    {err.response || err.response.status === 409  ? toast.error( "Error with Adding Question", {
+      position: "bottom-left",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_CATEGORY_FOR_BANK_FAIL,
+    });
+  }
+
+}
+
+
+// Invitation
+export const create_send_invitation = (assessmentId, emails) => async (dispatch) => {
+   const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+    const body = JSON.stringify({
+    assessmentId,
+    emails
+    });
+
+try {
+    console.log("section body", body)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/invitations/invite`,
+      body,
+      config
+    );
+    console.log("Message", res.data.message )
+    if (res.status === 201 || res.status === 200 || res.data.message == "SEND_INVITATION_SUCCESS") {
+      toast.success( `✅ you Successfully Sent an invitation to your candidates !`, {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -1233,6 +1364,73 @@ console.log("answers",answers)
         })}
     dispatch({
       type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+
+export const load_invited_candidates_by_assessment_ID= (assessmentId) => async (dispatch) => {
+   const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+
+
+try {
+    const res = await axios.get(
+      `${API_BASE_URL}/assessments/invitations/get_invited/${assessmentId}`,
+      config
+    );
+    console.log("Message", res.data.message )
+    // if (res.status === 201 || res.status === 200 || res.data.message == "GET_INVITED_SUCCESS") {
+    //   toast.success( `✅ Invited Candidates are Fetched Successfully !`, {
+    //     position: "bottom-center",
+    //     autoClose: 500,
+    //     hideProgressBar: false,
+    //     closeOnClick: false,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "colored",
+    //     transition: Flip,
+    //   });
+     
+    // }
+    dispatch({
+      type: LOAD_INVITED_CANDIDATES_SUCCESS,
+      payload: res.data,
+    });
+  return res.data
+  } catch (err) {
+    console.log(err);
+    // {err.response || err.response.status === 409  ? toast.error( "INVITATION_NOT_FOUND", {
+    //   position: "bottom-left",
+    //   autoClose: 3000,
+    //   hideProgressBar: false,
+    //   closeOnClick: false,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    //   theme: "colored",
+    //   transition: Flip,
+    //   style: {width:"400px"}
+    //   }) : toast.error( "somthing Error please try Again", {
+    //     position: "bottom-left",
+    //     autoClose: 3000,
+    //     hideProgressBar: false,
+    //     closeOnClick: false,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "colored",
+    //     transition: Flip,
+    //     style: {width:"400px"}
+    //     })}
+    dispatch({
+      type: LOAD_INVITED_CANDIDATES_FAIL,
     });
   }
 
