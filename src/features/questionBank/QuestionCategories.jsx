@@ -5,10 +5,12 @@ import {
   create_question_bank,
   create_question_bank_category,
   load_my_categories,
+  load_my_question_Bank_by_CategoryId,
   load_question_type,
 } from "../../action/Auth";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useLoadQuestionType } from "../../hooks/useQuestionType";
 
 const QuestionCategories = ({
   create_question_bank_category,
@@ -42,6 +44,7 @@ const QuestionCategories = ({
     difficultyLevel: "EASY",
   });
   useEffect(() => {
+
     if (SelectedCategories.category_id) {
       setFormData({
         name: "",
@@ -85,6 +88,10 @@ const QuestionCategories = ({
     setWordCount(value.trim() === "" ? 0 : value.trim().split(/\s+/).length);
   };
 
+  const fetchBank_by_categoryId = async (categoryID) => {
+     const response = await dispatch(load_my_question_Bank_by_CategoryId(categoryID))
+     console.log("response", response)
+    }
   useEffect(() => {
     const fetch_my_categories = async () => {
       const res = await dispatch(load_my_categories());
@@ -95,16 +102,9 @@ const QuestionCategories = ({
     };
     fetch_my_categories();
   }, []);
-  useEffect(() => {
-    const fetchquestionType = async () => {
-      const res = await dispatch(load_question_type());
-      if (res?.body) {
-        setQuestionType(res.body);
-      }
-    };
-    fetchquestionType();
-  }, []);
+  // load question type 
 
+ 
 
   const handleCreateCategory = async () => {
     setiscategorysubmitting(true);
@@ -199,7 +199,8 @@ const QuestionCategories = ({
                 {/* Manage Question Button */}
                 <div className="card-actions justify-center">
                   <Link
-                    to={`/my-question-repository/${category.id}`}
+                    onClick={()=>fetchBank_by_categoryId(category.id)}
+                    to={`/my-question-repository/${category.name}/${category.id}` }
                     className={` p-2 rounded-xl ${category.id === SelectedCategories.category_id
                         ? "bg-accent-teal-light text-white"
                         : "bg-btn-primary text-white"

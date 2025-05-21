@@ -30,13 +30,11 @@ import {
     user:null,
     role:0
   };
-  const initialStateCourse ={
-    course:null
-  }
-  
-  export default function (state = initialState ,  action) {
+
+  export default function auth (state = initialState ,  action) {
+  // console.log("action" ,action)
+    
     const { type, payload } = action;
-  
     switch (type) {
       case AUTHENTICATED_SUCCESS:
         return {
@@ -98,7 +96,7 @@ import {
         };
      
       case ADD_ASSESSMENT_SUCCESS:
-        case ADD_SECTION_SUCCESS:
+      case ADD_SECTION_SUCCESS:
             return " ADDED SUCCESFULLY";
       case ADD_ASSESSMENT_FAIL:
         case ADD_SECTION_FAIL:
@@ -107,7 +105,15 @@ import {
         return  "ERROR IN CHANGING PASSWORD"
         
       case PASSWORD_CHANGE_SUCCESS: 
-      return "CHANGED SUCCESFULLY"
+        return "CHANGED SUCCESFULLY"
+      
+      
+      // case USER_ASSESSMENT_SUCCESS:
+      //   return {  
+      //     ...assessmentState,
+      //     Assessment: payload,
+      //       loading:false
+      //   }
   
       default:
         return state;

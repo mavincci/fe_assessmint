@@ -51,7 +51,7 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
     e.preventDefault()
     console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    if (bankId !== null) {
+    if (bankId) {
         console.log("sending to question bank")
         createquestion_for_question_bank(bankId, sectionType, currentQuestion.text,null, currentQuestion.correctAnswer)
     } else {

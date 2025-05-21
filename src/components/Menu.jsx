@@ -127,12 +127,12 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           href: "/question-bank",
           visible: ["EXAMINER","ADMIN"],
         },
-          {
-          icon: <FileQuestion />,
-          label: "My Repositories",
-          href: "/my-question-repository",
-          visible: ["EXAMINER","ADMIN"],
-        },
+        //   {
+        //   icon: <FileQuestion />,
+        //   label: "My Repositories",
+        //   href: "/my-question-repository",
+        //   visible: ["EXAMINER","ADMIN"],
+        // },
               {
           icon: <FolderTree />,
           label: "Categories",
@@ -146,8 +146,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
       items: [
         {
           icon: <FilePlus />,
-          label: "Create Assignment",
-          href: "create-assignment",
+          label: "Create Assessment",
+          href: "/create-assessment",
           visible: ["EXAMINER"],
         },
         {

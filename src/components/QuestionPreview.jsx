@@ -3,12 +3,12 @@ import React from 'react'
 import NoElements from './NoElements'
 
 const QuestionPreview = ({ questions }) => {
-
+console.log("Questions", questions)
   return (
     <>
-      {questions.length !== 0 ? (
+      {questions?.length !== 0 ? (
         <div className="p-6 bg-white rounded-xl max-w-xl mx-auto space-y-6 border border-accent-teal-light mt-3 max-h-3/4 overflow-y-auto">
-          {questions.map((q, idx) => (
+          {questions?.map((q, idx) => (
             <div key={q.id} className="space-y-2">
               <div className="flex items-start gap-2">
                 <p className="font-semibold text-gray-700">{idx + 1}.</p>
