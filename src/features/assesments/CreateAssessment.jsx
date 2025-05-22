@@ -114,7 +114,8 @@ useLoadAssessment()
   };
   
     // fetch questions of a given sections
-  const fetchquestions = async () => {
+    const fetchquestions = async () => {
+    console.log("gere in create assessment sectin", selectedSectionID)
    await dispatch(load_my_questions(selectedSectionID));
  
 };
@@ -156,12 +157,13 @@ useLoadAssessment()
   return (
     <>
         
-      <div className="flex  justify-center items-center gap-4 last:ms-auto mr-4">
+      <div className="flex  flex-col md:flex-row justify-between items-center gap-4 last:ms-auto mr-4">
         
         
        
         <h1 className='font-bold w-[90%] text-3xl p-7'>Create Assessment</h1>
-        <Button icon={<PlusCircle />} label="Add Assessment" text="white" bg="bg-secondary" onClick={() => {
+        <div className="flex gap-3 mr-4 lg:flex-row flex-col  w-full lg:w-2/3  ">
+          <Button icon={<PlusCircle />} label="Add Assessment" text="white" bg="bg-accent" onClick={() => {
           // setIsassesmentcreated(true)
           Dispatch({ type: "isAssessmentCreated", payload: true });
           Dispatch({ type: "isModalOpen", payload: true });
@@ -172,12 +174,13 @@ useLoadAssessment()
               Dispatch({ type: "isSettingModalOpen", payload:true });
 
           }} />}
-          <Button icon={<Eye />} label="Preview" text="gray-200" bg="bg-lime-500" /> 
+          <Button icon={<Eye />} label="Preview" text="gray-200" bg="bg-gray-500" /> 
         <Button icon={<HelpCircle />} label="Guidance" text="gray-200" bg="bg-btn-primary" onClick={() => {
               Dispatch({ type: "isGuidanceModalOpen", payload:true });
 
           }}/> 
         
+        </div>
         
    
       </div>

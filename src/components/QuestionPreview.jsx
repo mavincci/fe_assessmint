@@ -12,7 +12,7 @@ console.log("Questions", questions)
             <div key={q.id} className="space-y-2">
               <div className="flex items-start gap-2">
                 <p className="font-semibold text-gray-700">{idx + 1}.</p>
-                <p className="font-medium text-gray-800">{q.questionData?.questionText}</p>
+                <p className="font-medium text-gray-800">{q?.questionData?.questionText}</p>
                 <span className='flex ms-auto space-x-0.5'>
                   <Edit size={18} className='text-amber-400 ' />
                   <Delete size={18} className='text-red-600' />
@@ -20,7 +20,20 @@ console.log("Questions", questions)
               </div>
 
               {/* Render True/False Options */}
-              {q.questionType === "TRUE_OR_FALSE" && (
+              {q?.questionType === "TRUE_OR_FALSE" && (
+                <div className="flex flex-col gap-2 pl-6">
+                  <div className="text-gray-600 text-md flex flex-row items-center gap-2">
+                    <span className="font-semibold">A)</span> True
+                    {q.questionData.answer === true && <span className="text-green-500 ml-2">(Correct)</span>}
+                  </div>
+                  <div className="text-gray-600 text-md flex flex-row items-center gap-2">
+                    <span className="font-semibold">B)</span> False
+                    {q.questionData.answer === false && <span className="text-green-500 ml-2">(Correct)</span>}
+                  </div>
+                </div>
+              )}
+
+               {q.questionType === "MULTIPLE_CHOICE" && (
                 <div className="flex flex-col gap-2 pl-6">
                   <div className="text-gray-600 text-md flex flex-row items-center gap-2">
                     <span className="font-semibold">A)</span> True

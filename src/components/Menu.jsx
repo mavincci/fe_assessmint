@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";    import {
         TreeDeciduous,
         TreePalm,
         FolderTree,
+        PlusCircle,
       } from "lucide-react";
 import { logout } from "../action/Auth";
 import { connect } from "react-redux";
@@ -41,13 +42,13 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <LayoutDashboard />,
           label: "Dashboard",
           href: "/dashboard",
-          visible: ["EXAMINER"],
+          visible: ["EXAMINER","ADMIN"],
         },
         {
           icon: <UserCog />,
           label: "User Management",
           href: "/user-management",
-          visible: ["EXAMINER"],
+          visible: ["ADMIN"],
         },
         {
           icon: <LibraryBig />,
@@ -59,7 +60,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <FileText />,
           label: "Assessments Results",
           href: "/assessment-results",
-          visible: ["EXAMINER"],
+          visible: ["EXAMINER", "ADMIN"],
         },
         // {
         //   icon: <FileTextIcon />,
@@ -74,18 +75,18 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         //   href: "/take-assessment",
         //   visible: ["EXAMINEE", "EXAMINER"],
         // },
-        {
-          icon: <BarChart3 />,
-          label: "Reporting & Analytics",
-          href: "/reporting-analytics",
-          visible: ["EXAMINER"],
-        },
-        {
-          icon: <CalendarDays />,
-          label: "Calendar",
-          href: "/calendar",
-          visible: ["EXAMINER", ],
-        },
+        // {
+        //   icon: <BarChart3 />,
+        //   label: "Reporting & Analytics",
+        //   href: "/reporting-analytics",
+        //   visible: ["ADMIN"],
+        // },
+        // {
+        //   icon: <CalendarDays />,
+        //   label: "Calendar",
+        //   href: "/calendar",
+        //   visible: ["ADMIN", ],
+        // },
         {
           icon: <History />,
           label: "History",
@@ -94,28 +95,28 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         },
         {
           icon: <MessageSquare />,
-          label: "Message",
-          href: "/message",
-          visible: ["EXAMINER"],
+          label: "Notification",
+          href: "/notifications",
+          visible: ["EXAMINER","ADMIN"],
         },
         {
-          icon: <Settings />,
-          label: "Setting",
-          href: "/settings",
-          visible: ["EXAMINER", "EXAMINEE"],
+          icon: <FilePlus />,
+          label: "Create Assessment",
+          href: "/create-assessment",
+          visible: ["EXAMINER", "ADMIN"],
         },
-        {
-          icon: <LifeBuoy />,
-          label: "Support",
-          href: "/support",
-          visible: ["EXAMINER"],
-        },
-        {
-          icon: <ShieldCheck />,
-          label: "Security",
-          href: "/security",
-          visible: ["EXAMINER"],
-        },
+        // {
+        //   icon: <LifeBuoy />,
+        //   label: "Support",
+        //   href: "/support",
+        //   visible: ["EXAMINER"],
+        // },
+        // {
+        //   icon: <ShieldCheck />,
+        //   label: "Security",
+        //   href: "/security",
+        //   visible: ["EXAMINER"],
+        // },
       ],
     },
      {
@@ -144,17 +145,18 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
     {
       title: "ACTIONS",
       items: [
-        {
-          icon: <FilePlus />,
-          label: "Create Assessment",
-          href: "/create-assessment",
-          visible: ["EXAMINER"],
+      
+          {
+          icon: <Settings />,
+          label: "Setting",
+          href: "/settings",
+          visible: ["EXAMINER", "ADMIN", "EXAMINEE"],
         },
         {
           icon: <LogOut />,
           label: "Logout",
           href: "/",
-          visible: ["EXAMINER", "EXAMINEE"],
+          visible: ["EXAMINER", "ADMIN","EXAMINEE"],
         },
       ],
     },
@@ -175,7 +177,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
                             to={subItems.label !== "Logout" ? subItems.href : subItems.href}
                             key={subItems.label}
                             onClick={subItems.label === "Logout" ? handlelogout : null}
-                            className={`flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2 rounded-md w-full  hover:bg-accent ${
+                            className={`flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2 rounded-md w-full   hover:bg-accent ${
                               location.pathname === subItems.href ? "bg-accent" : ""
                             }`}
                           >
@@ -185,11 +187,19 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
                           )
                       }
                   })}
+              
              </div> 
           ))}
       
-          
-    </div>
+      {roles === "EXAMINER" || roles == "ADMIN" && (
+          <Link to="/create-assessment" className=" fixed bottom-6 flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2  lg:py-6 lg:w-[10%] rounded-md w-[4%]  bg-[#8380FE] ">
+         <span className=""> <PlusCircle className=""/></span> <span className="hidden lg:block p-1">Create Assessment</span>
+        </Link>
+      )
+
+      }
+                
+      </div>
   )
 }
 

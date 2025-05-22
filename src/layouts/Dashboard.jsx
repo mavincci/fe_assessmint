@@ -58,7 +58,7 @@ const Dashboard = () => {
           </span>
         </div>
 
-        {manageprofile && (
+        {/* {manageprofile && (
           <div className="bg-white rounded-lg shadow-lg p-2 min-w-[200px] mt-7 absolute z-50">
             <div className="flex items-center space-x-2 p-2 hover:bg-violet-50 rounded cursor-pointer">
               <User size={16} />
@@ -74,7 +74,7 @@ const Dashboard = () => {
               <span>Logout</span>
             </div>
           </div>
-        )}
+        )} */}
 
         <Menus roles={user.roles = user.roles.filter(role => role !== "USER")[0]} />
       </div>

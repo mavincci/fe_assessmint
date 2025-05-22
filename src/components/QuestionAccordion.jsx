@@ -12,6 +12,7 @@ const QuestionAccordion = ({items, onSectionSelect,selectedID,selected_type ,cou
       const selectedSection = items[newIndex];
       onSectionSelect(selectedSection.questions); 
       selectedID(selectedSection.id); 
+      console.log("selectedsection Id", selectedSection.id)
       selected_type(selectedSection.questionType)
     } else {
       onSectionSelect([]); 

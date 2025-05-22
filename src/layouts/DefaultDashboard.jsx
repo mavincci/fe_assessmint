@@ -1,9 +1,29 @@
 import React from 'react';
-import { CalendarIcon, ChartBar, Clock } from 'lucide-react';
+import { CalendarIcon, ChartBar, Clock, List } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import UpcomingAssignment from '../components/UpcomingAssessment';
 import ActivityItem from '../components/ActivityItem';
+import BarChartCard from '../components/BarChartCard';
+import AreaChartCard from '../components/AreaChartCard';
+import SubscribersCard from '../components/SubscribersCard';
+import CircularProgressCard from '../components/CircularProgressCard';
+import WelcomeCard from '../components/WelcomeCard';
+import StateCard from '../components/StateCard';
+import { Calendar, Folder, User, Users } from '../components/Icons';
+import { motion } from 'framer-motion'
 
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.15,
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  }),
+}
 const ExaminerDashboard = () => {
   // Mock data for the dashboard
 
@@ -93,7 +113,8 @@ const ExaminerDashboard = () => {
     },
   ];
   const user = JSON.parse(localStorage.getItem("user"))
-  const isExaminee = user.roles.some(role => role === "EXAMINER");
+  const isExaminer = user.roles.some(role => role === "EXAMINER");
+  const isAdmin = user.roles.some(role => role === "ADMIN");
   const currentuser= user.roles.filter(role => role !== "USER")[0]
   return (
     <div className="min-h-screen bg-blue-50/50">
@@ -101,7 +122,7 @@ const ExaminerDashboard = () => {
         {/* <Header userName="Examiner user" /> */}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <motion.div  variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" >
           {stats.map((stat, index) => {
             if (stat.visible.includes(currentuser)) {
               return (
@@ -111,15 +132,17 @@ const ExaminerDashboard = () => {
               title={stat.title}
               value={stat.value}
               subtitle={stat.subtitle}
-            />
+                />
+                
+                
               )
             }
           })}
-        </div>
+        </motion.div >
 
         {/* Main Content */}
         {
-          isExaminee  ? <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          isExaminer  ? <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Upcoming Assignments */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-1">Upcoming assignments</h2>
@@ -156,6 +179,101 @@ const ExaminerDashboard = () => {
           </div> :""
               
         }
+{/* ADmin  Dashboard */}
+        {isAdmin && <>
+          
+      <div className="container px-4 mx-auto bg-bg-light">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.15,
+            },
+          },
+        }}
+      >
+        <motion.div variants={fadeInUp}>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+            <p className="text-gray-600 dark:text-gray-400">Welcome back, Admin. Here's what's happening.</p>
+          </div>
+        </motion.div>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {[{
+            title: "Total User", value: "135", Icon: Users, color: "primary"
+          }, {
+            title: "Total Examiner", value: "35", Icon: User, color: "secondary"
+          }, {
+            title: "Repository", value: "35", Icon: Folder, color: "success"
+          }, {
+            title: "Assignment created", value: "35", Icon: List, color: "info"
+          }].map((card, index) => (
+            <motion.div key={card.title} variants={fadeInUp} custom={index + 1}>
+              <StateCard
+                title={card.title}
+                value={card.value}
+                Icon={card.Icon}
+                color={card.color}
+                delay={(index + 1) * 40}
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Middle Section */}
+        <div className="flex flex-col md:flex-row gap-6 mb-8 w-full">
+          <motion.div variants={fadeInUp} custom={1} className="w-full md:w-[40%]">
+            <WelcomeCard />
+          </motion.div>
+
+          <motion.div
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.15,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            className="w-full md:w-[60%] flex flex-col lg:flex-row justify-between gap-4"
+          >
+            <motion.div variants={fadeInUp} className="lg:w-1/2 w-full">
+              <SubscribersCard
+                count="23.62K Birr"
+                title="Today's Subscription Earning"
+                type="money"
+                from="from-transparent"
+                to="to-teal-500"
+              />
+            </motion.div>
+            <motion.div variants={fadeInUp} className="lg:w-1/2 w-full">
+              <SubscribersCard
+                count="8.62K"
+                title="Subscribers"
+                from="from-[#2C3E50]"
+                to="to-[#4CA1AF]"
+              />
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div variants={fadeInUp} className="lg:col-span-2">
+            <AreaChartCard title="Created Assignment" subtitle="(+5) more in 2021" />
+          </motion.div>
+          <motion.div variants={fadeInUp}>
+            <BarChartCard title="Active Users" subtitle="(+23) than last week" />
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
+        </>}
         
       </div>
     </div>

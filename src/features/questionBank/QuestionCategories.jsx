@@ -145,7 +145,7 @@ const QuestionCategories = ({
           {Categories.map((category) => (
             <div
               key={category.id}
-              className={`card bg-base-100 shadow-xl cursor-pointer transition-colors duration-300  min-w-[384px] `}
+              className={`card bg-base-100 shadow-xl cursor-pointer transition-colors duration-300  min-w-[300px] w-[384px]`}
               onClick={() =>
                 setSelectedCastegories({
                   category_id: category.id,
