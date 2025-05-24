@@ -42,7 +42,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <LayoutDashboard />,
           label: "Dashboard",
           href: "/dashboard",
-          visible: ["EXAMINER","ADMIN"],
+          visible: ["EXAMINER","ADMIN","EXAMINEE"],
         },
         {
           icon: <UserCog />,
@@ -128,6 +128,12 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           href: "/question-bank",
           visible: ["EXAMINER","ADMIN"],
         },
+          {
+          icon: <FileQuestion />,
+          label: "AI",
+          href: "/ai",
+          visible: ["EXAMINER","ADMIN"],
+        },
         //   {
         //   icon: <FileQuestion />,
         //   label: "My Repositories",
@@ -164,7 +170,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
   
    
   return (
-      <div className="mt-4 text-sm h-[100vh] overflow-y-auto scrollbar-hide">
+      <div className="mt-4 text-sm h-[100vh] overflow-y-auto scrollbar-hide font-display">
           {menuItems.map((item) => (
               <div className="flex flex-col gap-2" key={item.title}>
                   <span className="hidden lg:block text-gray-200 font-light my-4">

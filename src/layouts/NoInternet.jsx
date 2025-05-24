@@ -1,9 +1,9 @@
-"use client"
+
 
 export default function NoInternetPage({status}) {
   return (
     <>
-      {status == "true" && <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+     <div className="m flex flex-col items-center justify-center bg-bg-light p-4">
       <div className="text-center max-w-md">
         {/* Simple emoji illustration instead of 3D graphics */}
         <div className="flex justify-center mb-8">
@@ -35,14 +35,12 @@ export default function NoInternetPage({status}) {
         </div>
 
         {/* Refresh button */}
-        <button onClick={() => window.location.reload()} className="btn btn-primary px-8">
-          Refresh
-        </button>
+     
 
         {/* Error code */}
         <p className="text-gray-400 text-sm mt-8">ERR_INTERNET_DISCONNECTED</p>
       </div>
-    </div>}
+    </div>
     </>
   )
 }

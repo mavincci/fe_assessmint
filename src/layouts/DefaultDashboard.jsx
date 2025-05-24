@@ -33,9 +33,9 @@ const ExaminerDashboard = () => {
       value: 567,
       icon: (
         <svg width="44" height="36" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2 34C2 34 4.87074 -4.48536 12.0571 13.3418C19.2435 31.1689 22.1143 30.3501 24.8571 16.5823C28.2477 -0.436459 40.7465 14.2172 42 2" stroke="black" strokeWidth="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2 34C2 34 4.87074 -4.48536 12.0571 13.3418C19.2435 31.1689 22.1143 30.3501 24.8571 16.5823C28.2477 -0.436459 40.7465 14.2172 42 2" stroke="black" stroke-opacity="0.21" strokeWidth="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2 34C2 34 4.87074 -4.48536 12.0571 13.3418C19.2435 31.1689 22.1143 30.3501 24.8571 16.5823C28.2477 -0.436459 40.7465 14.2172 42 2" stroke="black" strokeWidth="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2 34C2 34 4.87074 -4.48536 12.0571 13.3418C19.2435 31.1689 22.1143 30.3501 24.8571 16.5823C28.2477 -0.436459 40.7465 14.2172 42 2" stroke="black" strokeWidth="3"  strokeLinecap="round"/>
+<path d="M2 34C2 34 4.87074 -4.48536 12.0571 13.3418C19.2435 31.1689 22.1143 30.3501 24.8571 16.5823C28.2477 -0.436459 40.7465 14.2172 42 2" stroke="black" strokeOpacity="0.21" strokeWidth="3"  strokeLinecap="round"/>
+<path d="M2 34C2 34 4.87074 -4.48536 12.0571 13.3418C19.2435 31.1689 22.1143 30.3501 24.8571 16.5823C28.2477 -0.436459 40.7465 14.2172 42 2" stroke="black" strokeWidth="3"  strokeLinecap="round"/>
 </svg>
 
       ),

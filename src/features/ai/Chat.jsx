@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, User, Bot, CornerDownLeft, Mic, Paperclip, Moon, Sun } from 'lucide-react';
-import logo  from "../../assets/TestNest.png"
+import logo  from "../../assets/chatAi.png"
 // Main App Component
 export default function ChatAi() {
   // State for dark mode
@@ -117,7 +117,7 @@ export default function ChatAi() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center z-20">
         <div className="flex items-center gap-4">
-                  <img src={logo} className='w-10 h-10'/>
+                  <img src={logo} className='w-14 h-14'/>
           <h1 className="text-xl font-semibold text-gray-800 dark:text-white">Chat with TestNest AI</h1>
         </div>
         {/* <button

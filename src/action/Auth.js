@@ -274,8 +274,8 @@ export const checkAuthenticated = () => async (dispatch) => {
 
       // console.log("this res.data.body ", res.data.body.token)
   
-      const { refreshToken,token,  user } = res.data.body;
- 
+      const { refreshToken, token, user } = res.data.body;
+ console.log("body",res.data.body)
       // role = user.roles[1]
       
       dispatch({
@@ -417,6 +417,77 @@ export const createAssessment = (title, description) => async (dispatch) => {
   const body = JSON.stringify({
     title,
     description
+  });
+  console.log("Auth body", body)
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/create`,
+      body,
+      config
+    );
+    if (res.status === 201) {
+      toast.success("✅ Successfully created your Assessment! Your item is now live.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+      });
+      // console.log("registered");
+      //  <Navigate to="/login"/>
+      // <Navigate to="/login"/>
+    }
+    dispatch({
+      type: ADD_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    {err.response && err.response.status === 409 ? toast.error( "This user already Exist in this platform.", {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+      style: {width:"400px"}
+      }) : toast.error( "somthing Error please try Again", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Flip,
+        style: {width:"400px"}
+        })}
+    dispatch({
+      type: ADD_ASSESSMENT_FAIL,
+    });
+  }
+
+}
+// Ai
+export const Sendrequest = (topic, numberOfQuestions=10) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+  const body = JSON.stringify({
+    topic,
+    numberOfQuestions
   });
   console.log("Auth body", body)
   try {

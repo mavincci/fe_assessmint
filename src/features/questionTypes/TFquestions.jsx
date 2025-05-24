@@ -128,11 +128,11 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
 
   }
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">True/False Question Builder</h1>
+    <div className=" mx-auto p-2 w-full">
+      <h1 className="text-md md:text-2xl font-bold text-center mb-8">True/False Question Builder</h1>
 
       {/* Question Form */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div className="bg-white rounded-lg shadow-lg p-2 mb-8 ">
         <h2 className="text-xl font-bold mb-4">{isEditing ? "Edit Question" : "Create New Question"}</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Question Text */}

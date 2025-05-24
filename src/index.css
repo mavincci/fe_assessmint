@@ -73,3 +73,7 @@
   position: sticky;
   /* overlay: rgb(255,35,45); */
 }
+
+.bg-grad{
+  /* background-image: linear-gradient(to right bottom, #064812, #1d5040, #007f8d, #006a97, #005283, #004c78, #03476c, #074161, #0a4960, #1b505d, #2d565b, #3e5c5a); */
+}

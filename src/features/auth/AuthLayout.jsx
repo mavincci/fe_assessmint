@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 // import { ClipboardList } from 'lucide-react';
 import hero from "../../assets/hero1.png"
-import logo from "../../assets/TestNestfull.png"
+import logo from "../../assets/logo.png"
 
 const AuthLayout= () => {
   return (
@@ -11,7 +11,7 @@ const AuthLayout= () => {
       <div className="md:w-1/2 w-full p-8 bg-bg-light flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8">
-           <img src={logo} alt="logo"    className="absolute inset-0 w-24  h-24 top-7 left-7 " />
+           <img src={logo} alt="logo"    className="absolute rounded-full inset-0 w-24  h-24 top-7 left-7 " />
           </div>
           <Outlet />
         </div>

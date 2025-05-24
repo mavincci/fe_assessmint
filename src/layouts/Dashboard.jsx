@@ -4,30 +4,21 @@ import Avatar from "@mui/material/Avatar";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Bot, LogOut, PlusCircle, Settings, User } from "lucide-react";
 import Menus from "../components/Menu";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import useAuthCheck from "../hooks/useAuthCheck";
 import ChatAi from "../features/ai/Chat";
 import { motion, AnimatePresence } from "framer-motion";
-
+import chatIcon  from "../assets/chatAi.png"
 const Dashboard = () => {
-  // useAuthCheck()
-   const [showHeader, setShowHeader] = useState(true);
+  const location = useLocation();
 
-  // useEffect(() => {
-  //   // Set a timer to hide the header after 5000 milliseconds (5 seconds)
-  //   const timer = setTimeout(() => {
-  //     setShowHeader(false);
-  //   }, 5000);
+const isQuestionBank = location.pathname === "/question-bank";
 
-  //   // Cleanup function: Clear the timer if the component unmounts
-  //   // before the 5 seconds are up.
-  //   return () => clearTimeout(timer);
-  // }, []);
   console.log("use authnitce runnig");
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [manageprofile, setvisibleManageProfile] = useState(false);
-  const [chatVisible, setChatVisible] = useState(true);
+  const [chatVisible, setChatVisible] = useState(false);
 
   const imgSrc = "";
   const formattedName = user?.firstName
@@ -97,37 +88,45 @@ const Dashboard = () => {
     </AnimatePresence>
 
         {/* Toggle Chat Button */}
- <motion.button
-      className="absolute top-7 right-4 z-50 bg-btn-primary  rounded-full p-3 text-white flex items-center justify-center cursor-pointer overflow-hidden your-custom-glow-class" // Add a custom class for styling if using CSS file
-      style={{ // Using inline styles for demonstration, can move to CSS class
-        boxShadow: '0 0 8px rgba(0, 191, 255, 0.6)', // Initial subtle blue glow
-        transition: 'box-shadow 0.4s ease-in-out', // Smooth transition for glow
-      }}
-      whileHover={{
-        scale: 1.1,
-        width: "120px",
-        boxShadow: '0 0 20px rgba(0, 191, 255, 0.9), 0 0 30px rgba(0, 191, 255, 0.6)', // Stronger glow on hover
-        transition: { duration: 0.4 }
-      }}
-      whileTap={{ scale: 0.9 }}
-      onClick={() => setChatVisible(prev => !prev)}
-      aria-label="Toggle Chat AI"
-      title="Toggle Chat AI"
-    >
-      <Bot size={24} className="mr-2" />
-      <motion.span
-        className="whitespace-nowrap your-custom-text-glow-class" // Add a custom class for styling
-        initial={{ opacity: 0, width: 0 }}
-        whileHover={{
-          opacity: 1,
-          width: "auto",
-          textShadow: '0 0 8px rgba(255, 255, 255, 0.8)', // Subtle text glow on hover
+{isQuestionBank && (
+          <motion.button
+            
+        className="absolute top-7 right-4 z-50 bg-indigo-700 rounded-full p-3 text-white flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 ease-in-out"
+        style={{
+          boxShadow: '0 0 8px rgba(0, 191, 255, 0.6)',
         }}
-        transition={{ duration: 0.4 }}
+        animate={{
+          width: chatVisible ? "160px" : "60px",
+          borderRadius: chatVisible ? "2rem" : "9999px",
+        }}
+        transition={{ duration: 0.3 }}
+        onClick={() => setChatVisible(prev => !prev)}
+        aria-label="Toggle Chat AI"
+        title="Toggle Chat AI"
       >
-        TestNest AI
-      </motion.span>
-    </motion.button>
+            <motion.img
+          src={chatIcon}
+          alt="Chat Icon"
+          className="h-24 w-24 object-contain mx-auto"
+          animate={{
+            width: chatVisible ? "70px" : "50px",
+            height: chatVisible ? "40px" : "50px",
+            // marginRight: chatVisible ? "0.5rem" : "0.5rem",
+          }}
+              transition={{ duration: 0.3 }}
+              
+        />
+        <motion.span
+          className="whitespace-nowrap text-sm font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: chatVisible ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          TestNest AI
+        </motion.span>
+      </motion.button>
+)}
+
 
 
         <div className="max-h-[100vh] flex flex-col lg:flex-row w-full">
@@ -136,6 +135,7 @@ const Dashboard = () => {
             <Outlet />
           </div>
 
+         {chatVisible && isQuestionBank && <ChatAi/>}
    
         </div>
       </div>

@@ -6,6 +6,7 @@ import { Calendar, Clock, FileText, Users } from "lucide-react"
 import { Link } from "react-router-dom"
 import { load_my_assesment } from "../../action/Auth"
 import { useDispatch } from "react-redux"
+import NoDataAvailable from "../../components/NoDataAvailable"
 // Sample assignment data
 // const assignments = [
 //   {
@@ -203,20 +204,22 @@ console.log(assignments)
   return (
     <>
       {/* if Examinees */}
-      {isExaminee  && <>
-        <div className="min-h-screen bg-gray-50 flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full ">
-          {assignments.map((items, index) => (
+      {isExaminee && <>
+        
+        <div className="min-h-screen bg-bg-light flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full ">
+          {assignments.length > 0 ? <>
+              {assignments?.map((items, index) => (
              <div className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl  transition-shadow duration-300 overflow-hidden" key={items.id}>
         {/* Card Header */}
-        <div className="bg-gradient-to-r from-btn-primary to-accent-teal-light text-white p-6 rounded-t-lg h-32">
-          <div className="flex justify-between items-start">
-                  <h2 className="text-xl font-bold">{items.title}
+        <div className="bg-gradient-to-r from-btn-primary to-accent-teal-light text-white p-6 rounded-t-lg h-32" aria-label="Assessment Card header">
+          <div className="flex justify-between items-start" aria-label="Assessment Title">
+                  <h2 className="text-xl font-bold" aria-label={items.title}>{items.title}
                   </h2>
             <span className="hidden md:block px-2 py-1 text-xs font-semibold rounded-full bg-white/20 text-white border border-white/30">
               Assessment
             </span>
           </div>
-          <p className="text-blue-100 mt-2 text-sm">
+          <p className="text-blue-100 mt-2 text-sm" aria-label={`discription for ${items.title} says ${items.description}`}>
            {items.description.slice(0,50)}...
           </p>
         </div>
@@ -229,8 +232,8 @@ console.log(assignments)
                 <Clock className="h-5 w-5 text-blue-700" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Duration</p>
-                <p className="font-medium">40 minutes</p>
+                <p className="text-sm text-gray-500" aria-label="Duration ">Duration</p>
+                <p className="font-medium" >40 minutes</p>
               </div>
             </div>
 
@@ -283,6 +286,8 @@ console.log(assignments)
         </div>
       </div>
           ))}
+          </>: <NoDataAvailable message="Assessment is not Availble" emoji="🙅"/>}
+        
      
         </div>
         

@@ -27,6 +27,9 @@ import QuestionCategories from "./features/questionBank/QuestionCategories";
 import InvitePeople from "./features/assesments/Invitation";
 import ScreenReaderComponent from "./features/assesments/CheckVoice";
 import ManageRepository from "./features/questionBank/ManageRepository";
+import ProtectedRoutes from "./utils/ProtectedRoute";
+import PageNotFound from "./components/PageNotFound";
+import ChatInterface from "./features/ai/ChatInterface";
 // import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -43,7 +46,7 @@ function App() {
         </Route>
 
         {/* Protected Routes */}
-        {/* <Route element={<ProtectedRoute />}> */}
+        <Route element={<ProtectedRoutes />}>
           <Route element={<Dashboard />}>
             <Route path="/create-assessment" element={<CreateAssessment />} />
             <Route path="/take-assessment" element={<TakeAssessment />} />
@@ -60,15 +63,20 @@ function App() {
           <Route path="/categories" element={<QuestionCategories/>}/>
           <Route path="/invitiation/:assessmentId/:name" element={<InvitePeople />} />
           <Route path="/checkvoice" element={<ScreenReaderComponent />} />
-          <Route path="/my-question-repository/:categoryName/:categoryId" element={<ManageRepository />} />
+            <Route path="/my-question-repository/:categoryName/:categoryId" element={<ManageRepository />} />
+            <Route path="/ai" element={<ChatInterface />} />
+
+        {/* <Route path="*" element={<NoInternetPage />} /> */}
+            
+          <Route path="/*" element={<PageNotFound />} />
 
 
           
           </Route>
-        {/* </Route> */}
+        </Route>
 
         {/* Fallback route for 404 / no internet */}
-        <Route path="*" element={<NoInternetPage />} />
+
       </Routes>
 
       <ToastContainer
