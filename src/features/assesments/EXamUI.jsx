@@ -500,7 +500,7 @@ useEffect(() => {
       setCurrentSection(nextSection);
       setCurrentQuestion(0);
       return (
-        <div className="container mx-auto max-w-4xl py-8 px-4 flex justify-center items-center">
+        <div className="container mx-auto max-w-4xl py-8 px-4 flex justify-center items-center" aria-label='Loading Exam please wait'>
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
             <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
           </div>
@@ -536,26 +536,26 @@ useEffect(() => {
       <div className="container mx-auto max-w-4xl py-8 px-4">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
-            <h2 className="text-2xl font-bold text-center mb-6">Exam Completed</h2>
+            <h2 className="text-2xl font-bold text-center mb-6" aria-label="Exam Completed">Exam Completed</h2>
             <div className="space-y-6">
               <div className="text-center">
-                <p className="text-lg mb-4">Thank you for completing the {examData.title} exam!</p>
+                <p className="text-lg mb-4" aria-label={examData.title}>Thank you for completing the {examData.title} exam!</p>
                 <p>Your answers have been submitted successfully.</p>
               </div>
 
               <div className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">Exam Summary</h3>
+                <h3 className="font-semibold mb-2" aria-label='Exam Summary'>Exam Summary</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>Total Questions:</div>
-                  <div>{totalQuestions}</div>
-                  <div>Questions Answered:</div>
-                  <div>{Object.keys(answers).length}</div>
-                    <div className='flex gap-3 items-center p-2 '><SpellCheck/> correct Answers:</div>
-                  <div>{responses.rightanswer}</div>
-                   <div className='flex gap-3 items-center p-2 '><SkipForward/> Skipped Questions:</div>
-                  <div>{responses.skipped}</div>
-                   <div className='flex gap-3 items-center p-2 '><ShieldX/>  Wrong Answers:</div>
-                  <div>{responses.wronganswer}</div>
+                  <div aria-label="Total Questions">Total Questions:</div>
+                  <div aria-label={totalQuestions}>{totalQuestions}</div>
+                  <div aria-label="You answered ">Questions Answered:</div>
+                  <div aria-label={Object.keys(answers).length}>{Object.keys(answers).length}</div>
+                    <div className='flex gap-3 items-center p-2 ' aria-label='Correct answers'><SpellCheck/> correct Answers:</div>
+                  <div aria-label={responses.rightanswer}>{responses.rightanswer}</div>
+                   <div className='flex gap-3 items-center p-2 'aria-label="you skipped"><SkipForward/> Skipped Questions:</div>
+                  <div aria-label={responses.skipped}>{responses.skipped}</div>
+                   <div  aria-label="wroong answers"className='flex gap-3 items-center p-2 '><ShieldX/>  Wrong Answers:</div>
+                  <div aria-label={responses.wronganswer}>{responses.wronganswer}</div>
                   <div className='flex gap-3 items-center p-2 '><Timer/>Time Taken:</div>
                   <div>{examData.settings.duration * 60 - timeRemaining} seconds</div>
                 </div>
@@ -593,8 +593,8 @@ useEffect(() => {
         <div className="p-4 border-b">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold">{examData.title}</h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <h2 className="text-xl md:text-2xl font-bold" aril-label={examData.title }>{examData.title}</h2>
+              <p className="text-sm text-gray-600 mt-1" aria-label={` Section ${currentSection + 1} of ${examData.sections.length}: ${currentSectionData.title}`}>
                 Section {currentSection + 1} of {examData.sections.length}: {currentSectionData.title}
               </p>
             </div>
@@ -610,7 +610,7 @@ useEffect(() => {
         {/* Content */}
         <div className="p-6">
           <div className="mb-6">
-            <div className="flex justify-between text-sm mb-2">
+            <div className="flex justify-between text-sm mb-2" aria-label={`you answered ${calculateOverallQuestionNumber} from ${totalQuestions}`}>
               <span>Progress</span>
               <span>
                 {calculateOverallQuestionNumber()} of {totalQuestions}
@@ -625,7 +625,7 @@ useEffect(() => {
           </div>
 
           <div className="space-y-6">
-            <div className="text-lg font-medium">
+            <div className="text-lg font-medium" aria-label={`Question ${currentQuestionData.questionData.questionText}`}>
               Question {currentQuestion + 1}: {currentQuestionData.questionData.questionText}
             </div>
 
@@ -648,7 +648,7 @@ useEffect(() => {
                         checked={answers[currentQuestionData.id]?.[0] === option}
                         onChange={() => {}}
                       />
-                      <span className="ml-3 text-gray-700 capitalize">{option}</span>
+                      <span className="ml-3 text-gray-700 capitalize" aria-label={option}>{option}</span>
                     </label>
                   </div>
                 ))}
@@ -657,7 +657,7 @@ useEffect(() => {
               // Multiple choice question
               <div>
                 {currentQuestionData.questionData.answers?.length > 1 && (
-                  <div className="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
+                  <div className="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert" aria-label="This question allows multiple selections. Choose all that apply.">
                     <AlertCircle className="h-4 w-4 mr-2" />
                     <span>This question allows multiple selections. Choose all that apply.</span>
                   </div>
@@ -678,7 +678,7 @@ useEffect(() => {
                         )
                       }
                     >
-                      <label className="flex items-center cursor-pointer w-full">
+                      <label className="flex items-center cursor-pointer w-full" aria-label={"checkBox for option"}>
                         {currentQuestionData.questionData.answers?.length > 1 ? (
                           <input
                             type="checkbox"
@@ -695,7 +695,7 @@ useEffect(() => {
                             onChange={() => {}}
                           />
                         )}
-                        <span className="ml-3 text-gray-700">{option.answerText}</span>
+                        <span className="ml-3 text-gray-700" aria-label={option.answrText}>{option.answerText}</span>
                       </label>
                     </div>
                   ))}
@@ -713,6 +713,7 @@ useEffect(() => {
               : ""}
           </div>
           <button
+            aria-label={ isLastQuestion() ? "Submit Exam" : "Next Question"}
             className={`px-4 py-2 rounded transition-colors ${
               answers[currentQuestionData.id]?.length
                 ? isSubmitting

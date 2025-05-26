@@ -170,9 +170,9 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
   
    
   return (
-      <div className="mt-4 text-sm h-[100vh] overflow-y-auto scrollbar-hide font-display">
+      <div className="mt-4 text-sm h-[100vh] overflow-y-auto scrollbar-hide font-display" aria-label="Side Bar with Menus">
           {menuItems.map((item) => (
-              <div className="flex flex-col gap-2" key={item.title}>
+              <div className="flex flex-col gap-2" key={item.title} aria-label={item.title}>
                   <span className="hidden lg:block text-gray-200 font-light my-4">
                      {item.title}
                   </span>
@@ -185,7 +185,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
                             onClick={subItems.label === "Logout" ? handlelogout : null}
                             className={`flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2 rounded-md w-full   hover:bg-accent ${
                               location.pathname === subItems.href ? "bg-accent" : ""
-                            }`}
+                                }`}
+                              aria-label={`${subItems.label}`}
                           >
                             <span>{subItems.icon}</span>
                             <span className="hidden lg:block p-1">{subItems.label}</span>

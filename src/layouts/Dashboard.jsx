@@ -6,7 +6,6 @@ import { Bot, LogOut, PlusCircle, Settings, User } from "lucide-react";
 import Menus from "../components/Menu";
 import { Outlet, useLocation } from "react-router-dom";
 import useAuthCheck from "../hooks/useAuthCheck";
-import ChatAi from "../features/ai/Chat";
 import { motion, AnimatePresence } from "framer-motion";
 import chatIcon  from "../assets/chatAi.png"
 const Dashboard = () => {
@@ -88,44 +87,6 @@ const isQuestionBank = location.pathname === "/question-bank";
     </AnimatePresence>
 
         {/* Toggle Chat Button */}
-{isQuestionBank && (
-          <motion.button
-            
-        className="absolute top-7 right-4 z-50 bg-indigo-700 rounded-full p-3 text-white flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 ease-in-out"
-        style={{
-          boxShadow: '0 0 8px rgba(0, 191, 255, 0.6)',
-        }}
-        animate={{
-          width: chatVisible ? "160px" : "60px",
-          borderRadius: chatVisible ? "2rem" : "9999px",
-        }}
-        transition={{ duration: 0.3 }}
-        onClick={() => setChatVisible(prev => !prev)}
-        aria-label="Toggle Chat AI"
-        title="Toggle Chat AI"
-      >
-            <motion.img
-          src={chatIcon}
-          alt="Chat Icon"
-          className="h-24 w-24 object-contain mx-auto"
-          animate={{
-            width: chatVisible ? "70px" : "50px",
-            height: chatVisible ? "40px" : "50px",
-            // marginRight: chatVisible ? "0.5rem" : "0.5rem",
-          }}
-              transition={{ duration: 0.3 }}
-              
-        />
-        <motion.span
-          className="whitespace-nowrap text-sm font-medium"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: chatVisible ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          TestNest AI
-        </motion.span>
-      </motion.button>
-)}
 
 
 
@@ -135,7 +96,6 @@ const isQuestionBank = location.pathname === "/question-bank";
             <Outlet />
           </div>
 
-         {chatVisible && isQuestionBank && <ChatAi/>}
    
         </div>
       </div>
