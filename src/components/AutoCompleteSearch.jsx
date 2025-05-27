@@ -4,8 +4,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import { load_my_categories, load_my_question_Bank_by_CategoryId } from '../action/Auth';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
-export default function CategoryRepoAutocomplete({onRepoSelect,currentType}) {
+export default function CategoryRepoAutocomplete({ onRepoSelect, currentType }) {
+  const QuestionType= useParams().QuestionType
   const [categories, setCategories] = React.useState([]);
   const [repos, setRepos] = React.useState([]);
   const [selectedCategory, setSelectedCategory] = React.useState(null);
@@ -16,8 +18,8 @@ export default function CategoryRepoAutocomplete({onRepoSelect,currentType}) {
   const dispatch = useDispatch();
     const res = useSelector((state) => state.bankreducer.BankCategory.body);
     const repo = useSelector((state) => state.bankreducer.BankRepositoryByID.body);
-    
-console.log(repo)
+    currentType= QuestionType
+console.log(QuestionType)
   // Set categories once fetched from Redux store
   React.useEffect(() => {
     if (res) {

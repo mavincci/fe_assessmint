@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import QuestionAccordion from '../../components/QuestionAccordion'
 import { testquestions } from '../../lib/data'
-import { ClipboardList, Delete, Eye, FileType, HelpCircle, Lightbulb, Plus, PlusCircle, Save, Settings, X } from 'lucide-react'
+import { ClipboardList, Delete, Eye, FileType, HelpCircle, Lightbulb, PiggyBank, Plus, PlusCircle, Save, Settings, X } from 'lucide-react'
 import Button  from '../../components/Button'
 import QuestionPreview from '../../components/QuestionPreview'
 import QuestionModal from '../../components/QuestionModal'
@@ -10,7 +10,7 @@ import MultipleChoiceBuilder from '../questionTypes/MCQquestions'
 import TrueFalseBuilder from '../questionTypes/TFquestions'
 import ShortAnswerBuilder from '../questionTypes/ShortAnswer'
 import { createquestion, createSection, load_my_assesment, load_my_assesment_setting, load_my_questions, load_my_section, load_question_type } from '../../action/Auth'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import Step from '../../components/Step'
 import { createAssessment } from '../../action/Auth'
@@ -249,11 +249,14 @@ useLoadAssessment()
               {state.selectedQuestionType != null ? <> <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>{
                     Dispatch({ type: "isMCQOpen", payload:true });
 
-              }} />  <Button icon={<X />} label="Cancel" text="gray-200" bg="black"   /></>: ""}
+            }} />  <Button icon={<X />} label="Cancel" text="gray-200" bg="black" />
+              <Link to={`/add-from-bank/${state.selectedQuestionType}`}>
+                <Button icon={<PiggyBank />} label="Add From Bank" text="white" bg="bg-primary"  /> 
+              
+              </Link>
+            </> : ""}
              
-            <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={() => {
-                Dispatch({ type: "isMCQOpen", payload:true });
-              }} /> 
+        
           </div>
         <QuestionPreview questions={fetchedQuestions}/>
         </div>

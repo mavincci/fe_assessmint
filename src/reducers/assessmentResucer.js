@@ -15,6 +15,8 @@ import {
   LOAD_ASSESSMENT_BY_ID_FAIL,
   LOAD_ASSESSMENT_SETTING_SUCCESS,
   LOAD_ASSESSMENT_SETTING_FAIL,
+  PUBLISH_ASSESSMENT_SUCCESS,
+  PUBLISH_ASSESSMENT_FAIL,
 } from "../action/Types";
 
 const initialState = {
@@ -48,6 +50,18 @@ export default function assessment(state = initialState, action) {
         AssessmnetByID: payload,
         loading: false,
       };
+    
+    case PUBLISH_ASSESSMENT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+      };
+    case PUBLISH_ASSESSMENT_FAIL:
+      return {
+        ...state,
+        loading: false,
+        
+        };
      case LOAD_ASSESSMENT_BY_ID_FAIL:
       return {
         ...state,

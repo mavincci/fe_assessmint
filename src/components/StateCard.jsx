@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Calendar } from './Icons'
 
-const StateCard = ({ title, value, subtitle, Icon, color = 'primary', delay = 0 }) => {
+const StateCard = ({ title, value, subtitle, Icon, color = 'primary', delay = 0, bg }) => {
   const [isVisible, setIsVisible] = useState(false)
   
   useEffect(() => {
@@ -27,7 +27,7 @@ const StateCard = ({ title, value, subtitle, Icon, color = 'primary', delay = 0 
 
   return (
     <div 
-      className={`flex flex-row justify-between  items-center p-2 py-4 rounded-3xl bg-gradient-to-r animate-fade-in from-bg-secondary-light to-[#648F9A] opacity-0 ${isVisible ? 'opacity-100' : ''}`} 
+      className={`flex flex-row justify-between  items-center p-2 py-4 rounded-3xl ${bg ? bg : "bg-gradient-to-r animate-fade-in from-bg-secondary-light to-[#648F9A]" }  opacity-0 ${isVisible ? 'opacity-100' : ''}`} 
       style={{ 
         animationDelay: `${delay}ms`,
         transitionDelay: `${delay}ms`
@@ -39,7 +39,7 @@ const StateCard = ({ title, value, subtitle, Icon, color = 'primary', delay = 0 
         {subtitle && <div className="text-xs  dark:text-gray-400">{subtitle}</div>}
       </div>
       <div className={`p-3 rounded-full ${getColorClass()}`}>
-        {Icon ? <Icon className="w-5 h-5 text-white" /> : <Calendar className="w-5 h-5 text-white" />}
+        {Icon ? <Icon className="w-5 h-5 text-white" /> :  Icon ? Icon: <Calendar className="w-5 h-5 text-white" />}
       </div>
     </div>
   )

@@ -36,9 +36,10 @@ const ProtectedRoutes = () => {
   }
 
   // Optional role-based redirect
-  // if (user?.roles?.includes("EXAMINEE")) {
-  //   return <Navigate to="/manage-assessment" replace />;
+// if (user?.roles?.includes("EXAMINEE")) {
+//   return <Navigate to="/manage-assessment" replace />;
   // }
+  
 
   return <Outlet />;
 };

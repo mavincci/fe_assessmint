@@ -15,6 +15,8 @@ import {
   LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_FAIL,
   LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_SUCCESS,
   LOAD_BANK_REPOSITORY_SUCCESS,
+  LOAD_INVITED_BY_ASSESSMENT_ID_FAIL,
+  LOAD_INVITED_BY_ASSESSMENT_ID_SUCCESS,
   LOAD_INVITED_CANDIDATES_FAIL,
   LOAD_INVITED_CANDIDATES_SUCCESS,
   LOAD_QUESTION_FAIL,
@@ -26,6 +28,8 @@ import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
+  PUBLISH_ASSESSMENT_FAIL,
+  PUBLISH_ASSESSMENT_SUCCESS,
   QUESTION_TYPE_FAIL,
   QUESTION_TYPE_SUCCESS,
   SIGNUP_FAIL,
@@ -530,6 +534,79 @@ export const createAssessment = (title, description) => async (dispatch) => {
     });
   }
 };
+// publish assessment
+export const PublishAssessment = (assessmentID) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access")}`,
+      Accept: "application/json",
+    },
+  };
+
+  try {
+    console.log("Here in Publish auth", assessmentID)
+    const res = await axios.post(
+      `${API_BASE_URL}/assessments/publish/${assessmentID}`,{},
+      config
+    );
+    if (res.status === 201) {
+      toast.success(
+        "✅ Successfully Published your Assessment! Your item is now live.",
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+        }
+      );
+   
+    }
+    dispatch({
+      type: PUBLISH_ASSESSMENT_SUCCESS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log("Error in Publish Assessment", assessmentID)
+    console.log(err);
+    {
+      err.response && err.response.status === 409
+        ? toast.error("Already Published", {
+            position: "bottom-left",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+            style: { width: "400px" },
+          })
+        : toast.error("somthing Error please try Again", {
+            position: "bottom-left",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+            style: { width: "400px" },
+          });
+    }
+    dispatch({
+      type: PUBLISH_ASSESSMENT_FAIL,
+      payload:err
+    });
+  }
+};
 // Ai
 export const Sendrequest =
   (topic, numberOfQuestions = 10) =>
@@ -789,7 +866,104 @@ export const createquestion =
         type: ADD_ASSESSMENT_FAIL,
       });
     }
-  };
+    };
+  
+// Add question From Bank
+export const Add_question_from_bank =
+  (questionType, sectionId, questionText, options, answers) =>
+  async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+    console.log("options", options);
+    console.log("answers", answers);
+    const bodyData = {
+      questionType,
+      sectionId,
+      questionText,
+    };
+
+    if (questionType === "TRUE_OR_FALSE") {
+      bodyData.answer = answers;
+    } else {
+      bodyData.answers = answers;
+    }
+
+    if (options) {
+      bodyData.options = options;
+    }
+
+    const body = JSON.stringify(bodyData);
+    console.log("here inauth", bodyData, body);
+    try {
+      console.log("section body", body);
+      const res = await axios.post(
+        `${API_BASE_URL}/assessments/add_question`,
+        body,
+        config
+      );
+      console.log("Message", res.data.message);
+      if (
+        res.status === 201 ||
+        res.status === 200 ||
+        res.data.message == "ASSESSMENT_QUESTION_ADD_SUCCESS"
+      ) {
+        toast.success(`✅ Successfully created your your question !`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+        });
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+      {
+        err.response || err.response.status === 409
+          ? toast.error("Error with Adding Question", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : toast.error("somthing Error please try Again", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            });
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_FAIL,
+      });
+    }
+  };    
+
 // create settings for assessment
 export const CreateSetting_for_assessment =
   (assessmentId, startDateTime, endDateTIme, duration, maxAttempts, isPublic) =>
@@ -1599,7 +1773,39 @@ export const create_send_invitation =
       });
     }
   };
+// Get invited by assessment Id
 
+export const load_my_inivitation =
+  (categoryId) => async (dispatch) => {
+    if (localStorage.getItem("access")) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+          Accept: "application/json",
+        },
+      };
+
+      try {
+        const res = await axios.get(
+          `${API_BASE_URL}/assessments/invitations/mine`,
+          config
+        );
+        dispatch({
+          type: LOAD_INVITED_BY_ASSESSMENT_ID_SUCCESS,
+          payload: res.data,
+        });
+        return res.data;
+      } catch (err) {
+        console.log(err);
+        dispatch({ type: LOAD_INVITED_BY_ASSESSMENT_ID_FAIL });
+        return null;
+      }
+    } else {
+      dispatch({ type: LOAD_INVITED_BY_ASSESSMENT_ID_FAIL });
+      return null;
+    }
+  };
 export const load_invited_candidates_by_assessment_ID =
   (assessmentId) => async (dispatch) => {
     const config = {

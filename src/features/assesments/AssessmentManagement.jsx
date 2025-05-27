@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { Search, MoreHorizontal, ChevronLeft, ChevronRight, PlusCircle} from "lucide-react"
 import { Calendar, Clock, FileText, Users } from "lucide-react"
 import { Link } from "react-router-dom"
-import { load_my_assesment } from "../../action/Auth"
-import { useDispatch } from "react-redux"
+import {  load_my_assesment, load_my_inivitation, PublishAssessment } from "../../action/Auth"
+import { connect, useDispatch } from "react-redux"
 import NoDataAvailable from "../../components/NoDataAvailable"
 // Sample assignment data
 // const assignments = [
@@ -111,7 +111,7 @@ import NoDataAvailable from "../../components/NoDataAvailable"
 //   },
 // ]
 
-export default function AssessmentManagement() {
+const AssessmentManagement =({PublishAssessment})=> {
   const user = JSON.parse(localStorage.getItem("user"))
 
 
@@ -121,7 +121,9 @@ export default function AssessmentManagement() {
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState("Assessments")
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [assignments, setAssessmentData] =useState([])
+  const [ispublishing, setispublishing] = useState(false)
+  const [assignments, setAssessmentData] = useState([])
+  
   const itemsPerPage = 10
 
   // Filter assignments based on search query and filters
@@ -134,6 +136,8 @@ export default function AssessmentManagement() {
 
     return matchesSearch && matchesType && matchesStatus
   })
+
+
 console.log(assignments)
   // Calculate pagination
   const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage)
@@ -161,6 +165,18 @@ console.log(assignments)
 
     return pages
   }
+  const handlePublishassessment = (assessmentID) => {
+    setispublishing(true)
+    // console.log(assessmentID)
+    if (assessmentID) {
+
+      console.log(assessmentID)
+    PublishAssessment(assessmentID)
+    } else {
+      alert("Please select an assessment to publish")
+    }
+    setispublishing(false)
+  }
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -185,11 +201,22 @@ console.log(assignments)
   console.log(res.body)
         } 
     };
-
+const fetchExamineeAssessment = async () => {
+        const res = await dispatch(load_my_inivitation()); 
+        if (res?.body) {
+          setAssessmentData(res.body);
+          console.log(res.body)
+        }
+        
+      }
    
     if (isExaminer) {
    
       fetchAssessment()
+    }
+
+    if (isExaminee) {
+      fetchExamineeAssessment()
     }
   }, [])
  
@@ -298,7 +325,7 @@ console.log(assignments)
 {isExaminer &&  <div className="w-full bg-bg-light rounded-lg p-6 h-full">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className="text-2xl font-bold">Assignment Management</h1>
+          <h1 className="text-2xl font-bold">Assessment Management</h1>
           <p className="text-base-content/70">Create and manage assessments and question banks</p>
         </div>
         <Link to="/create-assessment" className="btn bg-bg-secondary-light text-white" onClick={() => setIsModalOpen(true)}>
@@ -386,7 +413,7 @@ console.log(assignments)
                   {/* <td>
                     <span className={getStatusBadgeClass(assignment.status)}>{assignment.status || "-"}</span>
                   </td> */}
-                  <td>{assignment.settings.isPublic == true ? "Public" : "Private"}</td>
+                  <td >{assignment.settings.isPublic == true ? "Public" : "Private"}</td>
 
                   <td>{ new Date(assignment.createdAt ).toLocaleString('en-US', {
     year: 'numeric',
@@ -396,7 +423,7 @@ console.log(assignments)
     minute: '2-digit',
     hour12: true,
   })|| "-"}</td>
-                  <td>{assignment.isPublished  ? <button className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800" onClick={handlePublished}>published</button> : <button className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800" onClick={handleunPublished}>Unpublished</button> 
+                  <td onClick={() => handlePublishassessment(assignment.id)}>{assignment.isPublished ? <button className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800" onClick={handlePublished}>{ ispublishing ? "Publishing" :"published"}</button> : <button className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800" onClick={handleunPublished}>Unpublished</button> 
  || "-"}</td>
                   <td ><Link className="outline outline-accent-teal-light text-center p-2 rounded-xl w-fit font-semibold hover:bg-accent-teal-light hover:text-white" to={`/invitiation/${assignment.id}/${assignment.title}`} >
                     Invite Cand.
@@ -588,3 +615,7 @@ console.log(assignments)
     </>
   )
 }
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, {PublishAssessment})(AssessmentManagement)

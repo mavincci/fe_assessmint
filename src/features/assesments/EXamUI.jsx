@@ -5,102 +5,7 @@ import { load_my_assesment_by_Id ,Create_do_answer, Create_start_assessment, Cre
 import { connect, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
-// Mock function to simulate the Redux dispatch and API call
-// const mockLoadAssessment = async (id) => {
-//   // Simulate API delay
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-//   // Return mock data
-//   return {
-//     id: "3e575686-19dc-44d3-9a67-1427d31784a1",
-//     title: "Frontend Development",
-//     description: "Test your proficiency in building dynamic and responsive user interfaces using HTML, CSS, JavaScript, and React.js.",
-//     isPublished: true,
-//     sections: [
-//       {
-//         id: "659e4117-3fe9-4720-8ef3-0e8d47060da9",
-//         title: "Basic Concepts",
-//         description: "Testing knowledge of fundamental programming concepts",
-//         questionType: "TRUE_OR_FALSE",
-//         questions: [
-//           {
-//             id: "0e6f283c-ab20-4a8e-acbe-d62e1dba8531",
-//             questionData: {
-//               questionText: "A stack follows the Last-In-First-Out (LIFO) principle.",
-//               answer: true,
-//             },
-//           },
-//         ],
-//       },
-//       {
-//         id: "28550717-90d1-4cb0-828f-d7b0b2fcd41c",
-//         title: "Framework Knowledge",
-//         description: "Testing knowledge of popular frameworks and libraries",
-//         questionType: "MULTIPLE_CHOICE",
-//         questions: [
-//           {
-//             id: "mcq-question-1",
-//             questionData: {
-//               questionText: "Which of the following are JavaScript frameworks or libraries?",
-//               options: [
-//                 { id: "opt1", answerText: "React" },
-//                 { id: "opt2", answerText: "Angular" },
-//                 { id: "opt3", answerText: "Python" },
-//                 { id: "opt4", answerText: "Vue" },
-//               ],
-//               answer: ["opt1", "opt2", "opt4"],
-//               isMultiSelect: true,
-//             },
-//           },
-//           {
-//             id: "mcq-question-2",
-//             questionData: {
-//               questionText: "Which CSS property is used to create a flexible box layout?",
-//               options: [
-//                 { id: "opt1", answerText: "display: flex" },
-//                 { id: "opt2", answerText: "display: grid" },
-//                 { id: "opt3", answerText: "position: absolute" },
-//                 { id: "opt4", answerText: "float: left" },
-//               ],
-//               answer: ["opt1"],
-//               isMultiSelect: false,
-//             },
-//           },
-//         ],
-//       },
-//     ],
-//     settings: {
-//       duration: 40,
-//       maxAttempts: 2,
-//       isPublic: true,
-//       startDateTime: "2025-05-11T02:42:00",
-//       endDateTime: "2025-05-12T10:35:00",
-//     },
-//   };
-// };
 
-// Mock API function to submit answers
-const submitAnswer = async (examId, questionId,sectionID,currentSectionTYPE, answer) => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  
-  console.log('Submitting answer:', {
-    examId,
-      questionId,
-      sectionID,
-    currentSectionTYPE,
-    answer
-  });
-  
-    // Simulate API response
-     await new Promise((resolve) => setTimeout(resolve, 1500));
-    // Create_do_answer(examId, sectionID, questionId, currentSectionTYPE, answer)
-    console.log("SENT")
-  return {
-    success: true,
-    message: 'Answer submitted successfully'
-  };
-};
 
 function ExamPage({ Create_do_answer,assessmentId,Create_start_assessment,Create_finish_attempt,isStartAssessment }) {
   // const assessmentId = useParams()
@@ -625,83 +530,129 @@ useEffect(() => {
           </div>
 
           <div className="space-y-6">
-            <div className="text-lg font-medium" aria-label={`Question ${currentQuestionData.questionData.questionText}`}>
+            {/* <div className="text-lg font-medium" aria-label={`Question ${currentQuestionData.questionData.questionText}`}>
               Question {currentQuestion + 1}: {currentQuestionData.questionData.questionText}
-            </div>
+            </div> */}
 
-            {currentSectionData.questionType === "TRUE_OR_FALSE" ? (
-              // True/False question
-              <div className="space-y-3">
-                {["true", "false"].map((option) => (
-                  <div
-                    key={option}
-                    className={`flex items-center border p-3 rounded-md hover:bg-gray-50 cursor-pointer transition-colors ${
-                      answers[currentQuestionData.id]?.[0] === option ? "border-accent-teal-light bg-blue-50" : "border-gray-200"
-                    }`}
-                    onClick={() => handleAnswerSelect(currentQuestionData.id, option, false)}
-                  >
-                    <label className="flex items-center cursor-pointer w-full">
-                      <input
-                        type="radio"
-                        name={`question-${currentQuestionData.id}`}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        checked={answers[currentQuestionData.id]?.[0] === option}
-                        onChange={() => {}}
-                      />
-                      <span className="ml-3 text-gray-700 capitalize" aria-label={option}>{option}</span>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              // Multiple choice question
-              <div>
-                {currentQuestionData.questionData.answers?.length > 1 && (
-                  <div className="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert" aria-label="This question allows multiple selections. Choose all that apply.">
-                    <AlertCircle className="h-4 w-4 mr-2" />
-                    <span>This question allows multiple selections. Choose all that apply.</span>
-                  </div>
+   <fieldset className="space-y-4" aria-labelledby={`question-${currentQuestionData.id}`}>
+              <legend
+          tabIndex={1}
+                
+                id={`question-${currentQuestionData.id}`} className="text-lg font-semibold text-gray-800 mb-2">
+   Question {currentQuestion + 1}:  {currentQuestionData.questionData.questionText}
+  </legend>
+
+  {currentSectionData.questionType === "TRUE_OR_FALSE" ? (
+    ["true", "false"].map((option) => {
+      const isSelected = answers[currentQuestionData.id]?.[0] === option;
+      return (
+        <div
+          key={option}
+          role="radio"
+          aria-checked={isSelected}
+          tabIndex={1}
+          className={`flex items-center border p-3 rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-teal-light ${
+            isSelected ? "border-accent-teal-light bg-blue-50" : "border-gray-200"
+          }`}
+          onClick={() => handleAnswerSelect(currentQuestionData.id, option, false)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleAnswerSelect(currentQuestionData.id, option, false);
+            }
+          }}
+        >
+          <input
+            type="radio"
+          tabIndex={1}
+            
+            name={`question-${currentQuestionData.id}`}
+            className="checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+            checked={isSelected}
+            onChange={() => {}}
+            aria-label={option}
+          />
+          <span className="ml-3 text-gray-700 capitalize" id={`label-${currentQuestionData.id}-${option}`}>
+            {option}
+          </span>
+        </div>
+      );
+    })
+  ) : (
+    <>
+      {currentQuestionData.questionData.answers?.length > 1 && (
+        <div
+          id={`multi-select-hint-${currentQuestionData.id}`}
+          className="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50"
+          role="alert"
+        >
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <span>This question allows multiple selections. Choose all that apply.</span>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {currentQuestionData.questionData.options?.map((option) => {
+          const isSelected = answers[currentQuestionData.id]?.includes(option.id);
+          const allowsMultiple = currentQuestionData.questionData.answers?.length > 1;
+          return (
+            <div
+              key={option.id}
+          tabIndex={1}
+
+              role={allowsMultiple ? "checkbox" : "radio"}
+              aria-checked={isSelected}
+              aria-labelledby={`label-${currentQuestionData.id}-${option.id}`}
+              // tabIndex={0}
+              className={`flex items-center border p-3 rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-teal-light ${
+                isSelected ? "border-accent-teal-light bg-blue-50" : "border-gray-200"
+              }`}
+              onClick={() =>
+                handleAnswerSelect(
+                  currentQuestionData.id,
+                  option.id,
+                  allowsMultiple
+                )
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleAnswerSelect(
+                    currentQuestionData.id,
+                    option.id,
+                    allowsMultiple
+                  );
+                }
+              }}
+            >
+              <label className="flex items-center cursor-pointer w-full" id={`label-${currentQuestionData.id}-${option.id}`}>
+                {allowsMultiple ? (
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-accent-teal-light bg-gray-100 border-gray-300 rounded focus:ring-accent-teal-dark"
+                    checked={isSelected || false}
+                    onChange={() => {}}
+                    aria-describedby={`multi-select-hint-${currentQuestionData.id}`}
+                  />
+                ) : (
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestionData.id}`}
+                    className="w-4 h-4 text-accent-teal-light bg-gray-100 border-gray-300 focus:ring-accent-teal-dark"
+                    checked={answers[currentQuestionData.id]?.[0] === option.id}
+                    onChange={() => {}}
+                  />
                 )}
+                <span className="ml-3 text-gray-700">{option.answerText}</span>
+              </label>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  )}
+</fieldset>
 
-                <div className="space-y-3">
-                  {currentQuestionData.questionData.options?.map((option) => (
-                    <div
-                      key={option.id}
-                      className={`flex items-center border p-3 rounded-md hover:bg-gray-50 cursor-pointer transition-colors ${
-                        answers[currentQuestionData.id]?.includes(option.id) ? "border-accent-teal-light bg-blue-50" : "border-gray-200"
-                      }`}
-                      onClick={() =>
-                        handleAnswerSelect(
-                          currentQuestionData.id,
-                          option.id,
-                          currentQuestionData.questionData.answers?.length > 1
-                        )
-                      }
-                    >
-                      <label className="flex items-center cursor-pointer w-full" aria-label={"checkBox for option"}>
-                        {currentQuestionData.questionData.answers?.length > 1 ? (
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4 text-accent-teal-light bg-gray-100 border-gray-300 rounded focus:ring-accent-teal-dark checkbox checkbox-accent"
-                            checked={answers[currentQuestionData.id]?.includes(option.id) || false}
-                            onChange={() => {}}
-                          />
-                        ) : (
-                          <input
-                            type="radio"
-                            name={`question-${currentQuestionData.id}`}
-                            className="w-4 h-4 text-accent-teal-light bg-gray-100 border-gray-300 focus:ring-accent-teal-dark radio radio-accent"
-                            checked={answers[currentQuestionData.id]?.[0] === option.id}
-                            onChange={() => {}}
-                          />
-                        )}
-                        <span className="ml-3 text-gray-700" aria-label={option.answrText}>{option.answerText}</span>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

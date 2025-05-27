@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarIcon, ChartBar, Clock, List } from 'lucide-react';
+import { CalendarIcon, ChartBar, Clock, Clock10Icon, List } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import UpcomingAssignment from '../components/UpcomingAssessment';
 import ActivityItem from '../components/ActivityItem';
@@ -10,7 +10,7 @@ import CircularProgressCard from '../components/CircularProgressCard';
 import WelcomeCard from '../components/WelcomeCard';
 import StateCard from '../components/StateCard';
 import { Calendar, Folder, User, Users } from '../components/Icons';
-import { motion } from 'framer-motion'
+import { color, motion } from 'framer-motion'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -39,7 +39,9 @@ const ExaminerDashboard = () => {
 </svg>
 
       ),
-      visible : ["EXAMINER"]
+      visible: ["EXAMINER"],
+      bg:"bg-[#746EF1B5]"
+      
     },
     {
       title: "Pending Evaluation",
@@ -60,9 +62,13 @@ const ExaminerDashboard = () => {
       {
       title: "Taken Assessment",
       value: 5,
-      subtitle: "Next 7 days",
-        icon: <Clock className="h-8 w-8" />,
-            visible : ["EXAMINEE"]
+      subtitle: "",
+        icon: <Clock10Icon className="h-8 w-8" />,
+        visible: ["EXAMINEE"],
+        color:"warning",
+      bg:"bg-[#746EF1]"
+
+            
 
     },  {
       title: "Pending Assessment ",
@@ -126,12 +132,14 @@ const ExaminerDashboard = () => {
           {stats.map((stat, index) => {
             if (stat.visible.includes(currentuser)) {
               return (
-                 <StatCard
+                 <StateCard
               key={index}
               icon={stat.icon}
               title={stat.title}
               value={stat.value}
-              subtitle={stat.subtitle}
+                  subtitle={stat.subtitle}
+                  color={stat.color}
+                  bg={stat.bg}
                 />
                 
                 

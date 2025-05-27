@@ -37,6 +37,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
   const menuItems = [
     {
       title: "TASKS",
+       visble:["EXAMINER","ADMIN","EXAMINEE"],
+
       items: [
         {
           icon: <LayoutDashboard />,
@@ -120,7 +122,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
       ],
     },
      {
-      title: "QUESTION BANK",
+       title: "QUESTION BANK",
+       visble:["EXAMINER","ADMIN"],
       items: [
        {
           icon: <FileQuestion />,
@@ -150,6 +153,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
     },
     {
       title: "ACTIONS",
+       visble:["EXAMINER","ADMIN", "EXAMINEE"],
+
       items: [
       
           {
@@ -172,10 +177,11 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
   return (
       <div className="mt-4 text-sm h-[100vh] overflow-y-auto scrollbar-hide font-display" aria-label="Side Bar with Menus">
           {menuItems.map((item) => (
-              <div className="flex flex-col gap-2" key={item.title} aria-label={item.title}>
-                  <span className="hidden lg:block text-gray-200 font-light my-4">
+            <div className="flex flex-col gap-2" key={item.title} aria-label={item.title}>
+              {item.visble.includes(roles) ?  <span className="hidden lg:block text-gray-200 font-light my-4">
                      {item.title}
-                  </span>
+                  </span>: null }
+                 
                   {item.items.map((subItems) => {
                       if (subItems.visible.includes(roles)) {
                           return (
