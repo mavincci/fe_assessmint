@@ -21,7 +21,7 @@ import ExaminerDashboard from "./layouts/DefaultDashboard";
 
 import store from "./Store";
 import useAuthCheck from "./hooks/useAuthCheck";
-import MyAssessment from "./features/assesments/MyAssessment";
+// import MyAssessment from "./features/assesments/MyAssessment";
 import Questions from "./features/questionBank/QuestionBank";
 import QuestionCategories from "./features/questionBank/QuestionCategories";
 import InvitePeople from "./features/assesments/Invitation";
@@ -31,6 +31,7 @@ import ProtectedRoutes from "./utils/ProtectedRoute";
 import PageNotFound from "./components/PageNotFound";
 import ChatInterface from "./features/ai/ChatInterface";
 import AddQuestion_from_Bank from "./features/assesments/AddQuestion_from_Bank";
+import ResultsRanking from "./features/assesments/MyAssessment";
 // import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -65,7 +66,7 @@ function App() {
             />
             <Route path="/assessment/:assessmentId" element={<Full />} />
             <Route path="/another" element={<ExamUI />} />
-            <Route path="/assessment" element={<MyAssessment />} />
+            <Route path="/assessment" element={<ResultsRanking />} />
             <Route path="/question-bank" element={<Questions />} />
             <Route path="/categories" element={<QuestionCategories />} />
             <Route
@@ -78,7 +79,7 @@ function App() {
               element={<ManageRepository />}
             />
             <Route path="/ai" element={<ChatInterface />} />
-            <Route path="/add-from-bank/:QuestionType" element={<AddQuestion_from_Bank/>}/>
+            <Route path="/add-from-bank/:QuestionType/:sectionId" element={<AddQuestion_from_Bank/>}/>
 
             {/* <Route path="*" element={<NoInternetPage />} /> */}
 

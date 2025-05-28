@@ -61,7 +61,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         {
           icon: <FileText />,
           label: "Assessments Results",
-          href: "/assessment-results",
+          href: "/assessment",
           visible: ["EXAMINER", "ADMIN"],
         },
         // {

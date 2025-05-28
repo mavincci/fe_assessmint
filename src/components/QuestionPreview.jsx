@@ -33,18 +33,23 @@ console.log("Questions", questions)
                 </div>
               )}
 
-               {q.questionType === "MULTIPLE_CHOICE" && (
-                <div className="flex flex-col gap-2 pl-6">
-                  <div className="text-gray-600 text-md flex flex-row items-center gap-2">
-                    <span className="font-semibold">A)</span> True
-                    {q.questionData.answer === true && <span className="text-green-500 ml-2">(Correct)</span>}
-                  </div>
-                  <div className="text-gray-600 text-md flex flex-row items-center gap-2">
-                    <span className="font-semibold">B)</span> False
-                    {q.questionData.answer === false && <span className="text-green-500 ml-2">(Correct)</span>}
-                  </div>
-                </div>
-              )}
+            {q.questionType === "MULTIPLE_CHOICE" && (
+  <div className="flex flex-col gap-2 pl-6">
+    {q.questionData.options.map((opt, index) => {
+      const isCorrect = q.questionData.answers.includes(opt.id);
+      return (
+        <div key={opt.id} className="flex items-center gap-2">
+          <span className="font-medium">{String.fromCharCode(65 + index)}.</span>
+          <span
+            className={`text-gray-800 ${isCorrect ? 'text-green-600 font-semibold' : ''}`}
+          >
+            {opt.answerText}
+          </span>
+        </div>
+      );
+    })}
+  </div>
+)}
             </div>
           ))}
         </div>

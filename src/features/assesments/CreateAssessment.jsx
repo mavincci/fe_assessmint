@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import QuestionAccordion from '../../components/QuestionAccordion'
 import { testquestions } from '../../lib/data'
-import { ClipboardList, Delete, Eye, FileType, HelpCircle, Lightbulb, PiggyBank, Plus, PlusCircle, Save, Settings, X } from 'lucide-react'
+import { ClipboardList, Container, Delete, Eye, FileType, HelpCircle, Lightbulb, PiggyBank, Plus, PlusCircle, Save, Settings, X } from 'lucide-react'
 import Button  from '../../components/Button'
 import QuestionPreview from '../../components/QuestionPreview'
 import QuestionModal from '../../components/QuestionModal'
@@ -97,8 +97,15 @@ function reducer(state, action) {
 
   }
 
-  // all returns from loading
-useLoadAssessment()
+const handleCreateAndLoad = async () => {
+  const created = await handleCreateAssessment(); // must be async if it returns a Promise
+  if (created) {
+    setTimeout(() => {
+      loadAssessment(); // call the refetching logic
+    }, 1000); // wait for 1 second
+  }
+};
+  
   const Assess = useSelector((state) => state.assessment.Assessments?.body)
   const Questiontype = useSelector((state) => state.assessment.QuestionType.body)
   const fetchedQuestions = useSelector((state)=> state.assessment.SectionsQuestions?.body)
@@ -249,9 +256,10 @@ useLoadAssessment()
               {state.selectedQuestionType != null ? <> <Button icon={<PlusCircle />} label="Add Question" text="white" bg="bg-btn-primary" onClick={()=>{
                     Dispatch({ type: "isMCQOpen", payload:true });
 
-            }} />  <Button icon={<X />} label="Cancel" text="gray-200" bg="black" />
-              <Link to={`/add-from-bank/${state.selectedQuestionType}`}>
-                <Button icon={<PiggyBank />} label="Add From Bank" text="white" bg="bg-primary"  /> 
+            }} />
+              {/* <Button icon={<X />} label="Cancel" text="gray-200" bg="black" /> */}
+              <Link to={`/add-from-bank/${state.selectedQuestionType}/${selectedSectionID}`}>
+                <Button icon={<Container />} label="Add From Bank" text="white" bg="bg-primary"  /> 
               
               </Link>
             </> : ""}
@@ -344,7 +352,7 @@ useLoadAssessment()
             {state.isAssessmentCreated &&      <button
           type="button"
           disabled={state.isAssessmentSubmitting}
-          onClick={() => handleCreateAssessment()}
+          onClick={() => handleCreateAndLoad()}
           className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${state.isAssessmentSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
         >
               {state.isAssessmentSubmitting

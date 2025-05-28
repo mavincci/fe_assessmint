@@ -316,20 +316,14 @@ export const login = (email, password) => async (dispatch) => {
   try {
     const res = await axios.post(`${API_BASE_URL}/auth/signin`, body, config);
 
-    // console.log("this res.data.body ", res.data.body.token)
-
     const { refreshToken, token, user } = res.data.body;
-    console.log("body", res.data.body);
-    // role = user.roles[1]
 
     dispatch({
       type: LOGIN_SUCCESS,
       payload: { token, refreshToken, user },
     });
 
-    // console.log(res.data)
-
-    toast.success("👋 Welcome Back!  you're Succesfully Logged in!", {
+    toast.success("👋 Welcome Back! You're successfully logged in!", {
       position: "bottom-center",
       autoClose: 1000,
       hideProgressBar: false,
@@ -341,48 +335,68 @@ export const login = (email, password) => async (dispatch) => {
       transition: Flip,
     });
 
-    // dispatch(load_user()); // Optional, if you want to validate token later
   } catch (err) {
-    // console.error(err.response.status);
     console.log("err", err);
-    {
-      err.response.status === 401
-        ? toast.error(
-            "You're unauthorized! Please check your credentials and try again.",
-            {
-              position: "bottom-left",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            }
-          )
-        : err.response.status == 500
-          ? toast.error("You're  not connected To localhost", {
-              position: "bottom-left",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            })
-          : "";
+
+    // Check for AxiosError safely
+    if (axios.isAxiosError(err)) {
+      const status = err.response?.status;
+      const isNetworkError = err.code === "ERR_NETWORK";
+
+      if (status === 401) {
+        toast.error("You're unauthorized! Please check your credentials and try again.", {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+          style: { width: "400px" },
+        });
+      } else if (status === 500) {
+        toast.error("Internal server error. Check your backend server.", {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+          style: { width: "400px" },
+        });
+      } else if (isNetworkError) {
+        toast.error("You're not connected to the internet or server is unreachable.", {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+          style: { width: "400px" },
+        });
+      } else {
+        toast.error("Something went wrong. Please try again.", {
+          position: "bottom-left",
+          autoClose: 3000,
+          theme: "colored",
+        });
+      }
+    } else {
+      toast.error("Unexpected error occurred. Try again later.");
     }
 
-    dispatch({
-      type: LOGIN_FAIL,
-    });
+    dispatch({ type: LOGIN_FAIL });
   }
 };
+
 // logout
 export const logout = () => (dispatch) => {
   localStorage.clear();
@@ -867,7 +881,76 @@ export const createquestion =
       });
     }
     };
+// Add_Quesitions from bank
+export const add_Questions_from_bank = (bankId,questionId,sectionId ) =>
+  async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+ 
+    const bodyData = {
+      bankId,
+      questionId,
+      sectionId,
+    };
+    try {
+      const res = await axios.post( `${API_BASE_URL}/assessments/add_from_bank`, bodyData, config);
+      console.log(res.data);
+       if (
+        res.status === 201 ||
+        res.status === 200 ||
+        res.data.message == "QUESTION_ADD_FROM_BANK_SUCCESS"
+      ) {
+        toast.success(`✅ Successfully Import your question From Bank !`, {
+          position: "top-center",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+        });
+      }
+    }
+    catch (err) {
+   {
+        err.response || err.response.status === 409
+          ? toast.error("Error with Adding Question", {
+              position: "bottom-left",
+              autoClose: 500,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : toast.error("somthing Error please try Again", {
+              position: "bottom-left",
+              autoClose: 500,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            });
+      }
+      
+    }
   
+  }
+      
 // Add question From Bank
 export const Add_question_from_bank =
   (questionType, sectionId, questionText, options, answers) =>

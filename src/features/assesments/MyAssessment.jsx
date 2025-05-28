@@ -1,200 +1,85 @@
-import React, { useState } from "react";
-import { Search, MoreHorizontal, Plus } from "lucide-react";
+import React from 'react';
 
-const MyAssessment = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-
-  const assignmentsData = [
-    {
-      id: 1,
-      title: "Frontend Developer",
-      type: "Technical",
-      candidates: 25,
-      duration: "45 min",
-      difficulty: "Medium",
-      status: "Active",
-      created: "Apr 28, 2025",
-    },
-    {
-      id: 2,
-      title: "Python Programming",
-      type: "Coding",
-      candidates: 15,
-      duration: "45 min",
-      difficulty: "Easy",
-      status: "Completed",
-      created: "Apr 25, 2025",
-    },
-    {
-      id: 3,
-      title: "UX Design Challenge",
-      type: "Practical",
-      candidates: 5,
-      duration: "120 min",
-      difficulty: "Hard",
-      status: "Draft",
-      created: "Apr 22, 2025",
-    },
-    {
-      id: 4,
-      title: "Technical Interview",
-      type: "Technical",
-      candidates: 20,
-      duration: "90 min",
-      difficulty: "Hard",
-      status: "Active",
-      created: "Apr 20, 2025",
-    },
-    {
-      id: 5,
-      title: "JavaScript Algorithms",
-      type: "Coding",
-      candidates: 10,
-      duration: "60 min",
-      difficulty: "Medium",
-      status: "Scheduled",
-      created: "Apr 15, 2025",
-    },
+const ResultsRanking = () => {
+  // Hardcoded data matching the image
+  const candidates = [
+    { rank: 1, name: 'John Doe', email: 'john@example.com', score: '96/100', timeSpent: '56 min', status: 'Passed' },
+    { rank: 2, name: 'John Doe', email: 'john@example.com', score: '90/100', timeSpent: '58 min', status: 'Passed' },
+    { rank: 3, name: 'John Doe', email: 'john@example.com', score: '89/100', timeSpent: '1 hr', status: 'Passed' },
+    { rank: 4, name: 'John Doe', email: 'john@example.com', score: '80/100', timeSpent: '1:10 hr', status: 'Passed' },
+    { rank: 5, name: 'John Doe', email: 'john@example.com', score: '70/100', timeSpent: '1:20 hr', status: 'Passed' },
+    { rank: 6, name: 'John Doe', email: 'john@example.com', score: '60/100', timeSpent: '1:22 hr', status: 'Passed' },
+    { rank: 7, name: 'John Doe', email: 'john@example.com', score: '50/100', timeSpent: '1:24 hr', status: 'Passed' },
+    { rank: 8, name: 'John Doe', email: 'john@example.com', score: '40/100', timeSpent: '1:26 hr', status: 'Failed' },
   ];
 
-  // Map status to DaisyUI badge colors
-  const statusBadgeClass = (status) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "badge badge-success"; // green
-      case "completed":
-        return "badge badge-outline"; // gray outline
-      case "draft":
-        return "badge badge-warning"; // yellow/orange
-      case "scheduled":
-        return "badge badge-info"; // blue
-      default:
-        return "badge badge-outline";
-    }
+  // Function to render rank with icons for top 3
+  const renderRank = (rank) => {
+    if (rank === 1) return <span className="text-yellow-500 text-xl">🏆 {rank}</span>;
+    if (rank === 2) return <span className="text-gray-400 text-xl">🥈 {rank}</span>;
+    if (rank === 3) return <span className="text-yellow-600 text-xl">🥉 {rank}</span>;
+    return <span className="text-gray-500">#{rank}</span>;
   };
 
-  const filteredAssignments = assignmentsData.filter((assignment) => {
-    const matchesSearch =
-      assignment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      assignment.type.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesType =
-      typeFilter === "all" || assignment.type.toLowerCase() === typeFilter;
-
-    const matchesStatus =
-      statusFilter === "all" || assignment.status.toLowerCase() === statusFilter;
-
-    return matchesSearch && matchesType && matchesStatus;
-  });
+  // Function to render status badges
+  const renderStatus = (status) => {
+    if (status === 'Passed') {
+      return <span className="badge badge-success text-white">Passed</span>;
+    } else if (status === 'Failed') {
+      return <span className="badge badge-error text-white">Failed</span>;
+    }
+    return <span className="badge badge-warning text-gray-800">Pending</span>;
+  };
 
   return (
-    <div className="min-h-screen bg-blue-50/50 p-6">
-      <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="hidden md:block text-2xl font-bold">Assignments</h1>
-          <button className="btn bg-btn-primary text-white flex items-center gap-2">
-            <Plus size={16} />
-            Create Assessment
-          </button>
-        </div>
+    <div className="p-6 bg-base-100 min-h-screen">
+      <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        Results Ranking
+        <span className="text-sm font-normal text-gray-500 ml-2">
+          performance by their assessment
+        </span>
+      </h2>
 
-        {/* Filters */}
-        <div className="bg-white p-6 rounded-lg shadow mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search input */}
-            <div className="form-control flex-grow ">
-              <div className="input-group ">
-               
-                <input
-                  type="text"
-                  placeholder="Search assignments..."
-                  className=" outline rounded-xl p-2 outline-accent-teal-light w-full focus:outline-btn-primary"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Type filter */}
-            <select
-              className=" outline rounded-xl p-2 outline-accent-teal-light w-full focus:outline-btn-primary md:w-40"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
-              <option value="all">All Types</option>
-              <option value="technical">Technical</option>
-              <option value="coding">Coding</option>
-              <option value="practical">Practical</option>
-            </select>
-
-            {/* Status filter */}
-            <select
-              className=" outline rounded-xl p-2 outline-accent-teal-light w-full focus:outline-btn-primary md:w-40"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-              <option value="draft">Draft</option>
-              <option value="scheduled">Scheduled</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Assignments Table */}
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="table table-zebra w-full">
-            <thead>
-              <tr>
-                <th>Assignments</th>
-                <th>Type</th>
-                <th className="text-center">Candidates</th>
-                <th>Duration</th>
-                <th>Difficulty</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAssignments.length > 0 ? (
-                filteredAssignments.map((assignment) => (
-                  <tr key={assignment.id} className="hover">
-                    <td className="font-medium">{assignment.title}</td>
-                    <td>{assignment.type}</td>
-                    <td className="text-center">{assignment.candidates}</td>
-                    <td>{assignment.duration}</td>
-                    <td>{assignment.difficulty}</td>
-                    <td>
-                      <div className={statusBadgeClass(assignment.status)}>
-                        {assignment.status}
+      <div className="overflow-x-auto">
+        <table className="table w-full table-zebra">
+          <thead>
+            <tr className="text-gray-600">
+              <th className="text-sm">Rank</th>
+              <th className="text-sm">Candidate</th>
+              <th className="text-sm">Score</th>
+              <th className="text-sm">Time Spent</th>
+              <th className="text-sm">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {candidates.map((candidate) => (
+              <tr key={candidate.rank} className="hover:bg-gray-100">
+                <td>{renderRank(candidate.rank)}</td>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar placeholder">
+                      <div className="bg-gray-200 text-gray-500 rounded-full w-10">
+                        <span className="text-sm">
+                          {candidate.name.charAt(0)}
+                        </span>
                       </div>
-                    </td>
-                    <td>{assignment.created}</td>
-                    <td className="text-right">
-                      <button className="btn btn-ghost btn-sm">
-                        <MoreHorizontal size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={8} className="py-8 text-center text-gray-500">
-                    No assignments found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-800">{candidate.name}</div>
+                      <div className="text-sm text-gray-500">{candidate.email}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="text-gray-800">{candidate.score}</td>
+                <td className="text-gray-800">{candidate.timeSpent}</td>
+                <td>{renderStatus(candidate.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 };
 
-export default MyAssessment;
+export default ResultsRanking;
