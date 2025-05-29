@@ -1,4 +1,3 @@
-"use client"
 
 import { useState } from "react"
 import { Calendar, Clock, Eye, EyeOff, Award, CheckCircle } from "lucide-react"
@@ -6,7 +5,7 @@ import { connect } from "react-redux"
 import { CreateSetting_for_assessment } from "../../action/Auth"
 
 const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment, assessment_setting_data }) => {
-  
+  console.log("assessment_setting_data",assessment_setting_data)
   const today = new Date();
   const formattedToday = today.toISOString().slice(0, 16).replace("T", " ");
   
@@ -21,7 +20,7 @@ const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_a
     enableTimeLimit: true,
     difficulty: "medium",
     showAnswersImmediately: true,
-    passingScore: 70,
+    passingScore: assessment_setting_data?.passingScore || 50,
     attemptsAllowed: assessment_setting_data?.maxAttempts || 1,
     enableRandomization: true,
     showProgressBar: true,
@@ -117,11 +116,11 @@ const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_a
       return 
     }
     console.log("startTime", settings.startDateTime.replace("T", " "))
-    CreateSetting_for_assessment(assessmentID,settings.startDateTime.replace("T", " "),settings.endDateTime.replace("T", " "),settings.timeLimit,settings.attemptsAllowed, settings.isPublic )
+    CreateSetting_for_assessment(assessmentID,settings.startDateTime.replace("T", " "),settings.endDateTime.replace("T", " "),settings.timeLimit,settings.attemptsAllowed,settings.passingScore, settings.isPublic )
 console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDateTime,settings.timeLimit,settings.attemptsAllowed, settings.isPublic)
     console.log("Saved settings:", settings)
     // Here you would save the settings to your backend
-    document.getElementById("save-modal").showModal()
+    // document.getElementById("save-modal").showModal()
   }
 
   return (
@@ -129,7 +128,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
       <div className="max-w-4xl mx-auto">
         <div className="card bg-base-100 shadow-xl">
           {/* Header */}
-          <div className="card-body bg-primary text-primary-content rounded-t-box">
+          <div className="card-body bg-btn-primary text-primary-content rounded-t-box">
             <h1 className="card-title text-2xl md:text-3xl font-bold">Assessment Settings</h1>
             <p className="opacity-90">Configure your assessment parameters</p>
           </div>
@@ -153,7 +152,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
                       onChange={handleChange}
                       className="input input-bordered w-full"
                     />
-                    <span className="badge badge-primary">Locked</span>
+                    <span className="badge bg-accent-teal-light text-white">Locked</span>
                   </div>
                 </div>
 
@@ -164,8 +163,8 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
                       <Clock className="h-5 w-5" />
                       Time Settings
                     </h2>
-                    {/* 
-                    <div className="form-control">
+                    {/* time limit */}
+                    {/* <div className="form-control">
                       <label className="label cursor-pointer justify-start gap-4">
                         <input
                           type="checkbox"
@@ -202,7 +201,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
                           onChange={handleChange}
                           min="1"
                           max="180"
-                          className="input input-bordered join-item w-full text-center"
+                          className="input outline outline-accent join-item w-full text-center"
                         />
                         <button
                           type="button"
@@ -402,7 +401,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
 
                     {/* pasing Score */}
 
-                    {/* <div className="form-control">
+                    <div className="form-control">
                       <label className="label">
                         <span className="label-text">Passing score (%)</span>
                       </label>
@@ -447,7 +446,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
                         ></progress>
                         <div className="text-center text-sm mt-1">{settings.passingScore}% to pass</div>
                       </div>
-                    </div> */}
+                    </div>
 
                     <div className="form-control mt-4">
                       <label className="label">
@@ -540,20 +539,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
       </div>
 
       {/* Success Modal */}
-      <dialog id="save-modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-success" />
-            Settings Saved!
-          </h3>
-          <p className="py-4">Your assessment settings have been successfully updated.</p>
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn btn-primary">Close</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+     
     </div>
   )
 }

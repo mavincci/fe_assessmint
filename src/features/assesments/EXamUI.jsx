@@ -441,33 +441,76 @@ useEffect(() => {
       <div className="container mx-auto max-w-4xl py-8 px-4">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
-            <h2 className="text-2xl font-bold text-center mb-6" aria-label="Exam Completed">Exam Completed</h2>
+            <h2
+              className="text-2xl font-bold text-center mb-6"
+              aria-label="Exam Completed"
+            >
+              Exam Completed
+            </h2>
             <div className="space-y-6">
               <div className="text-center">
-                <p className="text-lg mb-4" aria-label={examData.title}>Thank you for completing the {examData.title} exam!</p>
-                <p>Your answers have been submitted successfully.</p>
+                <p className="text-lg mb-4" aria-label={examData.title} tabIndex={0}>
+                  Thank you for completing the <b>{examData.title}</b> exam!
+                </p>
+                <p  aria-label="Your answers have been submitted successfully" tabIndex={1}>Your answers have been submitted successfully.</p>
               </div>
 
               <div className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2" aria-label='Exam Summary'>Exam Summary</h3>
+                <h3 className="font-semibold mb-2" aria-label="Exam Summary">
+                  Exam Summary
+                </h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div aria-label="Total Questions">Total Questions:</div>
                   <div aria-label={totalQuestions}>{totalQuestions}</div>
                   <div aria-label="You answered ">Questions Answered:</div>
-                  <div aria-label={Object.keys(answers).length}>{Object.keys(answers).length}</div>
-                    <div className='flex gap-3 items-center p-2 ' aria-label='Correct answers'><SpellCheck/> correct Answers:</div>
-                  <div aria-label={responses.rightanswer}>{responses.rightanswer}</div>
-                   <div className='flex gap-3 items-center p-2 'aria-label="you skipped"><SkipForward/> Skipped Questions:</div>
+                  <div aria-label={Object.keys(answers).length}>
+                    {Object.keys(answers).length}
+                  </div>
+                  <div
+                    className="flex gap-3 items-center p-2 "
+                    aria-label="Correct answers"
+                  >
+                    <SpellCheck /> correct Answers:
+                  </div>
+                  <div aria-label={responses.rightanswer}>
+                    {responses.rightanswer}
+                  </div>
+                  <div
+                    className="flex gap-3 items-center p-2 "
+                    aria-label="you skipped"
+                  >
+                    <SkipForward /> Skipped Questions:
+                  </div>
                   <div aria-label={responses.skipped}>{responses.skipped}</div>
-                   <div  aria-label="wroong answers"className='flex gap-3 items-center p-2 '><ShieldX/>  Wrong Answers:</div>
-                  <div aria-label={responses.wronganswer}>{responses.wronganswer}</div>
-                  <div className='flex gap-3 items-center p-2 '><Timer/>Time Taken:</div>
-                  <div>{examData.settings.duration * 60 - timeRemaining} seconds</div>
+                  <div
+                    aria-label="wroong answers"
+                    className="flex gap-3 items-center p-2 "
+                  >
+                    <ShieldX /> Wrong Answers:
+                  </div>
+                  <div aria-label={responses.wronganswer}>
+                    {responses.wronganswer}
+                  </div>
+                  <div className="flex gap-3 items-center p-2">
+                    <Timer />
+                    Time Taken:
+                  </div>
+                  <div>
+                    {Math.floor(
+                      (examData.settings.duration * 60 - timeRemaining) / 60
+                    )}{" "}
+                    minutes{" "}
+                    {(examData.settings.duration * 60 - timeRemaining) % 60}{" "}
+                    seconds
+                  </div>
                 </div>
               </div>
             </div>
             <div className="flex justify-center mt-8">
-              <button className="px-4 py-2 bg-btn-primary text-white rounded hover:bg-accent-teal-dark transition-colors" onClick={() => window.location.reload()}>
+              <button
+                className="px-4 py-2 bg-btn-primary text-white rounded hover:bg-accent-teal-dark transition-colors"
+                onClick={() => window.location.reload()}
+              >
                 Return to Dashboard
               </button>
             </div>

@@ -101,7 +101,7 @@ const AssessmentPage = () => {
   }, [isFullscreen, wasAttemptedExit,showExitModal]);
 
   return (
-    <div ref={assessmentRef} className="w-screen h-screen bg-gray-100 p-5 relative">
+    <div ref={assessmentRef} className="w-full h-screen bg-bg-light p-5 relative">
       {/* Exit Modal */}
       {showExitModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

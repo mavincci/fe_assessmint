@@ -8,7 +8,7 @@ import LoginForm from "./features/auth/LoginForm";
 import SignupForm from "./features/auth/SignupForm";
 
 import Dashboard from "./layouts/Dashboard";
-import CreateAssessment from "./features/assesments/CreateAssessment";
+import SetupAssessment from "./features/assesments/SetupAssessment";
 import TakeAssessment from "./features/assesments/TakeAssessment";
 import Resultpage from "./layouts/ResultPage";
 import NoInternetPage from "./layouts/NoInternet";
@@ -50,7 +50,8 @@ function App() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoutes />}>
           <Route element={<Dashboard />}>
-            <Route path="/create-assessment" element={<CreateAssessment />} />
+            <Route path="/setup-assessment" element={<SetupAssessment />} />
+            <Route path="/setup-assessment/:assessmentTitle/:assessmentId" element={<SetupAssessment />} />
             <Route path="/take-assessment" element={<TakeAssessment />} />
             <Route
               path="/take-assessment/:assessmentId"
@@ -70,7 +71,7 @@ function App() {
             <Route path="/question-bank" element={<Questions />} />
             <Route path="/categories" element={<QuestionCategories />} />
             <Route
-              path="/invitiation/:assessmentId/:name"
+              path="/invitiation/:name/:assessmentId"
               element={<InvitePeople />}
             />
             <Route path="/checkvoice" element={<ScreenReaderComponent />} />

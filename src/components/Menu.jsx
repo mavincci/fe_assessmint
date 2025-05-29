@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";    import {
         TreePalm,
         FolderTree,
         PlusCircle,
+        Bot,
       } from "lucide-react";
 import { logout } from "../action/Auth";
 import { connect } from "react-redux";
@@ -62,7 +63,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <FileText />,
           label: "Assessments Results",
           href: "/assessment",
-          visible: ["EXAMINER", "ADMIN"],
+          visible: ["EXAMINER", "EXAMINEE"],
         },
         // {
         //   icon: <FileTextIcon />,
@@ -89,24 +90,24 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
         //   href: "/calendar",
         //   visible: ["ADMIN", ],
         // },
-        {
-          icon: <History />,
-          label: "History",
-          href: "/history",
-          visible: ["EXAMINER","EXAMINEE"],
-        },
+        // {
+        //   icon: <History />,
+        //   label: "History",
+        //   href: "/history",
+        //   visible: ["EXAMINER","EXAMINEE"],
+        // },
         {
           icon: <MessageSquare />,
           label: "Notification",
           href: "/notifications",
           visible: ["EXAMINER","ADMIN"],
         },
-        {
-          icon: <FilePlus />,
-          label: "Create Assessment",
-          href: "/create-assessment",
-          visible: ["EXAMINER", "ADMIN"],
-        },
+        // {
+        //   icon: <FilePlus />,
+        //   label: "Setup Assessment",
+        //   href: "/setup-assessment",
+        //   visible: ["EXAMINER", "ADMIN"],
+        // },
         // {
         //   icon: <LifeBuoy />,
         //   label: "Support",
@@ -132,7 +133,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           visible: ["EXAMINER","ADMIN"],
         },
           {
-          icon: <FileQuestion />,
+          icon: <Bot/>,
           label: "AI",
           href: "/ai",
           visible: ["EXAMINER","ADMIN"],

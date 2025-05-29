@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -7,6 +5,17 @@ import {
   ChevronLeft,
   ChevronRight,
   PlusCircle,
+  FolderKanbanIcon,
+  FolderKanban,
+  ShieldMinus,
+  Settings,
+  Hourglass,
+  Repeat2,
+  Trophy,
+  EarthLock,
+  Timer,
+  Rss,
+  UserCheck,
 } from "lucide-react";
 import { Calendar, Clock, FileText, Users } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -14,9 +23,15 @@ import {
   load_my_assesment,
   load_my_inivitation,
   PublishAssessment,
+  createAssessment,
 } from "../../action/Auth";
 import { connect, useDispatch } from "react-redux";
 import NoDataAvailable from "../../components/NoDataAvailable";
+import QuestionModal from "../../components/QuestionModal";
+import AssessmentSettings from "./AssessmentSetting";
+import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
+
 // Sample assignment data
 // const assignments = [
 //   {
@@ -121,19 +136,89 @@ import NoDataAvailable from "../../components/NoDataAvailable";
 //   },
 // ]
 
-const AssessmentManagement = ({ PublishAssessment }) => {
+const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
   const user = JSON.parse(localStorage.getItem("user"));
-
+  const [publishingId, setPublishingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("Assessments");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [ispublishing, setispublishing] = useState(false);
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [assignments, setAssessmentData] = useState([]);
-
+  const [settings, setsettings] = useState({
+    id: null,
+    title: null,
+    settings: {},
+  });
   const itemsPerPage = 10;
+  const [state, setState] = useState({
+    title: "",
+    description: "",
+    wordCount: 0,
+    isAssessmentSubmitting: false,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setState((prev) => ({
+      ...prev,
+      [name]: value,
+      wordCount:
+        name === "description"
+          ? value.trim().split(/\s+/).length
+          : prev.wordCount,
+    }));
+  };
+
+  const handleDescriptionChange = (e) => {
+    const { value } = e.target;
+    setState((prev) => ({
+      ...prev,
+      description: value,
+      wordCount: value.trim().split(/\s+/).length,
+    }));
+  };
+  const handleCreateAssessment = async () => {
+    setState((prev) => ({ ...prev, isAssessmentSubmitting: true }));
+
+    try {
+      const res = await createAssessment(state.title, state.description);
+      console.log("Create assessment success", res);
+
+      setIsModalOpen(false);
+      setTimeout(() => {
+        if (isExaminer) fetchAssessment();
+        if (isExaminee) fetchExamineeAssessment();
+      }, 1000);
+    } catch (error) {
+      toast.error("Something went wrong.");
+      console.error(error);
+    } finally {
+      setState((prev) => ({ ...prev, isAssessmentSubmitting: false }));
+    }
+  };
+
+  const handleDeleteAssessment = async (id) => {
+    setState((prev) => ({ ...prev, isAssessmentSubmitting: true }));
+
+    try {
+      // const res = await createAssessment(state.title, state.description);
+      // console.log("Create assessment success", res);
+
+      // setIsModalOpen(false);
+      alert("are you sure to delete", id);
+      setTimeout(() => {
+        if (isExaminer) fetchAssessment();
+        if (isExaminee) fetchExamineeAssessment();
+      }, 1000);
+    } catch (error) {
+      toast.error("Something went wrong.");
+      console.error(error);
+    } finally {
+      setState((prev) => ({ ...prev, isAssessmentSubmitting: false }));
+    }
+  };
 
   // Filter assignments based on search query and filters
   const filteredAssignments = assignments.filter((assignment) => {
@@ -180,18 +265,25 @@ const AssessmentManagement = ({ PublishAssessment }) => {
 
     return pages;
   };
-  const handlePublishassessment = (assessmentID) => {
-    setispublishing(true);
-    // console.log(assessmentID)
-    if (assessmentID) {
-      console.log(assessmentID);
-      PublishAssessment(assessmentID);
-    } else {
+  const handlePublishassessment = async (assessmentID) => {
+    if (!assessmentID) {
       alert("Please select an assessment to publish");
+      return;
     }
-    setispublishing(false);
-  };
 
+    try {
+      setPublishingId(assessmentID);
+      await PublishAssessment(assessmentID);
+      setTimeout(() => {
+        if (isExaminer) fetchAssessment();
+        if (isExaminee) fetchExamineeAssessment();
+      }, 2000);
+    } catch (err) {
+      console.error("Publish failed", err);
+    } finally {
+      setPublishingId(null);
+    }
+  };
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case "Active":
@@ -207,22 +299,21 @@ const AssessmentManagement = ({ PublishAssessment }) => {
   const isExaminee = user.roles.some((role) => role === "EXAMINEE");
   const isExaminer = user.roles.some((role) => role === "EXAMINER");
   const dispatch = useDispatch();
+  const fetchAssessment = async () => {
+    const res = await dispatch(load_my_assesment());
+    if (res?.body) {
+      setAssessmentData(res.body);
+      console.log(res.body);
+    }
+  };
+  const fetchExamineeAssessment = async () => {
+    const res = await dispatch(load_my_inivitation());
+    if (res?.body) {
+      setAssessmentData(res.body);
+      console.log(res.body);
+    }
+  };
   useEffect(() => {
-    const fetchAssessment = async () => {
-      const res = await dispatch(load_my_assesment());
-      if (res?.body) {
-        setAssessmentData(res.body);
-        console.log(res.body);
-      }
-    };
-    const fetchExamineeAssessment = async () => {
-      const res = await dispatch(load_my_inivitation());
-      if (res?.body) {
-        setAssessmentData(res.body);
-        console.log(res.body);
-      }
-    };
-
     if (isExaminer) {
       fetchAssessment();
     }
@@ -238,6 +329,17 @@ const AssessmentManagement = ({ PublishAssessment }) => {
 
   const handleunPublished = () => {
     // unpublish API
+  };
+
+  const handleSelect = (Title, ID, Settings) => {
+    setsettings((prev) => ({
+      ...prev,
+      id: ID,
+      title: Title,
+      settings: Settings,
+    }));
+
+    setIsSettingModalOpen(true);
   };
   return (
     <>
@@ -363,7 +465,7 @@ const AssessmentManagement = ({ PublishAssessment }) => {
 
       {/* if not Examines */}
       {isExaminer && (
-        <div className="w-full bg-bg-light rounded-lg p-6 h-full">
+        <div className="w-full bg-bg-light rounded-lg p-6 h-full font-display">
           <div className="flex justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-bold">Assessment Management</h1>
@@ -371,13 +473,15 @@ const AssessmentManagement = ({ PublishAssessment }) => {
                 Create and manage assessments and question banks
               </p>
             </div>
-            <Link
-              to="/create-assessment"
+
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
               className="btn bg-bg-secondary-light text-white"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Assessment
-            </Link>
+            </button>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -417,19 +521,50 @@ const AssessmentManagement = ({ PublishAssessment }) => {
           </div>
 
           <div className="overflow-x-auto h-fit">
-            <table className="table bg-white">
-              <thead>
+            <table className="table bg-white table-sm table-zebra ">
+              <thead >
                 <tr>
                   <th>Assessment</th>
-                  {/* <th>Questions</th> */}
-                  <th>Duration</th>
-                  <th>Attempt</th>
-                  <th>Access</th>
+                  <th className="hidden md:table-cell">
+                    <span className="flex  gap-2 items-center text-start">
+                      Duration <Hourglass size={16} strokeWidth={1.75} />
+                    </span>
+                  </th>
+                  <th className="hidden md:table-cell ">
+                    <span className="flex  gap-2 items-center text-start">
+                      Attempt Allowed <Repeat2 size={20} strokeWidth={1.75} />
+                    </span>
+                  </th>
+                  <th className="hidden md:table-cell">
+                    <span className="flex  gap-2 items-center text-start">
+                      Passing Score <Trophy size={16} strokeWidth={1.75} />
+                    </span>
+                  </th>
+                  <th className="hidden md:table-cell">
+                    <span className="flex  gap-2 items-center text-start">
+                      Access <EarthLock size={16} strokeWidth={1.75} />{" "}
+                    </span>
+                  </th>
 
-                  <th>Created</th>
-                  <th>Published</th>
-                  <th>Invite</th>
-                  <th className="text-right">Actions</th>
+                  <th className="hidden md:table-cell">
+                    <span className="flex  gap-2 items-center text-start">
+                      Created
+                      <Timer size={16} strokeWidth={1.75} />{" "}
+                    </span>
+                  </th>
+                  <th>
+                    <span className="flex  gap-2 items-center text-start">
+                      Published
+                      <Rss size={16} strokeWidth={1.75} />
+                    </span>
+                  </th>
+                  <th>
+                    {" "}
+                    <span className="flex  gap-2 items-center text-start">
+                      Invite <UserCheck size={20} strokeWidth={1.75} />{" "}
+                    </span>
+                  </th>
+                  <th className="text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -438,18 +573,27 @@ const AssessmentManagement = ({ PublishAssessment }) => {
                     <tr key={assignment.id} className="hover">
                       <td className="font-medium">{assignment.title}</td>
                       {/* <td>{assignment.questions || "-"}</td> */}
-                      <td>{assignment.settings.duration}</td>
-                      <td>{assignment.settings.maxAttempts}</td>
-                      {/* <td>
-                    <span className={getStatusBadgeClass(assignment.status)}>{assignment.status || "-"}</span>
-                  </td> */}
-                      <td>
+                      <td className="hidden md:table-cell">
+                        {assignment.settings.duration || (
+                          <span className="bg-amber-500 p-1 text-white rounded-full text-sm">
+                            {" "}
+                            Not Set
+                          </span>
+                        )}
+                      </td>
+                      <td className="hidden md:table-cell ">
+                        {assignment.settings.maxAttempts}
+                      </td>
+                      <td className="hidden md:table-cell">
+                        <span> {assignment.settings.passingScore}</span>
+                      </td>
+                      <td className="hidden md:table-cell">
                         {assignment.settings.isPublic == true
                           ? "Public"
                           : "Private"}
                       </td>
 
-                      <td>
+                      <td className="hidden md:table-cell">
                         {new Date(assignment.createdAt).toLocaleString(
                           "en-US",
                           {
@@ -465,35 +609,39 @@ const AssessmentManagement = ({ PublishAssessment }) => {
                       <td
                         onClick={() => handlePublishassessment(assignment.id)}
                       >
-                        {assignment.isPublished ? (
-                          <button
-                            className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800"
-                            onClick={handlePublished}
-                          >
-                            {ispublishing ? "Publishing" : "published"}
-                          </button>
-                        ) : (
-                          (
-                            <button
-                              className=" p-2 rounded-xl  outline  outline-btn-primary hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white text-gray-800"
-                              onClick={handleunPublished}
-                            >
-                                                        {ispublishing ? "Publishing" : "unpublished"}
-
-                            </button>
-                          ) || "-"
-                        )}
+                        <button
+                          className={`p-2 rounded-xl outline outline-btn-primary ${assignment.isPublished ? "outline-btn-primary" : "bg-btn-primary text-white font-semibold  hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white"} text-gray-800 flex items-center gap-2`}
+                          disabled={assignment.isPublished}
+                        >
+                          {publishingId === assignment.id ? (
+                            <>
+                              <Loader2 className="animate-spin h-4 w-4" />
+                              Publishing...
+                            </>
+                          ) : assignment.isPublished ? (
+                            "Published"
+                          ) : (
+                            "Unpublished"
+                          )}
+                        </button>
                       </td>
                       <td>
                         <Link
-                          className="outline outline-accent-teal-light text-center p-2 rounded-xl w-fit font-semibold hover:bg-accent-teal-light hover:text-white"
-                          to={`/invitiation/${assignment.id}/${assignment.title}`}
+                          className=""
+                          to={`/invitiation/${encodeURIComponent(assignment.title)}/${assignment.id}`}
                         >
-                          Invite Cand.
+                          <button className="outline outline-accent-teal-light text-center p-2 rounded-xl w-36  font-semibold hover:bg-accent-teal-light hover:text-white">
+                            Invite Candidates
+                          </button>
                         </Link>
                       </td>
-                      <td className="text-right">
-                        <div className="dropdown dropdown-end">
+                      {/* <td>
+                        <Link to="/create-assessment" className="p-2 bg-accent-teal-light text-white font-semibold">
+                        Manage {assignment.title}
+                        </Link>
+                      </td> */}
+                      <td className="text-right ">
+                        {/* <div className="dropdown dropdown-end">
                           <div
                             tabIndex={0}
                             role="button"
@@ -518,6 +666,51 @@ const AssessmentManagement = ({ PublishAssessment }) => {
                               <a className="text-error">Delete assignment</a>
                             </li>
                           </ul>
+                        </div> */}
+
+                        <div className="flex gap-4">
+                          {/* Manage Icon */}
+                          <Link
+                            className="relative group cursor-pointer"
+                            to={`/setup-assessment/${encodeURIComponent(assignment.title)}/${assignment.id}`}
+                          >
+                            <FolderKanban
+                              size={28}
+                              className="text-btn-primary font-bold"
+                              strokeWidth={2.25}
+                              absoluteStrokeWidth
+                            />
+                            {/* <div className="absolute left-1/2 max-w-fit z-10 -translate-x-1/2 top-full mt-1 bg-gray-700 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              Manage {assignment.title}
+                            </div> */}
+                          </Link>
+                          {/* Remove Icon */}
+                          <Settings
+                            className="font-bold text-accent"
+                            strokeWidth={2.25}
+                            absoluteStrokeWidth
+                            onClick={() =>
+                              handleSelect(
+                                assignment.title,
+                                assignment.id,
+                                assignment.settings
+                              )
+                            }
+                          />{" "}
+                          <div
+                            className="relative group cursor-pointer"
+                            onClick={handleDeleteAssessment}
+                          >
+                            <ShieldMinus
+                              size={28}
+                              className="font-bold text-[#DC143C]"
+                              strokeWidth={2.25}
+                              absoluteStrokeWidth
+                            />
+                            {/* <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 bg-gray-700 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              Remove
+                            </div> */}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -571,8 +764,100 @@ const AssessmentManagement = ({ PublishAssessment }) => {
             </div>
           )}
 
+          <QuestionModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          >
+            <h1 className="text-center text-3xl font-semibold">
+              Add New Assessment
+            </h1>
+
+            <div className="space-y-4 mt-4">
+              {/* Title Field */}
+              <fieldset className="border border-base-300 rounded-lg p-4">
+                <legend className="px-2 text-sm font-medium">
+                  Enter Title <sup className="text-red-400">*</sup>
+                </legend>
+                <input
+                  type="text"
+                  name="title"
+                  className="input border-none w-full outline outline-accent-teal-light focus:outline-accent-teal-dark"
+                  placeholder="Type here"
+                  value={state.title}
+                  onChange={handleInputChange}
+                />
+              </fieldset>
+
+              {/* Description Field */}
+              <fieldset className="border border-base-300 rounded-lg p-4">
+                <legend className="px-2 text-sm font-medium">
+                  Enter Description <sup className="text-red-400">*</sup>
+                </legend>
+                <div className="relative">
+                  <textarea
+                    name="description"
+                    placeholder="Enter Description less than 30 words"
+                    className="textarea textarea-accent w-full h-32 resize-none"
+                    value={state.description}
+                    onChange={handleDescriptionChange}
+                  />
+                  <span className="absolute bottom-2 right-4 text-sm text-gray-500">
+                    {state.wordCount} words
+                  </span>
+                </div>
+              </fieldset>
+
+              {/* Submit Button */}
+              <button
+                type="button"
+                disabled={state.isAssessmentSubmitting}
+                onClick={handleCreateAssessment}
+                className={`w-full flex justify-center items-center gap-2 py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none transition duration-200 ${
+                  state.isAssessmentSubmitting
+                    ? "opacity-75 cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                {state.isAssessmentSubmitting && (
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                )}
+                {state.isAssessmentSubmitting
+                  ? "Creating Assessment..."
+                  : "Add Assessment"}
+              </button>
+            </div>
+          </QuestionModal>
+          <QuestionModal
+            isOpen={isSettingModalOpen}
+            onClose={() => setIsSettingModalOpen(false)}
+          >
+            <AssessmentSettings
+              assessmentID={settings.id}
+              assessmentTitle={settings.title}
+              assessment_setting_data={settings.settings}
+            />
+          </QuestionModal>
+
           {/* Create Assignment Modal */}
-          <dialog className={`modal ${isModalOpen ? "modal-open" : ""}`}>
+          {/* <dialog className={`modal ${isModalOpen ? "modal-open" : ""}`}>
             <div className="modal-box">
               <form method="dialog">
                 <button
@@ -697,7 +982,7 @@ const AssessmentManagement = ({ PublishAssessment }) => {
             <form method="dialog" className="modal-backdrop">
               <button onClick={() => setIsModalOpen(false)}>close</button>
             </form>
-          </dialog>
+          </dialog> */}
         </div>
       )}
     </>
@@ -706,6 +991,7 @@ const AssessmentManagement = ({ PublishAssessment }) => {
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, { PublishAssessment })(
-  AssessmentManagement
-);
+export default connect(mapStateToProps, {
+  PublishAssessment,
+  createAssessment,
+})(AssessmentManagement);

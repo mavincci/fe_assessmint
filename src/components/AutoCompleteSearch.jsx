@@ -17,8 +17,12 @@ export default function CategoryRepoAutocomplete({ onRepoSelect, currentType }) 
 
   const dispatch = useDispatch();
     const res = useSelector((state) => state.bankreducer.BankCategory.body);
-    const repo = useSelector((state) => state.bankreducer.BankRepositoryByID.body);
+  const repo = useSelector((state) => state.bankreducer.BankRepositoryByID.body);
+  if (QuestionType) {
     currentType= QuestionType
+    
+  }
+  currentType
 console.log(QuestionType)
   // Set categories once fetched from Redux store
   React.useEffect(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plus, MoreHorizontal } from "lucide-react"; // Import Lucide icons
+import { Plus, MoreHorizontal, Bot } from "lucide-react"; // Import Lucide icons
 import QuestionModal from "../../components/QuestionModal";
 import {
   create_question_bank,
@@ -123,13 +123,17 @@ const QuestionCategories = ({
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Question Categories</h1>
           {/* DaisyUI Button */}
-          <div className="flex flex-row justify-end gap-4 p-2">
+          <div className="flex flex-row justify-end gap-8 p-2 align-middle items-center">
+             <Link to="/ai" >
+                <Bot className="w-11 h-11 rounded-full text-btn-primary animate animate-pulse duration-300 "/>
+              </Link>
             <button
               onClick={() => setIsModalOpen(!isModalOpen)}
               className="p-3 flex flex-row items-center justify-center cursor-pointer bg-btn-primary text-white rounded-xl"
             >
               {" "}
               {/* Using btn-neutral for a darker button */}
+             
               <Plus className="mr-1 h-4 w-4" /> {/* Lucide Plus icon */}
               Create Category
             </button>

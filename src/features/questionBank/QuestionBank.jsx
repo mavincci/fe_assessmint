@@ -8,6 +8,8 @@ import TFquestions from '../questionTypes/TFquestions';
 import QuestionBankQuestionPreview from './Managequestion';
 import { useParams } from 'react-router-dom';
 import { useLoadQuestionType } from '../../hooks/useQuestionType';
+import Pagination from '../../components/Pagination';
+import { usePagination } from '../../hooks/usePagination';
 // Import statements for ShadCN/UI components are removed
 
 
@@ -55,10 +57,6 @@ const updateField = (field, value) => {
   const [IsRepoSubmitting, setIsRepoSubmitting] = useState(false)
   const [isModalOpen, setIsModalOpen] =useState(false)
   const dispatch = useDispatch()
-  // --- Pagination State ---
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // State for items per page
-  // --- End Pagination State ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -118,8 +116,7 @@ const updateField = (field, value) => {
     updateField("wordCount",(value.trim() === "" ? 0 : value.trim().split(/\s+/).length))
   };
 
-  // Mock data for questions with added type property
-  // Casting to the type implicitly or explicitly is good practice if you remove the type alias
+ 
  
     console.log(categoryId)
     const questionsData = useSelector((state)=> state.bankreducer.BankRepository?.body)
@@ -206,61 +203,25 @@ console.log("cat",categories)
     });
   }, [searchQuery, state.selectedType, state.selectedDifficulty, state.selectedCategory, questionsData]); // Depend on filter states and source data
 
-  // --- Pagination Logic Calculations ---
-  const totalItems = filteredQuestions?.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  // Calculate the items to display on the current page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredQuestions?.slice(indexOfFirstItem, indexOfLastItem);
-  // --- End Pagination Logic Calculations ---
-
-  // --- Pagination Handlers ---
-  const handlePageChange = (pageNumber) => {
-      // Ensure page number is within valid range
-      const newPage = Math.max(1, Math.min(pageNumber, totalPages === 0 ? 1 : totalPages));
-    // Reset expanded item when page changes
-          updateField("expandedQuestionId", null)
-
-      // setExpandedQuestionId(null);
-      setCurrentPage(newPage);
-  };
-
-  const handleItemsPerPageChange = (value) => {
-    const newItemsPerPage = parseInt(value, 10);
-     // Reset expanded item when items per page changes
-    // setExpandedQuestionId(null);
-          updateField("expandedQuestionId", null)
-
-    setItemsPerPage(newItemsPerPage);
-    // Optional: Reset to page 1 when items per page changes
-    // setCurrentPage(1);
-     // Or, try to keep the current item visible if possible - more complex
-     // For simplicity, let's just reset to 1 if the current page number is now invalid
-     if (currentPage > Math.ceil(totalItems / newItemsPerPage)) {
-         setCurrentPage(1);
-     }
-  };
-  // --- End Pagination Handlers ---
 
 
+const {
+  currentPage,
+  itemsPerPage,
+  totalItems,
+  totalPages,
+  indexOfFirstItem,
+  indexOfLastItem,
+  currentItems,
+  handlePageChange,
+  handleItemsPerPageChange,
+} = usePagination(filteredQuestions, 5);
   return (
     <div className="min-h-screen bg-blue-50/50 p-6">
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Question Repositories</h1>
-          {/* <button className="btn bg-btn-primary text-white hover:bg-slate-800"
-            onClick={() => { setIsModalOpen(true)
-            
-          }}>
-            <Plus className="mr-1 h-4 w-4" />
-            Create Repository
-          </button> */}
-
-
         </div>
-
         <div className="bg-white rounded-lg shadow-sm p-6">
           {/* Question Type filters */}
           <div className="flex flex-wrap gap-3 mb-6">
@@ -464,58 +425,18 @@ console.log("cat",categories)
           </div>
 
           {/* --- Pagination Controls --- */}
-           {totalItems > 0 && ( // Only show pagination if there are items
-            <div className="mt-6 flex flex-wrap justify-between items-center bg-accent-teal-light p-3 text-white rounded-b-xl">
-                {/* Items per page selector */}
-                 <div className="flex flex-row items-center gap-2 mb-3 md:mb-0 w-[20%]">
-                    <span className='w-fit'>Items/page:</span>
-                     <select
-                       className="select select-bordered select-sm bg-accent-teal-light" // DaisyUI select classes
-                       value={itemsPerPage}
-                       onChange={(e) => handleItemsPerPageChange(e.target.value)}
-                     >
-                       <option value={5}>5</option>
-                       <option value={10}>10</option>
-                       <option value={20}>20</option>
-                       <option value={50}>50</option>
-                     </select>
-                 </div>
-
-                {/* Page Info */}
-                <div className="text-sm text-gray-700 mb-3 md:mb-0">
-                    Showing {Math.min(totalItems, indexOfFirstItem + 1)}-{Math.min(totalItems, indexOfLastItem)} of {totalItems} questions
-                </div>
-
-                {/* Pagination Buttons (Using DaisyUI btn-group or individual buttons) */}
-                {/* Example using individual buttons */}
-                <div className="join"> {/* DaisyUI join class for button grouping */}
-                    <button
-                        className="join-item btn btn-outline btn-sm" // DaisyUI button classes
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Previous
-                    </button>
-                    {/* Optional: Display page numbers - more complex, skipping for this example */}
-                    {/* For a simple implementation, just Previous/Next is often enough */}
-                    {/* If you want page numbers, you'd loop from 1 to totalPages and create a button for each */}
-                     {/* Example: showing current page out of total */}
-                     <button className="join-item btn btn-outline btn-sm pointer-events-none">
-                         Page {currentPage} of {totalPages}
-                     </button>
-
-                    <button
-                        className="join-item btn btn-outline btn-sm" // DaisyUI button classes
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages || totalPages === 0} // Disable if no pages
-                    >
-                        Next
-                    </button>
-                </div>
-            </div>
-           )}
+        
           {/* --- End Pagination Controls --- */}
-
+<Pagination
+  totalItems={totalItems}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  itemsPerPage={itemsPerPage}
+  handleItemsPerPageChange={handleItemsPerPageChange}
+  handlePageChange={handlePageChange}
+  indexOfFirstItem={indexOfFirstItem}
+  indexOfLastItem={indexOfLastItem}
+/>
         </div>
 
             <QuestionModal

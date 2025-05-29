@@ -269,24 +269,24 @@ export default function ChatInterface() {
       </header>
 
       {/* Tabs */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
+      <div className="bg-bg-light dark:bg-gray-800 shadow-sm transition-colors duration-300">
         <div className="container mx-auto px-4">
           <div className="tabs tabs-bordered p-1">
             <button
-              className={`tab  ${activeTab === "chat" ? "bg-accent-teal-light font-bold text-white rounded-full " : ""}`}
+              className={`tab  ${activeTab === "chat" ? "bg-accent-teal-dark font-bold text-white rounded-full " : ""}`}
               onClick={() => setActiveTab("chat")}
             >
               Chat
             </button>
             <button
-              className={`tab  ${activeTab === "tf" ? "bg-accent-teal-light font-bold text-white rounded-full " : ""}`}
+              className={`tab  ${activeTab === "tf" ? "bg-accent-teal-dark font-bold text-white rounded-full " : ""}`}
               onClick={() => setActiveTab("tf")}
             >
               T/F Questions{" "}
               {tfQuestions?.length > 0 && `(${tfQuestions?.length})`}
             </button>
             <button
-              className={`tab  ${activeTab === "mcq" ? "bg-accent-teal-light font-bold text-white rounded-full " : ""}`}
+              className={`tab  ${activeTab === "mcq" ? "bg-accent-teal-dark font-bold text-white rounded-full " : ""}`}
               onClick={() => setActiveTab("mcq")}
             >
               MCQ Questions{" "}
@@ -320,11 +320,11 @@ export default function ChatInterface() {
                         } animate-fade-in`}
                       >
                         <div
-                          className={`max-w-3xl rounded-lg px-4 py-3 ${
+                          className={`max-w-4xl rounded-lg px-4 py-3 font-display  ${
                             message.type === "user"
                               ? "bg-btn-primary text-white"
                               : message.type === "system"
-                                ? "bg-btn-primary dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                ? "bg-bg-light border border-btn-primary rounded-xl p-2 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-lg"
                                 : "bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200"
                           }`}
                         >
@@ -397,7 +397,7 @@ export default function ChatInterface() {
 
             {/* Input area (only show in chat tab) */}
             {activeTab === "chat" && (
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mb-8">
                 <ChatInput
                   onSendMessage={handleSendMessage}
                   isLoading={loading}

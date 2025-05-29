@@ -57,7 +57,9 @@ const EmailList = ({ emails }) => {
 };
 
 const InvitePeople = ({ create_send_invitation }) => {
- const { assessmentId, name } = useParams();
+  const { assessmentId, name } = useParams();
+  const Name = decodeURIComponent(name);
+  
 const dispatch = useDispatch()
   const [isPublished, setIsPublished] = useState(false);
   const [accessControl, setAccessControl] = useState(false);
@@ -71,7 +73,7 @@ const dispatch = useDispatch()
     resolver: yupResolver(schema), // Use yup resolver for validation
   });
 
-  console.log("AssessmentID for Invitaion", assessmentId ,name)
+  console.log("AssessmentID for Invitaion", assessmentId ,Name)
 
   // This function will be called by handleSubmit when validation passes
   const onSubmit = (data) => {
@@ -149,7 +151,7 @@ const dispatch = useDispatch()
               <option value="test1">Test 1</option>
               <option value="test2">Test 2</option>
             </select> */}
-            <input type="text" className="font-bold text-lg text-accent-teal-light" disabled value={name}/>
+            <input type="text" className="font-bold text-lg text-accent-teal-light" disabled value={Name}/>
           </div>
         </div>
 

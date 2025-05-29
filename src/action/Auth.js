@@ -316,14 +316,20 @@ export const login = (email, password) => async (dispatch) => {
   try {
     const res = await axios.post(`${API_BASE_URL}/auth/signin`, body, config);
 
+    // console.log("this res.data.body ", res.data.body.token)
+
     const { refreshToken, token, user } = res.data.body;
+    console.log("body", res.data.body);
+    // role = user.roles[1]
 
     dispatch({
       type: LOGIN_SUCCESS,
       payload: { token, refreshToken, user },
     });
 
-    toast.success("👋 Welcome Back! You're successfully logged in!", {
+    // console.log(res.data)
+
+    toast.success("👋 Welcome Back!  you're Succesfully Logged in!", {
       position: "bottom-center",
       autoClose: 1000,
       hideProgressBar: false,
@@ -335,68 +341,49 @@ export const login = (email, password) => async (dispatch) => {
       transition: Flip,
     });
 
+
+    // dispatch(load_user()); // Optional, if you want to validate token later
   } catch (err) {
+    // console.error(err.response.status);
     console.log("err", err);
-
-    // Check for AxiosError safely
-    if (axios.isAxiosError(err)) {
-      const status = err.response?.status;
-      const isNetworkError = err.code === "ERR_NETWORK";
-
-      if (status === 401) {
-        toast.error("You're unauthorized! Please check your credentials and try again.", {
-          position: "bottom-left",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Flip,
-          style: { width: "400px" },
-        });
-      } else if (status === 500) {
-        toast.error("Internal server error. Check your backend server.", {
-          position: "bottom-left",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Flip,
-          style: { width: "400px" },
-        });
-      } else if (isNetworkError) {
-        toast.error("You're not connected to the internet or server is unreachable.", {
-          position: "bottom-left",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Flip,
-          style: { width: "400px" },
-        });
-      } else {
-        toast.error("Something went wrong. Please try again.", {
-          position: "bottom-left",
-          autoClose: 3000,
-          theme: "colored",
-        });
-      }
-    } else {
-      toast.error("Unexpected error occurred. Try again later.");
+    {
+      err.response.status === 401 || (axios.isAxiosError(err) && err?.code =="Network Error")
+        ? toast.error(
+            "You're unauthorized! Please check your credentials and try again.",
+            {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            }
+          )
+        : err.response.status == 500
+          ? toast.error("You're  not connected To localhost", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : "";
     }
 
-    dispatch({ type: LOGIN_FAIL });
+    dispatch({
+      type: LOGIN_FAIL,
+    });
   }
 };
-
 // logout
 export const logout = () => (dispatch) => {
   localStorage.clear();
@@ -561,15 +548,15 @@ export const PublishAssessment = (assessmentID) => async (dispatch) => {
   try {
     console.log("Here in Publish auth", assessmentID)
     const res = await axios.post(
-      `${API_BASE_URL}/assessments/publish/${assessmentID}`,{},
+      `${API_BASE_URL}/assessments/publish/${assessmentID}`, {},
       config
     );
-    if (res.status === 201) {
+    if (res.status === 201 || res.status === 200 ) {
       toast.success(
-        "✅ Successfully Published your Assessment! Your item is now live.",
+       "PUBLISHED SUCCESSFULLY",
         {
           position: "top-center",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -754,8 +741,8 @@ export const createSection =
     } catch (err) {
       console.log(err);
       {
-        err.response && err.response.status === 409
-          ? toast.error("Confilicting INPUT", {
+        err.response && (err.response.status === 409 || err.response.data.message === "ASSESSMENT_ALREADY_PUBLISHED")
+          ? toast.error( err.response.data.message.replaceAll("_", " ").toLowerCase(), {
               position: "bottom-left",
               autoClose: 3000,
               hideProgressBar: false,
@@ -786,7 +773,162 @@ export const createSection =
     }
   };
 
-// create Question
+// fetch results
+export const fetch_results_by_assessment_Id = (assessmentId) => async (dispatch) => {
+  
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+  };
+   try {
+      const res = await axios.get(
+        `${API_BASE_URL}/assessments/attempts/result/fetch_results/${assessmentId}`,
+        config
+      );
+      if (
+        res.status === 201 ||
+        res.status === 200 ||
+        res.data.message == "RESULT_FETCH_SUCCESS"
+      ) {
+        toast.success(
+          `✅ Fetch result Success.`,
+          {
+            position: "bottom-left",
+            autoClose: 80,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+          }
+        );
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+     console.log(res);
+     return res.data
+    } catch (err) {
+      console.log(err);
+      {
+        err.response && (err.response.status === 409 || err.response.data.message === "ASSESSMENT_ALREADY_PUBLISHED")
+          ? toast.error( err.response.data.message.replaceAll("_", " ").toLowerCase(), {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : toast.error("somthing Error please try Again", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            });
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_FAIL,
+      });
+    }
+
+}
+
+// fetch results for examinee
+
+export const fetch_results_by_assessment_Id_for_examinee = (assessmentId) => async (dispatch) => {
+  
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+  };
+   try {
+      const res = await axios.get(
+        `${API_BASE_URL}/assessments/attempts/result/fetch_result/${assessmentId}`,
+        config
+      );
+      if (
+        res.status === 201 ||
+        res.status === 200 ||
+        res.data.message == "RESULT_FETCH_SUCCESS"
+      ) {
+        toast.success(
+          `✅ Successfully created your Section ! Your item is now live.`,
+          {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+          }
+        );
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+     console.log(res);
+     return res.data
+    } catch (err) {
+      console.log(err);
+      {
+        err.response && (err.response.status === 409 || err.response.data.message === "ASSESSMENT_ALREADY_PUBLISHED")
+          ? toast.error( err.response.data.message.replaceAll("_", " ").toLowerCase(), {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : toast.error("somthing Error please try Again", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            });
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_FAIL,
+      });
+    }
+
+}
+
+ // create Question
 export const createquestion =
   (questionType, sectionId, questionText, options, answers) =>
   async (dispatch) => {
@@ -1049,7 +1191,7 @@ export const Add_question_from_bank =
 
 // create settings for assessment
 export const CreateSetting_for_assessment =
-  (assessmentId, startDateTime, endDateTIme, duration, maxAttempts, isPublic) =>
+  (assessmentId, startDateTime, endDateTIme, duration, maxAttempts,passingScore, isPublic) =>
   async (dispatch) => {
     const config = {
       headers: {
@@ -1064,6 +1206,7 @@ export const CreateSetting_for_assessment =
       endDateTIme,
       duration,
       maxAttempts,
+      passingScore,
       isPublic: typeof isPublic === "boolean" ? isPublic : isPublic === "true",
     });
 
@@ -1105,7 +1248,7 @@ export const CreateSetting_for_assessment =
       {
         (err.response && err.response.status === 409) ||
         err.response.data.message == "VALIDATION_ERROR"
-          ? toast.error("Check Your Inputs and try again", {
+          ? toast.error(err.response.message.replaceAll("_", " "), {
               position: "bottom-left",
               autoClose: 3000,
               hideProgressBar: false,
@@ -1874,10 +2017,7 @@ export const load_my_inivitation =
           `${API_BASE_URL}/assessments/invitations/mine`,
           config
         );
-        dispatch({
-          type: LOAD_INVITED_BY_ASSESSMENT_ID_SUCCESS,
-          payload: res.data,
-        });
+      
         return res.data;
       } catch (err) {
         console.log(err);
