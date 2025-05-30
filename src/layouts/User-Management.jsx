@@ -1,111 +1,34 @@
-"use client"
-
-import { useState } from "react"
+import useSWR, { useSWRConfig } from "swr";
+import { useEffect, useState } from "react"
 import { Search, MoreHorizontal, UserPlus, ChevronLeft, ChevronRight } from "lucide-react"
 import QuestionModal from "../components/QuestionModal"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
+import { fetchAllRoles, fetchAllUsers } from "../action/Auth"
 
-// Sample user data
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Admin",
-    status: "Active",
-    lastActive: "2 hours ago",
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "1 day ago",
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    email: "michael@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "3 days ago",
-  },
-  {
-    id: 4,
-    name: "Emily Wilson",
-    email: "emily@example.com",
-    role: "Examiner",
-    status: "Inactive",
-    lastActive: "2 weeks ago",
-  },
-  {
-    id: 5,
-    name: "David Brown",
-    email: "david@example.com",
-    role: "Examiner",
-    status: "Active",
-    lastActive: "5 hours ago",
-  },
-  {
-    id: 6,
-    name: "Lisa Garcia",
-    email: "lisa@example.com",
-    role: "Examinee",
-    status: "Pending",
-    lastActive: "Never",
-  },
-  {
-    id: 7,
-    name: "Robert Johnson",
-    email: "robert@example.com",
-    role: "Admin",
-    status: "Active",
-    lastActive: "1 hour ago",
-  },
-  {
-    id: 8,
-    name: "Jennifer Lee",
-    email: "jennifer@example.com",
-    role: "Examiner",
-    status: "Active",
-    lastActive: "4 days ago",
-  },
-  {
-    id: 9,
-    name: "Thomas Wright",
-    email: "thomas@example.com",
-    role: "Examinee",
-    status: "Inactive",
-    lastActive: "1 month ago",
-  },
-  {
-    id: 10,
-    name: "Patricia Miller",
-    email: "patricia@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "12 hours ago",
-  },
-  {
-    id: 11,
-    name: "James Wilson",
-    email: "james@example.com",
-    role: "Examiner",
-    status: "Pending",
-    lastActive: "Never",
-  },
-  {
-    id: 12,
-    name: "Elizabeth Taylor",
-    email: "elizabeth@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "2 days ago",
-  },
-]
+
 
 export default function UserManagement() {
+  const ONE_DAY = 1000 * 60 * 60 * 24; 
+  //  const { cache } = useSWRConfig();
+const { data: users, error, isLoading } = useSWR("all_users_list", fetchAllUsers, {
+  dedupingInterval: ONE_DAY,
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+});
+
+const { data: roles } = useSWR("all_roles", fetchAllRoles, {
+  dedupingInterval: ONE_DAY,
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+});
+  //   useEffect(() => {
+  //   const isCached = cache.get("all_users_list") !== undefined;
+  //   console.log("Is 'all_users_list' cached?", isCached);
+  // }, []);
+
+  // console.log("roles", roles.body)
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("All Roles")
   const [statusFilter, setStatusFilter] = useState("All Status")
@@ -114,22 +37,25 @@ export default function UserManagement() {
   const itemsPerPage = 10
 
   // Filter users based on search query and filters
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = users?.body.filter((user) => {
     const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||  user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
 
-    const matchesRole = roleFilter === "All Roles" || user.role === roleFilter
-
-    const matchesStatus = statusFilter === "All Status" || user.status === statusFilter
+const matchesRole =
+  roleFilter === "All Roles" ||
+  user.roles?.some((role) => role !== "USER" && role === roleFilter);
+    const matchesStatus = statusFilter === "All Status"
+    //   || 
+    // user.status === statusFilter
 
     return matchesSearch && matchesRole && matchesStatus
   })
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  // // Calculate pagination
+  const totalPages = Math.ceil(filteredUsers?.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage)
+  const paginatedUsers = filteredUsers?.slice(startIndex, startIndex + itemsPerPage)
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -194,16 +120,20 @@ export default function UserManagement() {
             />
           </div>
         </div>
-        <select
-          className="select select-bordered w-full md:w-[180px]"
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-        >
-          <option value="All Roles">All Roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Examiner">Examiner</option>
-          <option value="Examinee">Examinee</option>
-        </select>
+       <select
+  className="select select-bordered w-full md:w-[180px]"
+  value={roleFilter}
+  onChange={(e) => setRoleFilter(e.target.value)}
+>
+  <option value="All Roles">All Roles</option>
+  {roles?.body
+    ?.filter((role) => role !== "USER")
+    .map((role) => (
+      <option key={role} value={role}>
+        {role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}
+      </option>
+    ))}
+</select>
         <select
           className="select select-bordered w-full md:w-[180px]"
           value={statusFilter}
@@ -220,25 +150,27 @@ export default function UserManagement() {
         <table className="table bg-white">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
               <th>Email</th>
               <th>Role</th>
-              <th>Status</th>
-              <th>Last Active</th>
+              {/* <th>Status</th>
+              <th>Last Active</th> */}
               <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.length > 0 ? (
+            {paginatedUsers?.length > 0 ? (
               paginatedUsers.map((user) => (
                 <tr key={user.id} className="hover">
-                  <td className="font-medium">{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>
+                  <td className="font-medium">{user?.firstName}</td>
+                  <td className="font-medium">{user?.lastName}</td>
+                  <td>{user?.email}</td>
+                  <td>{user?.roles?.filter((role)=>role !== "USER")}</td>
+                  {/* <td>
                     <span className={getStatusBadgeClass(user.status)}>{user.status}</span>
                   </td>
-                  <td>{user.lastActive}</td>
+                  <td>{user.lastActive}</td> */}
                   <td className="text-right">
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="btn btn-ghost btn-xs">
@@ -270,7 +202,7 @@ export default function UserManagement() {
         </table>
       </div>
 
-      {filteredUsers.length > 0 && (
+      {filteredUsers?.length > 0 && (
         <div className="flex justify-center mt-4">
           <div className="join">
             <button

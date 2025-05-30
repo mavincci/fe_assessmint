@@ -1535,7 +1535,52 @@ export const Create_finish_attempt = (assessmentID) => async (dispatch) => {
     });
   }
 };
+// fetch all users
+export const fetchAllUsers = async () => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
 
+  try {
+    const res = await axios.get(`${API_BASE_URL}/auth/get_all_users`, config);
+    console.log(res.data)
+    
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    throw error; // rethrow so SWR can detect the error
+    }
+  }
+    
+};
+// fetch all roles 
+export const fetchAllRoles = async () => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+  try {
+    const res = await axios.get(`${API_BASE_URL}/auth/get_roles`, config);
+    console.log(res.data)
+    
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    throw error; // rethrow so SWR can detect the error
+    }
+  }
+    
+};
 // create Question Bank , categories , fetch
 // create categories
 export const create_question_bank_category =
