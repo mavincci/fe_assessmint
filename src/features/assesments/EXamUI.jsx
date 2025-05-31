@@ -32,7 +32,8 @@ useEffect(() => {
     const start_assessment = async () => {
       try {
         setIsLoading(true);
-        const res = await Create_start_assessment(assessmentId);
+        if (isStartAssessment) {
+          const res = await Create_start_assessment(assessmentId);
         console.log("Sent Start to ASSESSMENT", res);
         if (res?.data?.message === "ASSESSMENT_START_SUCCESS") {
           console.log("HERE in Success")
@@ -49,6 +50,7 @@ useEffect(() => {
         else if(res?.response?.data?.message === "ASSESSMENT_NOT_PUBLISHED") {
           setError(res?.response?.data?.message.replaceAll("_", " "));
         }
+       }
       } catch (err) {
         console.error("Error in starting assessment:", err);
       } finally {

@@ -807,7 +807,8 @@ export const fetch_results_by_assessment_Id = (assessmentId) => async (dispatch)
             transition: Flip,
           }
         );
-      }
+     }
+    
       dispatch({
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
@@ -830,7 +831,22 @@ export const fetch_results_by_assessment_Id = (assessmentId) => async (dispatch)
               transition: Flip,
               style: { width: "400px" },
             })
-          : toast.error("somthing Error please try Again", {
+          :
+        err.response.data.message === "An error occurred while processing your requestjava.util.NoSuchElementException" ? toast.info(
+          `No results submitted yet`,
+          {
+            position: "bottom-left",
+            autoClose: 0,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+          }
+        ):
+         toast.error("somthing Error please try Again", {
               position: "bottom-left",
               autoClose: 3000,
               hideProgressBar: false,
@@ -863,7 +879,7 @@ export const fetch_results_by_assessment_Id_for_examinee = (assessmentId) => asy
   };
    try {
       const res = await axios.get(
-        `${API_BASE_URL}/assessments/attempts/result/fetch_result/${assessmentId}`,
+        `${API_BASE_URL}/assessments/attempts/result/fetch_my_results/${assessmentId}`,
         config
       );
       if (
@@ -1548,7 +1564,7 @@ export const fetchAllUsers = async () => {
 
   try {
     const res = await axios.get(`${API_BASE_URL}/auth/get_all_users`, config);
-    console.log(res.data)
+    // console.log(res.data)
     
     return res.data;
   } catch (error) {
@@ -1571,7 +1587,7 @@ export const fetchAllRoles = async () => {
 
   try {
     const res = await axios.get(`${API_BASE_URL}/auth/get_roles`, config);
-    console.log(res.data)
+    // console.log(res.data)
     
     return res.data;
   } catch (error) {

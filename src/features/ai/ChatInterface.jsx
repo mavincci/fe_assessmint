@@ -248,8 +248,8 @@ export default function ChatInterface() {
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300 bg-grad">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            {/* <Bot className="h-6 w-6 text-primary-600" /> */}
-            <img src={aiImage} className="w-16 h-16 " />
+            <Bot className="h-10 w-10 text-primary-600 animate animate-pulse duration-500" />
+            {/* <img src={aiImage} className="w-16 h-16 " /> */}
             <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
               AssessMint AI Question Generator
             </h1>

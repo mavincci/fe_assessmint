@@ -29,7 +29,7 @@ import { useLocation } from "react-router-dom"; // <-- make sure this is at the 
 
 // import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
 const Menus = ({ roles, logout, isAuthenticated }) => {
-  console.log("MENU user role", roles)
+  // console.log("MENU user role", roles)
   const location = useLocation()
   function handlelogout() {
     console.log("logging out....")

@@ -50,7 +50,7 @@ const MyAssessment = () => {
     );
     if (response?.body) {
       setFetchedResults(response.body);
-      console.log("Feetched results", response.body);
+      console.log("Feetched result examine", response.body);
     } else {
       console.log("response", response);
     } 
@@ -64,7 +64,7 @@ const MyAssessment = () => {
     if (isExaminee) {
       fetch_results_examinee();
     }
-    if (selectedAssessment) {
+    if (selectedAssessment && isExaminer) {
       fetch_results();
     }
 
@@ -72,9 +72,9 @@ const MyAssessment = () => {
 
 
   return (
-    <div className="min-h-screen bg-bg-light p-4 sm:p-6 lg:p-8 antialiased font-display">
+    <div className="min-h-screen bg-bg-light p-4 sm:p-6 lg:p-8 antialiased font-display dark:bg-gray-800 dark:text-bg-light">
       <div className="max-w-9xl rounded-xl  overflow-hidden">
-        <h1 className="text-4xl text-start font-bold text-gray-800 p-2 border-gray-200">
+        <h1 className="text-4xl text-start font-bold light:text-gray-800 p-2 border-gray-200">
           Assessment Results Overview
         </h1>
       { !isExaminee &&   <span className="p-2 text-start font-semibold ">
@@ -84,14 +84,14 @@ const MyAssessment = () => {
 
  
 
-        <AssessmentTable data={fetchedresults} assessments = {rawAssessment?.body  || AssessmentData} SelectedID = {(id)=>setSelectedAssessment(id)}  Examiner={isExaminer} Examinee = {isExaminee} />
+        <AssessmentTable data={fetchedresults} assessments = {rawAssessment?.body  || AssessmentData} SelectedID = {(id)=>setSelectedAssessment(id)}   Examiner={isExaminer} Examinee = {isExaminee} />
       </div>
     </div>
   );
 };
 
 // Define a constant for the passing percentage threshold
-const PASS_THRESHOLD = 70; // Example: 70% is considered passing
+const PASS_THRESHOLD = 50; // Example: 70% is considered passing
 
 // SearchableSelect component for autocomplete functionality
 const SearchableSelect = ({ options, value, onChange, placeholder, label }) => {
@@ -140,7 +140,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, label }) => {
 
   return (
     <div className="relative flex-grow " ref={wrapperRef}>
-      <div className="relative bg-white ">
+      <div className="relative bg-white  ">
         <input
           id={`searchable-select-${label}`}
           type="text"
@@ -205,13 +205,15 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
   // State for searchable select for Assessment ID
   const [selectedAssessmentFilter, setSelectedAssessmentFilter] =
     React.useState("");
+  const [PassingScore, setPasingScore]= useState(0)
   // State for sorting functionality
   const [sortColumn, setSortColumn] = React.useState(null);
   const [sortDirection, setSortDirection] = React.useState("asc"); // 'asc' or 'desc'
   // State for pass/fail filtering
   const [passFailFilter, setPassFailFilter] = React.useState("all"); // 'all', 'pass', 'fail'
-
+  // console.log("assessment set", assessments.body.map(res)=> res.settings)
   // Function to toggle the expanded state of a row
+  console.log("assessment setting" ,assessments)
   const toggleRow = (key) => {
     setExpandedRows((prev) => ({
       ...prev,
@@ -219,7 +221,7 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
     }));
   };
 
-
+console.log("passingScore", PassingScore)
   // Helper function to calculate success percentage
   const calculatePercentage = (success, failure, skipped) => {
     const total = success + failure + skipped;
@@ -237,30 +239,36 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
     }
     return percentage.toFixed(2) + "%";
   };
+  function ensureArray(input) {
+  return Array.isArray(input) ? input : [input];
+}
 
-  // Group attempts by examinee and assessment to find the highest score and corresponding percentage
-  const groupedData = React.useMemo(() => {
-    return data?.reduce((acc, currentAttempt) => {
-      const key = `${currentAttempt.examineeEmail}-${currentAttempt.assessmentId}`;
-      if (!acc[key]) {
-        acc[key] = {
-          examineeName: currentAttempt.examineeName,
-          examineeEmail: currentAttempt.examineeEmail,
-          assessmentId: currentAttempt.assessmentId,
-          attempts: [],
-          highestSuccessCount: 0,
-          highestScoreAttempt: null, // Store the full attempt object that has the highest success
-        };
-      }
-      acc[key].attempts.push(currentAttempt);
-      // Update the highest success count and the corresponding attempt for the current group
-      if (currentAttempt.successCount > acc[key].highestSuccessCount) {
-        acc[key].highestSuccessCount = currentAttempt.successCount;
-        acc[key].highestScoreAttempt = currentAttempt;
-      }
-      return acc;
-    }, {});
-  }, [data]); // Recalculate only if data changes
+const groupedData = React.useMemo(() => {
+  const safeData = Array.isArray(data) ? data : data ? [data] : [];
+
+  return safeData.reduce((acc, currentAttempt) => {
+    const key = `${currentAttempt.examineeEmail}-${currentAttempt.assessmentId}`;
+    if (!acc[key]) {
+      acc[key] = {
+        examineeName: currentAttempt.examineeName,
+        examineeEmail: currentAttempt.examineeEmail,
+        assessmentId: currentAttempt.assessmentId,
+        attempts: [],
+        highestSuccessCount: 0,
+        highestScoreAttempt: null,
+      };
+    }
+
+    acc[key].attempts.push(currentAttempt);
+
+    if (currentAttempt.successCount > acc[key].highestSuccessCount) {
+      acc[key].highestSuccessCount = currentAttempt.successCount;
+      acc[key].highestScoreAttempt = currentAttempt;
+    }
+
+    return acc;
+  }, {});
+}, [data]);
 
   // Get unique assessment IDs for the searchable select
  const uniqueAssessments = React.useMemo(() => {
@@ -272,7 +280,8 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
       seenIds.add(item.id);
       unique.push({
         id: item.id,
-        title: item.title, // or item.assessmentTitle depending on your data shape
+        title: item.title, 
+        PassScore:item.settings.passingScore
       });
     }
   });
@@ -405,19 +414,19 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
   } = usePagination(processedData, 7);
 console.log("SelectedID",SelectedID)
   return (
-    <div className="p-6">
+    <div className="p-6 dark:bg-gray-800 dark:text-bg-light">
       {/* Search and Filter Controls */}
       <div className="flex gap-4 items-center w-full max-w-5xl mx-28 my-4  justify-between ">
         
   {/* Search Input */}
-  <div className="relative w-72">
+  <div className="relative w-72 dark:bg-gray-700 dark:text-bg-light">
     <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
       <Search className="h-4 w-4" />
     </span>
     <input
       type="text"
       id="examinee-search-input"
-      className="block w-full rounded-md border bg-white border-accent-teal-light shadow-sm pl-10 pr-3 py-3 focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm h-12"
+      className="block w-full rounded-md border  dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm pl-10 pr-3 py-3 focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm h-12"
       placeholder="Search by Examinee Name..."
       value={examineeSearchTerm}
       onChange={(e) => setExamineeSearchTerm(e.target.value)}
@@ -425,25 +434,30 @@ console.log("SelectedID",SelectedID)
         </div>
         <div className="flex gap-9">
   <Autocomplete
-    className="w-72"
+    className="w-72 dark:bg-gray-700 dark:text-bg-light"
     options={uniqueAssessments}
     getOptionLabel={(option) => option.title || ""}
     isOptionEqualToValue={(option, value) => option.id === value.id}
     onChange={(e, newVal) => {
-      if (newVal) SelectedID(newVal.id);
+      if (newVal) {
+        SelectedID(newVal.id);
+        setPasingScore(newVal.PassScore)
+        // console.log("newVal", newVal)
+      }
     }}
     renderInput={(params) => (
       <TextField
         {...params}
         label="Select Assessment"
         variant="outlined"
+        className="dark:bg-gray-700 dark:text-bg-light"
         sx={{
           "& label": { color: "gray" },
           "& label.Mui-focused": { color: "#286575" },
           "& .MuiInputBase-root": {
             height: 48,
             paddingX: 1.5,
-            backgroundColor: "white",
+            // backgroundColor: "white",
           },
           "& input": { padding: "12px 14px" },
         }}
@@ -466,10 +480,10 @@ console.log("SelectedID",SelectedID)
 
 
   {/* Pass/Fail Filter */}
-  <div className="w-48">
+  <div className="w-48 ">
     <select
       id="pass-fail-filter"
-      className="block w-full rounded-md bg-white border border-accent-teal-light shadow-sm focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm py-3 px-5 h-12"
+      className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm py-3 px-5 h-12"
       value={passFailFilter}
       onChange={(e) => setPassFailFilter(e.target.value)}
     >
@@ -486,11 +500,12 @@ console.log("SelectedID",SelectedID)
 
 
       {/* Assessment Results Table */}
-      <div className="overflow-x-auto rounded-lg shadow-md">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto rounded-lg shadow-md ">
+        <table className="min-w-full divide-y bg-white table table-sm table-zebra dark:bg-gray-700 dark:text-bg-light">
+          <thead className="">
             <tr>
-              <th
+              {Examiner && <>
+                <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100 rounded-tl-lg"
                 onClick={() => handleSort("examineeName")}
@@ -509,6 +524,7 @@ console.log("SelectedID",SelectedID)
                   Examinee Email {renderSortArrow("examineeEmail")}
                 </div>
               </th>
+              </>}
 
               <th
                 scope="col"
@@ -545,7 +561,7 @@ console.log("SelectedID",SelectedID)
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:text-bg-light">
             {/* Iterate over each grouped assessment result */}
             {currentItems.length > 0 ? (
               currentItems.map((group) => {
@@ -568,29 +584,31 @@ console.log("SelectedID",SelectedID)
                   <React.Fragment key={groupKey}>
                     {/* Main row for each examinee/assessment group */}
                     <tr
-                      className="hover:bg-gray-50 cursor-pointer"
+                      className="hover:bg-gray-50 dark:hover:bg-gray-400 cursor-pointer"
                       onClick={() => toggleRow(groupKey)}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {Examiner && <>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-400 text-gray-900">
                         {group.examineeName}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500 dark:text-gray-400">
                         {group.examineeEmail}
                       </td>
+                      </>}
 
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
                         {group.highestSuccessCount}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
                         {highestScorePercentageDisplay}
                       </td>
                       <td className={`px-6 py-4 whitespace-nowrap`}>
                         <span
-                          className={`${parseFloat(highestScorePercentageDisplay) >= 70 ? "bg-accent-teal-light" : parseFloat(highestScorePercentageDisplay) == 50 ? "bg-[#B78B54]" : "bg-red-500"} p-1 rounded-full text-white text-sm`}
+                          className={`${parseFloat(highestScorePercentageDisplay) >= PassingScore ? "bg-accent-teal-light" : parseFloat(highestScorePercentageDisplay) == PassingScore ? "bg-[#B78B54]" : "bg-red-500"} p-1 rounded-full text-white text-sm`}
                         >
-                          {parseFloat(highestScorePercentageDisplay) >= 70
+                          {parseFloat(highestScorePercentageDisplay) >= PassingScore
                             ? "Passed"
-                            : parseFloat(highestScorePercentageDisplay) == 50
+                            : parseFloat(highestScorePercentageDisplay) == PassingScore
                               ? "Passed"
                               : "Failed"}
                         </span>
@@ -653,17 +671,17 @@ console.log("SelectedID",SelectedID)
                             </h4>
 
                             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                              {group.attempts.map((attempt) => (
+                              {group.attempts.map((attempt, idx) => (
                                 <div
                                   key={attempt.attemptId}
                                   className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 transition hover:shadow-md"
                                 >
-                                  <div className="mb-2 text-sm font-medium text-indigo-600">
-                                    Attempt ID: {attempt.attemptId}
+                                  <div className="mb-2 text-sm font-medium bg-accent-teal-light p-2 rounded-xl text-bg-light">
+                                    Attempt: {idx +1}
                                   </div>
 
                                   <ul className="text-sm text-gray-700 space-y-1">
-                                    <li className="flex items-center gap-2">
+                                    <li className="flex items-center gap-2  shadow-2xl">
                                       <span className="text-green-600 font-medium">
                                         ✔ Success:
                                       </span>{" "}

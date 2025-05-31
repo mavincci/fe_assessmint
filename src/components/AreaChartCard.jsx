@@ -125,7 +125,7 @@ const AreaChartCard = ({ title = "Created Assignment", subtitle = "(+5) more in 
   }
   
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl p-5 animate-fade-in opacity-0 ${isVisible ? 'opacity-100' : ''}`}>
+    <div className={`bg-white  dark:bg-gray-700 dark:text-bg-light rounded-xl p-5 animate-fade-in opacity-0 ${isVisible ? 'opacity-100' : ''}`}>
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h3>

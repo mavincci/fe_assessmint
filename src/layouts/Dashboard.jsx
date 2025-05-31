@@ -28,9 +28,9 @@ const isQuestionBank = location.pathname === "/question-bank";
     : "";
 
   return (
-    <div className="h-full top-0 flex">
+    <div className="h-full top-0 flex ">
       {/* left */}
-      <div className="w-[16%] md:w-[10%] lg:w-[14%] p-3 bg-bg-secondary-light max-h-[100vh] overflow-y-auto scrollbar-hide  justify-between ">
+      <div className="w-[16%] md:w-[10%] lg:w-[14%] p-3 bg-bg-secondary-light dark:bg-gray-900 max-h-[100vh] overflow-y-auto scrollbar-hide  justify-between ">
         <div
           className="cursor-pointer flex space-x-2 ml-4 items-center align-middle justify-center md:justify-start text-primary-blue-light font-semibold"
           onClick={() => setvisibleManageProfile(!manageprofile)}
@@ -70,7 +70,7 @@ const isQuestionBank = location.pathname === "/question-bank";
       </div>
 
       {/* right */}
-      <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-bg-light h-[100vh] overflow-auto scrollbar-hide relative">
+      <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-bg-light dark:bg-gray-800 h-[100vh] overflow-auto scrollbar-hide relative">
          <AnimatePresence>
       {/* Conditionally render the motion.div based on the showHeader state */}
       {/* {showHeader && ( */}
@@ -90,9 +90,9 @@ const isQuestionBank = location.pathname === "/question-bank";
 
 
 
-        <div className="max-h-[100vh] flex flex-col lg:flex-row w-full">
+        <div className="max-h-[100vh] flex flex-col lg:flex-row w-full dark:bg-gray-800">
           {/* Main Content */}
-          <div className={`w-full h-full transition-all duration-300 overflow-auto`}>
+          <div className={`w-full h-full transition-all duration-300 overflow-auto dark:bg-gray-800 dark:text-bg-light`}>
             <Outlet />
           </div>
 

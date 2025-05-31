@@ -11,6 +11,8 @@ import WelcomeCard from '../components/WelcomeCard';
 import StateCard from '../components/StateCard';
 import { Calendar, Folder, User, Users } from '../components/Icons';
 import { color, motion } from 'framer-motion'
+import { fetchAllUsers } from '../action/Auth';
+import useSWR from 'swr';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -25,6 +27,17 @@ const fadeInUp = {
   }),
 }
 const ExaminerDashboard = () => {
+    const ONE_DAY = 1000 * 60 * 60 * 24; 
+  //  const { cache } = useSWRConfig();
+const { data: users, error, isLoading } = useSWR("all_users_list", fetchAllUsers, {
+  dedupingInterval: ONE_DAY,
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  errorRetryCount:2
+});
+  
+  console.log("usrs", users)
   // Mock data for the dashboard
 
   const stats = [
@@ -123,7 +136,7 @@ const ExaminerDashboard = () => {
   const isAdmin = user.roles.some(role => role === "ADMIN");
   const currentuser= user.roles.filter(role => role !== "USER")[0]
   return (
-    <div className="min-h-screen bg-blue-50/50">
+    <div className="min-h-screen bg-bg-light dark:bg-gray-800 dark:text-bg-light">
       <div className="container mx-auto px-4 py-6">
         {/* <Header userName="Examiner user" /> */}
 
@@ -152,7 +165,7 @@ const ExaminerDashboard = () => {
         {
           isExaminer  ? <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Upcoming Assignments */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white rounded-xl shadow-sm p-6 dark:bg-gray-700 dark:text-bg-light ">
             <h2 className="text-lg font-semibold mb-1">Upcoming assignments</h2>
             <p className="text-sm text-gray-500 mb-4">scheduled assignments for the next 7 days</p>
             <div className="divide-y divide-gray-100 space-y-3 p-2">
@@ -169,7 +182,7 @@ const ExaminerDashboard = () => {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white rounded-xl shadow-sm p-6 dark:bg-gray-700 dark:text-bg-light">
             <h2 className="text-lg font-semibold mb-1">Recent Submission</h2>
             <p className="text-sm text-gray-500 mb-4">4 assignment waiting for review and evaluation</p>
             <div>
@@ -190,7 +203,7 @@ const ExaminerDashboard = () => {
 {/* ADmin  Dashboard */}
         {isAdmin && <>
           
-      <div className="container px-4 mx-auto bg-bg-light">
+      <div className="container px-4 mx-auto bg-bg-light dark:bg-gray-800 dark:text-bg-light">
       <motion.div
         initial="hidden"
         animate="visible"
@@ -212,9 +225,9 @@ const ExaminerDashboard = () => {
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[{
-            title: "Total User", value: "135", Icon: Users, color: "primary"
+            title: "Total User", value: users?.body?.length, Icon: Users, color: "primary"
           }, {
-            title: "Total Examiner", value: "35", Icon: User, color: "secondary"
+            title: "Total Examiner", value: users?.body?.filter((user)=>user.roles.includes("EXAMINER")).length, Icon: User, color: "secondary"
           }, {
             title: "Repository", value: "35", Icon: Folder, color: "success"
           }, {
@@ -261,7 +274,7 @@ const ExaminerDashboard = () => {
             </motion.div>
             <motion.div variants={fadeInUp} className="lg:w-1/2 w-full">
               <SubscribersCard
-                count="8.62K"
+                count= {users?.body?.length}
                 title="Subscribers"
                 from="from-[#2C3E50]"
                 to="to-[#4CA1AF]"
@@ -271,12 +284,12 @@ const ExaminerDashboard = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <motion.div variants={fadeInUp} className="lg:col-span-2">
-            <AreaChartCard title="Created Assignment" subtitle="(+5) more in 2021" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
+          <motion.div variants={fadeInUp} className="lg:col-span-2 ">
+            <AreaChartCard title="Created Assessment" subtitle="(+5) more in 2024" />
           </motion.div>
           <motion.div variants={fadeInUp}>
-            <BarChartCard title="Active Users" subtitle="(+23) than last week" />
+            <BarChartCard title="Active Users" subtitle="(+23) than last week" noOfusers= {users?.body?.length} />
           </motion.div>
         </div>
       </motion.div>

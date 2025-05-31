@@ -64,7 +64,7 @@ const handleAddQuestions = async ({ type }) => {
     );
 
     setProgress({ current: i + 1, total: questions.length });
-    await sleep(500);
+    await sleep(200);
   }
 
   console.log(`${type.toUpperCase()} Questions Sent`);
@@ -309,7 +309,7 @@ const handleAddQuestions = async ({ type }) => {
               {mcqQuestions.map((question, index) => (
                 <div
                   key={index}
-                  className="p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150"
+                  className="p-5 dark:hover:bg-gray-700 dark:hover:bg-gray-750 transition-colors duration-150"
                 >
                   <div className="flex justify-between items-start">
                     {editingMCQId === index ? (
@@ -470,7 +470,7 @@ const handleAddQuestions = async ({ type }) => {
     <div className="modal-box text-center">
       <h3 className="font-bold text-lg mb-4">Submitting Questions</h3>
       <p>{`${progress.current}/${progress.total} Submitted`}</p>
-      <progress className="progress progress-primary w-full mt-4" value={progress.current} max={progress.total}></progress>
+      <progress className="progress progress-accent w-full mt-4" value={progress.current} max={progress.total}></progress>
     </div>
   </dialog>)}
       </div>

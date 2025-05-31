@@ -16,20 +16,20 @@ const Header = () => {
     const [currentDate] = useState(new Date());
   return (
       <>
-           <header className="bg-bg-light  sticky top-0 z-10 w-[90%] mx-auto mt-3 rounded-2xl">
+           <header className="bg-bg-light dark:bg-gray-800  dark:text-bg-light sticky top-0 z-10 w-[90%] mx-auto mt-3 rounded-2xl">
         <div className="px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center ">
              
               <div className="ml-4 hidden lg:block ">
-                <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
+                <h1 className="text-lg font-semibold dark:text-bg-light text-gray-900">Dashboard</h1>
                 <p className="text-sm text-gray-500">{format(currentDate, 'dd MMMM yyyy')}</p>
               </div>
             </div>
             <div className="relative w-[85%]">
                 <input
                   type="text"
-                  placeholder="Search assignments..."
+                  placeholder="Search assessment..."
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-teal-light focus:border-transparent"
                 />
                 <Search className="absolute left-3 top-4 h-6 w-6 text-gray-400" />

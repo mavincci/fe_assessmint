@@ -2,6 +2,7 @@ import { BanknoteArrowDown, Currency } from "lucide-react";
 import { Mail } from "./Icons";
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const SubscribersCard = ({
   count = "8.62K",
@@ -32,9 +33,9 @@ const SubscribersCard = ({
       <div className="text-4xl font-bold text-white mb-2">{count}</div>
       <div className="text-lg text-gray-300 mb-6">{title}</div>
 
-      <button className="btn px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors duration-200">
+      <Link to="/user-management" className="btn px-4 py-2 bg-accent-teal-light hover:bg-accent-teal-dark text-white rounded-md transition-colors duration-200">
         Manage List
-      </button>
+      </Link>
     </div>
   );
 };

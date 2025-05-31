@@ -60,13 +60,13 @@ export default function Notifications() {
   })
 
   return (
-    <div className="max-w-7xl mx-auto bg-bg-light max-h-[90vh] ">
+    <div className="max-w-7xl mx-auto bg-bg-light max-h-[90vh] table= dark:bg-gray-800 dark:text-bg-light ">
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           
 
           <div className="relative">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-md border border-gray-300">
+            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 rounded-md border border-gray-300">
               <Filter className="w-4 h-4" />
               <span>All notification</span>
               <svg
@@ -120,7 +120,7 @@ export default function Notifications() {
           {filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`bg-white p-6 rounded-md border ${
+              className={`bg-white p-6 rounded-md border  dark:bg-gray-700 dark:text-bg-light ${
                 notification.read ? "border-gray-200" : "border-blue-200"
               } relative`}
             >
@@ -133,7 +133,7 @@ export default function Notifications() {
                     <h3 className="text-lg font-bold">{notification.title}</h3>
                     <span className="text-sm text-gray-500">{notification.time}</span>
                   </div>
-                  <p className="text-gray-600 mb-4">{notification.message}</p>
+                  <p className="text-gray-600  dark:text-gray-400 mb-4">{notification.message}</p>
                   <Link to="/assignment-detail">
                     <button className="px-4 py-2 bg-btn-primary text-white rounded-md text-sm">View Details</button>
                   </Link>

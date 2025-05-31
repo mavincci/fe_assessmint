@@ -13,7 +13,7 @@ const Pagination = ({
   if (totalItems === 0) return null;
 
   return (
-    <div className="mt-6 flex flex-wrap justify-between items-center bg-accent-teal-light p-3 text-white rounded-b-xl">
+    <div className="mt-0 flex flex-wrap justify-between items-center bg-accent-teal-light p-3 text-white rounded-b-xl">
       {/* Items per page selector */}
       <div className="flex flex-row items-center gap-2 mb-3 md:mb-0 w-[20%]">
         <span className='w-fit'>Items/page:</span>

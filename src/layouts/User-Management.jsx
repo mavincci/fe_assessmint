@@ -4,6 +4,8 @@ import { Search, MoreHorizontal, UserPlus, ChevronLeft, ChevronRight } from "luc
 import QuestionModal from "../components/QuestionModal"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import { fetchAllRoles, fetchAllUsers } from "../action/Auth"
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/Pagination";
 
 
 
@@ -15,6 +17,7 @@ const { data: users, error, isLoading } = useSWR("all_users_list", fetchAllUsers
   revalidateIfStale: false,
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
+  errorRetryCount:2
 });
 
 const { data: roles } = useSWR("all_roles", fetchAllRoles, {
@@ -22,6 +25,7 @@ const { data: roles } = useSWR("all_roles", fetchAllRoles, {
   revalidateIfStale: false,
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
+  errorRetryCount:2
 });
   //   useEffect(() => {
   //   const isCached = cache.get("all_users_list") !== undefined;
@@ -32,9 +36,9 @@ const { data: roles } = useSWR("all_roles", fetchAllRoles, {
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("All Roles")
   const [statusFilter, setStatusFilter] = useState("All Status")
-    const [currentPage, setCurrentPage] = useState(1)
+    // const [currentPage, setCurrentPage] = useState(1)
     const [isModalOpen, setIsModalOpen] = useState(false)
-  const itemsPerPage = 10
+  // const itemsPerPage = 10
 
   // Filter users based on search query and filters
   const filteredUsers = users?.body.filter((user) => {
@@ -52,10 +56,10 @@ const matchesRole =
     return matchesSearch && matchesRole && matchesStatus
   })
 
-  // // Calculate pagination
-  const totalPages = Math.ceil(filteredUsers?.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedUsers = filteredUsers?.slice(startIndex, startIndex + itemsPerPage)
+  // // // Calculate pagination
+  // const totalPages = Math.ceil(filteredUsers?.length / itemsPerPage)
+  // const startIndex = (currentPage - 1) * itemsPerPage
+  // const paginatedUsers = filteredUsers?.slice(startIndex, startIndex + itemsPerPage)
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -92,8 +96,20 @@ const matchesRole =
     }
   }
 
+    const {
+      currentPage,
+      itemsPerPage,
+      totalItems,
+      totalPages,
+      indexOfFirstItem,
+      indexOfLastItem,
+      currentItems,
+      handlePageChange,
+      handleItemsPerPageChange,
+    } = usePagination(filteredUsers, 5);
+
   return (
-    <div className="w-full bg-bg-light rounded-lg p-6  h-full ">
+    <div className="w-full bg-bg-light rounded-lg p-6  h-full dark:bg-gray-800 dark:text-bg-light ">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">User Management</h1>
@@ -147,7 +163,7 @@ const matchesRole =
       </div>
 
       <div className="overflow-x-auto">
-        <table className="table bg-white">
+        <table className="table bg-white dark:bg-gray-700 dark:text-bg-light">
           <thead>
             <tr>
               <th>First Name</th>
@@ -160,8 +176,15 @@ const matchesRole =
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers?.length > 0 ? (
-              paginatedUsers.map((user) => (
+            {isLoading && <>
+              <tbody>
+                            <tr>
+              <div className="animate animate-pulse duration-500 text-lg text-gray-400">Loading...</div>
+  </tr> 
+               </tbody>
+            </>}
+            {currentItems?.length > 0 && isLoading == false  ? (
+              currentItems.map((user) => (
                 <tr key={user.id} className="hover">
                   <td className="font-medium">{user?.firstName}</td>
                   <td className="font-medium">{user?.lastName}</td>
@@ -200,44 +223,18 @@ const matchesRole =
             )}
           </tbody>
         </table>
+                    <Pagination
+  totalItems={totalItems}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  itemsPerPage={itemsPerPage}
+  handleItemsPerPageChange={handleItemsPerPageChange}
+  handlePageChange={handlePageChange}
+  indexOfFirstItem={indexOfFirstItem}
+  indexOfLastItem={indexOfLastItem}
+/>
       </div>
-
-      {filteredUsers?.length > 0 && (
-        <div className="flex justify-center mt-4">
-          <div className="join">
-            <button
-              className="join-item btn"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-
-            {getPageNumbers().map((page) => (
-              <button
-                key={page}
-                className={`join-item btn ${currentPage === page ? "btn-active" : ""}`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
-
-            {totalPages > 3 && currentPage < totalPages - 2 && (
-              <button className="join-item btn btn-disabled">...</button>
-            )}
-
-            <button
-              className="join-item btn"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-          )}
-
+            
            <QuestionModal isOpen={isModalOpen} onClose={() => {
           setIsModalOpen(false)
           }}>

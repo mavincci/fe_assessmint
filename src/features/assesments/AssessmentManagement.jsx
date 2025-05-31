@@ -31,6 +31,8 @@ import QuestionModal from "../../components/QuestionModal";
 import AssessmentSettings from "./AssessmentSetting";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from  "../../components/Pagination"
 
 // Sample assignment data
 // const assignments = [
@@ -142,7 +144,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [statusFilter, setStatusFilter] = useState("All Status");
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [assignments, setAssessmentData] = useState([]);
@@ -151,7 +153,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
     title: null,
     settings: {},
   });
-  const itemsPerPage = 10;
+  // const itemsPerPage = 10;
   const [state, setState] = useState({
     title: "",
     description: "",
@@ -236,13 +238,13 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
   });
 
   console.log(assignments);
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedAssignments = filteredAssignments.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  // // Calculate pagination
+  // const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const paginatedAssignments = filteredAssignments.slice(
+  //   startIndex,
+  //   startIndex + itemsPerPage
+  // );
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -284,18 +286,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
       setPublishingId(null);
     }
   };
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case "Active":
-        return "badge badge-neutral";
-      case "Inactive":
-        return "badge badge-ghost";
-      case "Draft":
-        return "badge badge-outline";
-      default:
-        return "badge";
-    }
-  };
+ 
   const isExaminee = user.roles.some((role) => role === "EXAMINEE");
   const isExaminer = user.roles.some((role) => role === "EXAMINER");
   const dispatch = useDispatch();
@@ -323,13 +314,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
     }
   }, []);
 
-  const handlePublished = () => {
-    // publish API
-  };
 
-  const handleunPublished = () => {
-    // unpublish API
-  };
 
   const handleSelect = (Title, ID, Settings) => {
     setsettings((prev) => ({
@@ -341,17 +326,29 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
 
     setIsSettingModalOpen(true);
   };
+
+  const {
+    currentPage,
+    itemsPerPage,
+    totalItems,
+    totalPages,
+    indexOfFirstItem,
+    indexOfLastItem,
+    currentItems,
+    handlePageChange,
+    handleItemsPerPageChange,
+  } = usePagination(assignments, 5);
   return (
     <>
       {/* if Examinees */}
       {isExaminee && (
         <>
-          <div className="min-h-screen bg-bg-light flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full ">
+          <div className="min-h-screen bg-bg-light flex-wrap flex md:flex-row items-center justify-center p-4 gap-4 w-full dark:bg-gray-800 dark:text-bg-light">
             {assignments.length > 0 ? (
               <>
                 {assignments?.map((items, index) => (
                   <div
-                    className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl  transition-shadow duration-300 overflow-hidden"
+                    className="w-full max-w-md bg-white rounded-lg shadow-lg hover:shadow-xl  transition-shadow duration-300 overflow-hidden dark:bg-gray-600 dark:text-bg-light"
                     key={items.id}
                   >
                     {/* Card Header */}
@@ -390,7 +387,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                           </div>
                           <div>
                             <p
-                              className="text-sm text-gray-500"
+                              className="text-sm text-gray-500 dark:text-gray-400 dark:font-semibold"
                               aria-label="Duration "
                             >
                               Duration
@@ -404,17 +401,17 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                             <Calendar className="h-5 w-5 text-blue-700" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500">Available</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 dark:font-semibold">Available</p>
                             <p className="font-medium">May 11-12, 2025</p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 ">
                           <div className="bg-blue-100 p-2 rounded-full">
                             <Users className="h-5 w-5 text-blue-700" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500">Attempts</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 dark:font-semibold">Attempts</p>
                             <p className="font-medium">Maximum 2 attempts</p>
                           </div>
                         </div>
@@ -424,7 +421,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                             <FileText className="h-5 w-5 text-blue-700" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500">Content</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 dark:font-semibold">Content</p>
                             <p className="font-medium">
                               1 section • 1 question
                             </p>
@@ -434,7 +431,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                     </div>
 
                     {/* Card Footer */}
-                    <div className="bg-gray-50 border-t px-6 py-4">
+                    <div className="bg-gray-50 border-t px-6 py-4 dark:bg-gray-600 dark:text-bg-light">
                       <div className="w-full flex justify-between items-center">
                         <div className="flex space-x-1">
                           <div className="w-2 h-2 rounded-full bg-blue-600"></div>
@@ -465,7 +462,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
 
       {/* if not Examines */}
       {isExaminer && (
-        <div className="w-full bg-bg-light rounded-lg p-6 h-full font-display">
+        <div className="w-full bg-bg-light rounded-lg p-6 h-full font-display dark:bg-gray-800 dark:text-bg-light">
           <div className="flex justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-bold">Assessment Management</h1>
@@ -521,7 +518,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
           </div>
 
           <div className="overflow-x-auto h-fit">
-            <table className="table bg-white table-sm table-zebra ">
+            <table className="table bg-white table-sm table-zebra dark:bg-gray-700 dark:text-bg-light ">
               <thead >
                 <tr>
                   <th>Assessment</th>
@@ -568,8 +565,8 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedAssignments.length > 0 ? (
-                  paginatedAssignments.map((assignment) => (
+                {currentItems.length > 0 ? (
+                  currentItems.map((assignment) => (
                     <tr key={assignment.id} className="hover">
                       <td className="font-medium">{assignment.title}</td>
                       {/* <td>{assignment.questions || "-"}</td> */}
@@ -610,7 +607,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                         onClick={() => handlePublishassessment(assignment.id)}
                       >
                         <button
-                          className={`p-2 rounded-xl outline outline-btn-primary ${assignment.isPublished ? "outline-btn-primary" : "bg-btn-primary text-white font-semibold  hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white"} text-gray-800 flex items-center gap-2`}
+                          className={`p-2  dark:text-bg-light dark:hover:bg-btn-primary rounded-xl outline outline-btn-primary ${assignment.isPublished ? "outline-btn-primary" : "bg-btn-primary text-white font-semibold  hover:outline-accent-teal-light hover:bg-btn-primary cursor-pointer hover:text-white"} text-gray-800 flex items-center gap-2`}
                           disabled={assignment.isPublished}
                         >
                           {publishingId === assignment.id ? (
@@ -724,9 +721,19 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                 )}
               </tbody>
             </table>
+            <Pagination
+  totalItems={totalItems}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  itemsPerPage={itemsPerPage}
+  handleItemsPerPageChange={handleItemsPerPageChange}
+  handlePageChange={handlePageChange}
+  indexOfFirstItem={indexOfFirstItem}
+  indexOfLastItem={indexOfLastItem}
+/>
+    
           </div>
-
-          {filteredAssignments.length > 0 && (
+      {/* {filteredAssignments.length > 0 && (
             <div className="flex justify-center mt-4">
               <div className="join">
                 <button
@@ -762,13 +769,13 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                 </button>
               </div>
             </div>
-          )}
+          )} */}
 
           <QuestionModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
           >
-            <h1 className="text-center text-3xl font-semibold">
+            <h1 className="text-center text-3xl font-semibold dark:text-bg-light">
               Add New Assessment
             </h1>
 
@@ -812,7 +819,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                 type="button"
                 disabled={state.isAssessmentSubmitting}
                 onClick={handleCreateAssessment}
-                className={`w-full flex justify-center items-center gap-2 py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none transition duration-200 ${
+                className={`w-full flex justify-center items-center gap-2 py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-accent-teal-light focus:outline-none transition duration-200 ${
                   state.isAssessmentSubmitting
                     ? "opacity-75 cursor-not-allowed"
                     : ""

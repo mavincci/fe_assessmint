@@ -5,7 +5,7 @@ import { Bar } from 'react-chartjs-2'
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const BarChartCard = ({ title = "Active Users", subtitle = "(+23) than last week" }) => {
+const BarChartCard = ({ title = "Active Users", subtitle = "(+23) than last week",noOfusers=0 }) => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
@@ -111,7 +111,7 @@ const BarChartCard = ({ title = "Active Users", subtitle = "(+23) than last week
             <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
             <span className="text-xs text-gray-400">Users</span>
           </div>
-          <div className="text-xl font-bold text-white">32,984</div>
+          <div className="text-xl font-bold text-white">{noOfusers}</div>
         </div>
         <div className="bg-gray-800 p-3 rounded-lg">
           <div className="flex items-center mb-1">
