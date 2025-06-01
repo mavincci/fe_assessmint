@@ -1058,23 +1058,7 @@ export const add_Questions_from_bank = (bankId,questionId,sectionId ) =>
     try {
       const res = await axios.post( `${API_BASE_URL}/assessments/add_from_bank`, bodyData, config);
       console.log(res.data);
-       if (
-        res.status === 201 ||
-        res.status === 200 ||
-        res.data.message == "QUESTION_ADD_FROM_BANK_SUCCESS"
-      ) {
-        toast.success(`✅ Successfully Import your question From Bank !`, {
-          position: "top-center",
-          autoClose: 500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Flip,
-        });
-      }
+     
     }
     catch (err) {
    {

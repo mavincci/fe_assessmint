@@ -130,7 +130,7 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
           icon: <FileQuestion />,
           label: "All Repositories",
           href: "/question-bank",
-          visible: ["EXAMINER","ADMIN"],
+          visible: ["EXAMINER"],
         },
           {
           icon: <Bot/>,
@@ -205,8 +205,8 @@ const Menus = ({ roles, logout, isAuthenticated }) => {
              </div> 
           ))}
       
-      {roles === "EXAMINER" || roles == "ADMIN" && (
-          <Link to="/create-assessment" className=" fixed bottom-6 flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2  lg:py-6 lg:w-[10%] rounded-md w-[4%]  bg-[#8380FE] ">
+      {roles === "EXAMINER"  && (
+          <Link to="/manage-assessment" className=" fixed bottom-6 flex items-center justify-center lg:justify-start gap-2 text-white py-2 md:px-2  lg:py-6 lg:w-[10%] rounded-md w-[10%]  bg-[#8380FE] ">
          <span className=""> <PlusCircle className=""/></span> <span className="hidden lg:block p-1">Create Assessment</span>
         </Link>
       )

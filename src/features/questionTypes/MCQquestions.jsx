@@ -175,13 +175,13 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">Multiple Choice Question Builder</h1>
+    <div className=" w-full   md:mx-auto md:p-6  dark:bg-gray-700 dark:text-bg-light">
+      <h1 className="hidden md:block md:text-3xl font-bold text-center mb-8">Multiple Choice Question Builder</h1>
 
       {/* Question Form */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 className="text-xl font-bold mb-4">{isEditing ? "Edit Question" : "Create New Question"}</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="bg-white rounded-lg shadow-lg md:p-6 w-full  mb-8 dark:bg-gray-700 dark:text-bg-light">
+        <h2 className="md:text-xl font-bold mb-4">{isEditing ? "Edit Question" : "Create New Question"}</h2>
+        <form onSubmit={handleSubmit} className="space-y-6 w-full ">
           {/* Question Text */}
           <div className=" flex flex-col">
             <label className="label">
@@ -212,9 +212,9 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
 
           {/* Answer Options */}
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row md:justify-between items-center space-y-4">
               <h3 className="text-lg font-medium">Answer Options</h3>
-              <button type="button" className="btn flex gap-2 btn-md btn-outline hover:outline-accent-teal-light outline bg-btn-primary hover:bg-white p-2 rounded-xl text-white hover:text-accent-teal-light " onClick={addOption}>
+              <button type="button" className="btn flex gap-2 btn-md btn-outline hover:outline-accent-teal-light outline bg-btn-primary hover:bg-white p-2 w-full md:w-fit rounded-xl text-white hover:text-accent-teal-light " onClick={addOption}>
                 <PlusCircle/> Add Option
                           </button>
                        
@@ -226,7 +226,7 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
             
 
             {currentQuestion.options.map((option) => (
-              <div key={option.id} className="flex items-center gap-4">
+              <div key={option.id} className="flex items-center gap-1 ">
                 <input
                   type="checkbox"
                   className="checkbox checkbox-accent"
@@ -256,10 +256,10 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
 
           {/* Submit and Cancel Buttons */}
           <div className="flex gap-4">
-            <button type="submit" className="btn  bg-btn-primary text-white roundxl">
+            <button type="submit" className="btn  bg-btn-primary text-white roundxl w-full md:w-fit">
               {isSubmitting ? "Adding..." : "Add Question"}
             </button>
-            {isEditing &&    <button type="submit" className="btn  bg-btn-primary text-white roundxl">
+            {isEditing &&    <button type="submit" className="btn  bg-btn-primary text-white roundxl  w-full md:w-fit">
              Update Question
             </button>}
             {isEditing && (
@@ -272,7 +272,7 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
       </div>
 
       {/* Questions List */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-gray-800 dark:text-bg-light">
         <h2 className="text-xl font-bold mb-4">Your Questions</h2>
         {questions.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
@@ -319,7 +319,7 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
       </div>
 
       {/* Preview Modal */}
-      <dialog id="preview_modal" className="modal">
+      <dialog id="preview_modal" className="modal dark:bg-gray-800 dark:text-bg-light">
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">Question Preview</h3>
           {previewQuestion && (

@@ -28,12 +28,12 @@ const EmailList = ({ emails }) => {
   return (
     
     <>
-{emails.length > 0 ?  <div className="bg-btn-primary rounded-lg shadow-lg p-6 w-full h-[90%] overflow-y-auto scrollbar-hide ">
-        <ul className="space-y-2">
+{emails.length > 0 ?  <div className="bg-white rounded-lg shadow-lg p-6 w-full h-[90%] overflow-y-auto scrollbar-hide dark:bg-gray-700 dark:text-bg-light ">
+        <ul className="space-y-2 flex flex-wrap">
           {emails.map((email, index) => (
             <li
               key={index}
-              className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors duration-200 text-gray-700"
+              className="p-3 bg-gray-100 dark:bg-gray-600 rounded-full dark:text-accent-teal-light  hover:bg-gray-300 shadow-cl transition-colors duration-200 text-gray-700"
             >
               {email}
             </li>
@@ -134,7 +134,7 @@ const dispatch = useDispatch()
   }, [])
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-8 w-full  my-6 rounded-xl h-full bg-white ">
+    <div className="flex flex-col md:flex-row gap-6 p-8 w-full  my-6 rounded-xl h-full bg-bg-light dark:bg-gray-800 dark:text-bg-light ">
       <div className=" md:w-1/2 space-y-4">
         <h1 className="text-2xl font-bold">Assessment Management</h1>
 

@@ -72,13 +72,13 @@ const MyAssessment = () => {
 
 
   return (
-    <div className="min-h-screen bg-bg-light p-4 sm:p-6 lg:p-8 antialiased font-display dark:bg-gray-800 dark:text-bg-light">
-      <div className="max-w-9xl rounded-xl  overflow-hidden">
-        <h1 className="text-4xl text-start font-bold light:text-gray-800 p-2 border-gray-200">
+    <div className="min-h-screen bg-bg-light flex flex-col md:flex-row p-4 sm:p-6 lg:p-8 antialiased font-display dark:bg-gray-800 dark:text-bg-light">
+      <div className="md:max-w-9xl w-full rounded-xl  overflow-hidden">
+        <h1 className="text-4xl md:text-start font-bold light:text-gray-800 p-2 border-gray-200 ">
           Assessment Results Overview
         </h1>
-      { !isExaminee &&   <span className="p-2 text-start font-semibold ">
-          {" "}
+      { !isExaminee &&   <span className="md:p-2  text-start font-semibold ">
+        
           View candidates ranked by their performance
         </span> }
 
@@ -414,89 +414,81 @@ const groupedData = React.useMemo(() => {
   } = usePagination(processedData, 7);
 console.log("SelectedID",SelectedID)
   return (
-    <div className="p-6 dark:bg-gray-800 dark:text-bg-light">
-      {/* Search and Filter Controls */}
-      <div className="flex gap-4 items-center w-full max-w-5xl mx-28 my-4  justify-between ">
-        
-  {/* Search Input */}
-  <div className="relative w-72 dark:bg-gray-700 dark:text-bg-light">
-    <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-      <Search className="h-4 w-4" />
-    </span>
-    <input
-      type="text"
-      id="examinee-search-input"
-      className="block w-full rounded-md border  dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm pl-10 pr-3 py-3 focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm h-12"
-      placeholder="Search by Examinee Name..."
-      value={examineeSearchTerm}
-      onChange={(e) => setExamineeSearchTerm(e.target.value)}
-    />
-        </div>
-        <div className="flex gap-9">
-  <Autocomplete
-    className="w-72 dark:bg-gray-700 dark:text-bg-light"
-    options={uniqueAssessments}
-    getOptionLabel={(option) => option.title || ""}
-    isOptionEqualToValue={(option, value) => option.id === value.id}
-    onChange={(e, newVal) => {
-      if (newVal) {
-        SelectedID(newVal.id);
-        setPasingScore(newVal.PassScore)
-        // console.log("newVal", newVal)
-      }
-    }}
-    renderInput={(params) => (
-      <TextField
-        {...params}
-        label="Select Assessment"
-        variant="outlined"
-        className="dark:bg-gray-700 dark:text-bg-light"
-        sx={{
-          "& label": { color: "gray" },
-          "& label.Mui-focused": { color: "#286575" },
-          "& .MuiInputBase-root": {
-            height: 48,
-            paddingX: 1.5,
-            // backgroundColor: "white",
-          },
-          "& input": { padding: "12px 14px" },
-        }}
+   <div className="p-4 md:p-6 dark:bg-gray-800 dark:text-bg-light  w-full">
+  {/* Search and Filter Controls */}
+  <div className="flex flex-col gap-4 md:flex-row md:items-center w-full max-w-full md:max-w-7xl mx-auto my-4 justify-between">
+    
+    {/* Search Input */}
+    <div className="relative w-full md:w-72 dark:bg-gray-700 dark:text-bg-light">
+      <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+        <Search className="h-4 w-4" />
+      </span>
+      <input
+        type="text"
+        id="examinee-search-input"
+        className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm pl-10 pr-3 py-3 focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm h-12"
+        placeholder="Search by Examinee Name..."
+        value={examineeSearchTerm}
+        onChange={(e) => setExamineeSearchTerm(e.target.value)}
       />
-    )}
-    sx={{
-      "& .MuiOutlinedInput-root": {
-        "& fieldset": {
-          borderColor: "green",
-        },
-        "&:hover fieldset": {
-          borderColor: "black",
-        },
-        "&.Mui-focused fieldset": {
-          borderColor: "#286575",
-        },
-      },
-    }}
-  />
+    </div>
 
+    {/* Right side controls */}
+    <div className="flex flex-col md:flex-row w-full md:w-auto gap-4">
+      
+      {/* Autocomplete */}
+      <div className="w-full md:w-72 dark:bg-gray-700 dark:text-bg-light">
+        <Autocomplete
+          options={uniqueAssessments}
+          getOptionLabel={(option) => option.title || ""}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          onChange={(e, newVal) => {
+            if (newVal) {
+              SelectedID(newVal.id);
+              setPasingScore(newVal.PassScore);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Select Assessment"
+              variant="outlined"
+              sx={{
+                "& label": { color: "gray" },
+                "& label.Mui-focused": { color: "#286575" },
+                "& .MuiInputBase-root": { height: 48 },
+                "& input": { padding: "12px 14px" },
+              }}
+            />
+          )}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": { borderColor: "green" },
+              "&:hover fieldset": { borderColor: "black" },
+              "&.Mui-focused fieldset": { borderColor: "#286575" },
+            },
+          }}
+        />
+      </div>
 
-  {/* Pass/Fail Filter */}
-  <div className="w-48 ">
-    <select
-      id="pass-fail-filter"
-      className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm py-3 px-5 h-12"
-      value={passFailFilter}
-      onChange={(e) => setPassFailFilter(e.target.value)}
-    >
-      <option value="all">All</option>
-      <option value="pass">Pass (≥{PASS_THRESHOLD}%)</option>
-      <option value="fail">Fail (&lt;{PASS_THRESHOLD}%)</option>
-    </select>
+      {/* Pass/Fail Filter */}
+      <div className="w-full md:w-48">
+        <select
+          id="pass-fail-filter"
+          className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm py-3 px-5 h-12"
+          value={passFailFilter}
+          onChange={(e) => setPassFailFilter(e.target.value)}
+        >
+          <option value="all">All</option>
+          <option value="pass">Pass (≥{PASS_THRESHOLD}%)</option>
+          <option value="fail">Fail (&lt;{PASS_THRESHOLD}%)</option>
+        </select>
+      </div>
+
+    </div>
   </div>
 
-        </div>
-  {/* Autocomplete */}
 
-</div>
 
 
       {/* Assessment Results Table */}
@@ -507,7 +499,7 @@ console.log("SelectedID",SelectedID)
               {Examiner && <>
                 <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100 rounded-tl-lg"
+                className=" px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100 rounded-tl-lg"
                 onClick={() => handleSort("examineeName")}
               >
                 <div className="flex items-center gap-1">
@@ -517,7 +509,7 @@ console.log("SelectedID",SelectedID)
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort("examineeEmail")}
               >
                 <div className="flex items-center gap-1">
@@ -528,7 +520,7 @@ console.log("SelectedID",SelectedID)
 
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort("highestSuccessCount")}
               >
                 <div className="flex items-center gap-1">
@@ -591,12 +583,12 @@ console.log("SelectedID",SelectedID)
                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-400 text-gray-900">
                         {group.examineeName}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500 dark:text-gray-400">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm  text-gray-500 dark:text-gray-400">
                         {group.examineeEmail}
                       </td>
                       </>}
 
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
+                      <td className=" hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
                         {group.highestSuccessCount}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
@@ -661,12 +653,12 @@ console.log("SelectedID",SelectedID)
                     {/* Detailed attempts row, shown only when expanded */}
                     {isExpanded && (
                       <tr>
-                        <td colSpan="6" className="px-6 py-4 bg-gray-50">
+                        <td colSpan="6" className="px-6 py-4 bg-gray-50 dark:bg-gray-800 dark:text-bg-light">
                           <div
                             id={`attempts-row-${groupKey}`}
                             className="space-y-4"
                           >
-                            <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">
+                            <h4 className="text-sm font-semibold light:text-gray-800 border-b pb-2">
                               🧪 Individual Attempts
                             </h4>
 
@@ -674,13 +666,13 @@ console.log("SelectedID",SelectedID)
                               {group.attempts.map((attempt, idx) => (
                                 <div
                                   key={attempt.attemptId}
-                                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 transition hover:shadow-md"
+                                  className="bg-white dark:bg-gray-700 dark:text-bg-light rounded-xl shadow-sm border border-gray-200 p-4 transition hover:shadow-md"
                                 >
                                   <div className="mb-2 text-sm font-medium bg-accent-teal-light p-2 rounded-xl text-bg-light">
                                     Attempt: {idx +1}
                                   </div>
 
-                                  <ul className="text-sm text-gray-700 space-y-1">
+                                  <ul className="text-sm light:text-gray-700 space-y-1">
                                     <li className="flex items-center gap-2  shadow-2xl">
                                       <span className="text-green-600 font-medium">
                                         ✔ Success:
@@ -699,7 +691,7 @@ console.log("SelectedID",SelectedID)
                                       </span>{" "}
                                       {attempt.skippedCount}
                                     </li>
-                                    <li className="mt-2 font-semibold text-blue-700">
+                                    <li className="mt-2 font-semibold light:text-blue-700">
                                       🎯 Score:{" "}
                                       {formatPercentage(
                                         calculatePercentage(
@@ -729,11 +721,9 @@ console.log("SelectedID",SelectedID)
             )}
           </tbody>
           <tfoot>
-          
-          </tfoot>
-        </table>
-      </div>
-        <Pagination
+            <tr>
+              <td colSpan={8}>
+                <div className="w-full">   <Pagination
   totalItems={totalItems}
   currentPage={currentPage}
   totalPages={totalPages}
@@ -742,7 +732,13 @@ console.log("SelectedID",SelectedID)
   handlePageChange={handlePageChange}
   indexOfFirstItem={indexOfFirstItem}
   indexOfLastItem={indexOfLastItem}
-/>
+/></div>
+              </td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+     
     </div>
   );
 };

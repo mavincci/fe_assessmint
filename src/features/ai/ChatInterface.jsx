@@ -324,7 +324,7 @@ export default function ChatInterface() {
                             message.type === "user"
                               ? "bg-btn-primary text-white"
                               : message.type === "system"
-                                ? "bg-bg-light border border-btn-primary rounded-xl p-2 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-lg"
+                                ? "bg-bg-light border border-btn-primary rounded-xl p-2 dark:bg-gray-700 text-gray-800 dark:text-gray-200 md:text-lg"
                                 : "bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200"
                           }`}
                         >
@@ -397,7 +397,7 @@ export default function ChatInterface() {
 
             {/* Input area (only show in chat tab) */}
             {activeTab === "chat" && (
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mb-8">
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mb-8 w-full">
                 <ChatInput
                   onSendMessage={handleSendMessage}
                   isLoading={loading}

@@ -30,7 +30,7 @@ const QuestionPreview = ({ questions = [], isLoading = false }) => {
           animate="visible"
           variants={fadeUp}
           //  style={{ border: '3px solid red' }}
-          className="bg-bg-light rounded-xl max-w-full mx-auto p-6 border text-black border-accent-teal-light max-h-full overflow-y-auto space-y-6"
+          className="bg-bg-light dark:bg-gray-800 dark:text-bg-light rounded-xl max-w-full mx-auto p-6 border text-black border-accent-teal-light max-h-full overflow-y-auto space-y-6"
         >
           {questions.map((q, idx) => (
             <motion.div
@@ -42,7 +42,7 @@ const QuestionPreview = ({ questions = [], isLoading = false }) => {
               <div className="flex items-start gap-2">
                 {console.log("q",q)}
                 <p className="font-semibold text-gray-700">{idx + 1}.</p>
-                <p className="font-medium text-gray-800">{q?.questionData?.questionText}</p>
+                <p className="font-medium light:text-gray-800">{q?.questionData?.questionText}</p>
                 <span className="flex ms-auto space-x-1">
                   <Edit size={18} className="text-amber-500 hover:text-amber-600 cursor-pointer" />
                   <Delete size={18} className="text-red-500 hover:text-red-600 cursor-pointer" />
@@ -56,7 +56,7 @@ const QuestionPreview = ({ questions = [], isLoading = false }) => {
                     const isCorrect = (val === 'True' && q.questionData.answer === true) ||
                                       (val === 'False' && q.questionData.answer === false);
                     return (
-                      <div key={val} className="text-gray-700 flex items-center gap-2">
+                      <div key={val} className="light:text-gray-700 flex items-center gap-2">
                         <span className="font-semibold">{i === 0 ? 'A)' : 'B)'}</span> {val}
                         {isCorrect && (
                           <CheckCircle2 size={16} className="text-green-500 ml-2" />
@@ -75,7 +75,7 @@ const QuestionPreview = ({ questions = [], isLoading = false }) => {
                     return (
                       <div key={opt.id} className="flex items-center gap-2">
                         <span className="font-semibold">{String.fromCharCode(65 + index)}.</span>
-                        <span className={`text-gray-800 ${isCorrect ? 'text-green-600 font-semibold' : ''}`}>
+                        <span className={`light:text-gray-800 ${isCorrect ? 'text-green-600 font-semibold' : ''}`}>
                           {opt.answerText}
                         </span>
                         {isCorrect && <CheckCircle2 size={16} className="text-green-500" />}

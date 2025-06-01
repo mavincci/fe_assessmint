@@ -123,10 +123,10 @@ const matchesRole =
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <div className="join w-full">
-            <div className="join-item btn btn-square btn-ghost">
-              <Search className="h-4 w-4" />
-            </div>
+          <div className="join w-full relative">
+            {/* <div className="join-item btn btn-square btn-ghost absolute left-1">
+              <Search className="h-4 w-4   " />
+            </div> */}
             <input
               type="text"
               placeholder="Search users..."
@@ -222,17 +222,26 @@ const matchesRole =
               </tr>
             )}
           </tbody>
+         <tfoot>
+  <tr>
+    <td colSpan={6}>
+      <div className="w-full">
+        <Pagination
+          totalItems={totalItems}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          handleItemsPerPageChange={handleItemsPerPageChange}
+          handlePageChange={handlePageChange}
+          indexOfFirstItem={indexOfFirstItem}
+          indexOfLastItem={indexOfLastItem}
+        />
+      </div>
+    </td>
+  </tr>
+</tfoot>
         </table>
-                    <Pagination
-  totalItems={totalItems}
-  currentPage={currentPage}
-  totalPages={totalPages}
-  itemsPerPage={itemsPerPage}
-  handleItemsPerPageChange={handleItemsPerPageChange}
-  handlePageChange={handlePageChange}
-  indexOfFirstItem={indexOfFirstItem}
-  indexOfLastItem={indexOfLastItem}
-/>
+                   
       </div>
             
            <QuestionModal isOpen={isModalOpen} onClose={() => {

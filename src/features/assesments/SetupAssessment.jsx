@@ -94,7 +94,17 @@ function reducer(state, action) {
 
   const handleCreateSection = async () => {
     createSection(state.selectedId, state.title, state.description, state.type);
-    Dispatch({ type: "isModalOpen", payload:false });
+    // Dispatch({ type: "isModalOpen", payload: false });
+    // setIsModalOpen(false)
+     Dispatch({ type: "description", payload:""});
+    Dispatch({ type: "title", payload: "" });
+    if (sectionCache.current[state.selectedId]) {
+      delete sectionCache.current[state.selectedId];
+    }
+     await new Promise(resolve => setTimeout(resolve, 500));
+
+  await fetchSection();
+      // await fetchSection()
    
 
   }
@@ -108,6 +118,21 @@ useLoadAssessment()
   const fetchedQuestions = useMemo(() => rawFetchedQuestions, [rawFetchedQuestions]);
   const loading = useSelector((state) => state.assessment.loading);
   console.log("Questiontype", fetchedQuestions)
+
+    const fetchSection = async () => {
+    if (sectionCache.current[state.selectedId]) {
+      setFetchedSection(sectionCache.current[state.selectedId]);
+      return;
+    }
+
+    // Else fetch from API
+    const res = await dispatch(load_my_section(state.selectedId));
+    if (res?.body) {
+      sectionCache.current[state.selectedId] = res.body; 
+      setFetchedSection(res.body);
+      console.log("FetchedSection", res.body)
+    }
+  };
   useEffect(() => {
 
   
@@ -124,23 +149,10 @@ useLoadAssessment()
  
 };
 // fetch Sections 
-  const fetchSection = async () => {
-    if (sectionCache.current[state.selectedId]) {
-      setFetchedSection(sectionCache.current[state.selectedId]);
-      return;
-    }
 
-    // Else fetch from API
-    const res = await dispatch(load_my_section(state.selectedId));
-    if (res?.body) {
-      sectionCache.current[state.selectedId] = res.body; 
-      setFetchedSection(res.body);
-      console.log("FetchedSection", res.body)
-    }
-  };
   
 
-  if (state.selectedId ) {
+  if (state.selectedId || isModalOpen == false ) {
     fetchSection();
   }
   if (state.isModalOpen) {
@@ -160,8 +172,8 @@ useLoadAssessment()
   
   return (
     <>
-      <div className="flex  flex-col md:flex-row justify-between items-center gap-4 last:ms-auto mr-4">
-        <h1 className="font-bold w-[90%] text-3xl p-7">
+      <div className="flex  flex-col md:flex-row md:justify-between items-center gap-4 last:ms-auto mr-4">
+        <h1 className="font-bold w-[90%] md:text-3xl text-md p-7">
           Configure Assessment for {assessmentT}
         </h1>
       </div>
@@ -246,10 +258,10 @@ useLoadAssessment()
         </div>
       </div>
 
-      <div className="md:w-[95%] w-full flex flex-col md:flex-row lg:justify-center mx-auto lg:mt-5  gap-2 bg-bg-light overflow-auto scrollbar-hide p-1 h-[70vh]">
+      <div className="md:w-[95%] w-full flex flex-col md:flex-row lg:justify-center  mx-auto lg:mt-5  gap-2 bg-bg-light dark:bg-gray-800 dark:text-bg-light overflow-y-scroll scrollbar-hide p-1 h-[80vh]">
         {/* left */}
 
-        <div className="w-full lg:w-1/2 bg-white shadow-lg border border-btn-primary rounded-xl shadow-btn-primary-light overflow-auto scrollbar-hide   ">
+        <div className="w-full lg:w-1/2 dark:bg-gray-800 dark:text-bg-light bg-white shadow-lg border border-btn-primary rounded-xl shadow-btn-primary-light md:overflow-auto md:scrollbar-hide   ">
            
           {FetchedSection.length === 0 && (
             <NoElements
@@ -268,6 +280,7 @@ useLoadAssessment()
                 text="white"
                 bg="bg-btn-primary"
                 onClick={() => {
+                  setIsModalOpen(true)
                   Dispatch({ type: "isModalOpen", payload: true });
                 }}
               />
@@ -296,10 +309,11 @@ useLoadAssessment()
           <QuestionPreview questions={fetchedQuestions} />
         </div>
 
-        {/* Create ASsessment or Section */}
+        {/* Create  Section */}
         <QuestionModal
-          isOpen={state.isModalOpen}
+          isOpen={isModalOpen}
           onClose={() => {
+            setIsModalOpen(false)
             Dispatch({ type: "isModalOpen", payload: false });
             Dispatch({ type: "title", payload: "" });
             Dispatch({ type: "description", payload: "" });
@@ -383,7 +397,7 @@ useLoadAssessment()
               onClick={() => {
                     
                     handleCreateSection();
-                    setsectioncreated("Section created");
+                    // setsectioncreated("Section created");
                     Dispatch({ type: "isMCQOpen", payload: true });
 
                               Dispatch({ type: "isModalOpen", payload: false });
@@ -471,6 +485,7 @@ useLoadAssessment()
 </form> */}
           </div>
         </QuestionModal>
+        {/* setting */}
         <QuestionModal
           isOpen={state.isSettingModalOpen}
           onClose={() =>
@@ -489,12 +504,12 @@ useLoadAssessment()
             Dispatch({ type: "isGuidanceModalOpen", payload: false })
           }
         >
-          <div className="p-6 max-w-4xl mx-auto bg-white rounded-2xl shadow-md space-y-6">
-            <h1 className="text-3xl font-bold text-gray-800">
+          <div className="p-6 max-w-4xl mx-auto dark:bg-gray-700 dark:text-bg-light bg-white rounded-2xl shadow-md space-y-6">
+            <h1 className="md:text-3xl  text-xl font-bold light:text-gray-800">
               How to Create an Assessment
             </h1>
 
-            <div className="space-y-4 text-gray-700">
+            <div className="space-y-4 light:text-gray-700">
               <Step
                 icon={<ClipboardList className="text-blue-600" />}
                 title="Step 1: Click 'Add Assessment Button'"
@@ -525,17 +540,17 @@ useLoadAssessment()
             Dispatch({ type: "isMCQOpen", payload: false });
           }}
         >
-          {state.selectedQuestionType === "MULTIPLE_CHOICE" ? (
+          {state.type === "MULTIPLE_CHOICE" ? (
             <MultipleChoiceBuilder
               sectionID={selectedSectionID}
               sectionType={state.selectedQuestionType}
             />
-          ) : state.selectedQuestionType === "TRUE_OR_FALSE" ? (
+          ) : state.type === "TRUE_OR_FALSE" ? (
             <TrueFalseBuilder
               sectionID={selectedSectionID}
               sectionType={state.selectedQuestionType}
             />
-          ) : state.selectedQuestionType === "ESSAY" ? (
+          ) : state.type === "ESSAY" ? (
             <ShortAnswerBuilder />
           ) : (
             ""

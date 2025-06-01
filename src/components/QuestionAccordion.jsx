@@ -27,7 +27,7 @@ const QuestionAccordion = ({items, onSectionSelect,selectedID,selected_type ,cou
       <div key={index} className="border border-accent-teal-light rounded-md shadow-sm overflow-hidden">
         <button
           className={`flex justify-between w-full p-4 mb-0 duration-300 transition text-left ${
-            openIndex === index ? 'bg-accent-teal-light text-white' : 'bg-white'
+            openIndex === index ? 'bg-accent-teal-light text-white' : 'bg-white dark:bg-gray-800 dark:text-bg-light'
           }`}
           onClick={() => toggle(index)}
         >
@@ -40,13 +40,13 @@ const QuestionAccordion = ({items, onSectionSelect,selectedID,selected_type ,cou
   
         {openIndex === index && (
           <>
-            <p className="flex justify-end ms-auto mr-3 p-1 max-w-fit">
+            <p className="flex justify-end ms-auto mr-3 p-1 max-w-fit ">
               Number of Questions
               <strong className="ml-1 text-center rounded bg-accent-teal-light h-7 min-w-8 max-w-fit text-white">
                 {count || "0"}
               </strong>
             </p>
-            <div className="p-4 bg-white text-gray-700 border-2 border-accent-teal-light rounded-xl my-5 w-[95%] mx-auto relative">
+            <div className="p-4 bg-white dark:bg-gray-800 dark:text-bg-light text-gray-700 border-2 border-accent-teal-light rounded-xl my-5 w-[95%] mx-auto relative">
               <Edit className="absolute top-2 right-2" />
               <b>Description:</b> {item.description}
             </div>

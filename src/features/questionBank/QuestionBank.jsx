@@ -217,14 +217,14 @@ const {
   handleItemsPerPageChange,
 } = usePagination(filteredQuestions, 5);
   return (
-    <div className="min-h-screen bg-blue-50/50 p-6">
+    <div className="min-h-screen bg-blue-50/50 p-6 dark:bg-gray-800 dark:text-bg-light">
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Question Repositories</h1>
         </div>
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-800 dark:text-bg-light">
           {/* Question Type filters */}
-          <div className="flex flex-wrap gap-3 mb-6">
+          <div className="flex flex-wrap gap-3 mb-6 ">
             <button
               className={`btn ${state.selectedType === "All" ? "bg-btn-primary text-white" : "btn-outline"} flex items-center gap-2`}
               onClick= {() => updateField("selectedType","All")}
@@ -317,9 +317,9 @@ const {
           </div>
 
           {/* Questions Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto ">
             {/* DaisyUI table */}
-            <table className="table w-full table-zebra collapse">
+            <table className="table w-full table-zebra collapse dark:bg-gray-800 dark:text-bg-light">
               <thead>
                 <tr>
                   <th className="text-left">Repository</th>
@@ -334,7 +334,7 @@ const {
                 {currentItems?.map((repo) => (
                   <React.Fragment key={repo.id}>
                     <tr
-                      className="hover:bg-gray-50 cursor-pointer"
+                      className="hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-600 "
                       onClick={() => toggleExpandQuestion(repo.id, repo.questionType)}
                     >
                       <td className="font-medium">
@@ -368,13 +368,13 @@ const {
                     </tr>
                     {/* Expanded content - Full Width */}
                     {state.expandedQuestionId === repo.id && (
-                      <tr className="bg-gray-50">
+                      <tr className="bg-gray-50 dark:bg-gray-800 dark:text-bg-light">
                         <td colSpan={6} className="p-4">
                           <div className="w-full flex gap-4">
                             {/* Left Section */}
-                            <div className="w-1/2 bg-white p-4 rounded shadow">
+                            <div className="w-1/2 bg-white p-4 rounded shadow dark:bg-gray-700 dark:text-bg-light">
                               <h4 className="font-medium mb-2">Add Question under 
-                                <span className='uppercase text-bold bg-accent-teal-light p-1 rounded text-white'> {repo.name}</span>
+                                <span className='uppercase text-bold bg-accent-teal-light md:p-1 rounded text-white'> {repo.name}</span>
                               </h4>
                               {repo?.questionType === 'MULTIPLE_CHOICE' && (
                                 <MCQquestions bankId={repo.id} sectionType={repo.questionType}/>
@@ -398,7 +398,7 @@ const {
                               )}
                             </div>
                             {/* Right Section */}
-                            <div className="w-1/2 bg-white p-4 rounded shadow">
+                            <div className="w-1/2 bg-white md:p-4 rounded shadow">
                               <QuestionBankQuestionPreview bankId={repo.id} />
                             </div>
                           </div>
@@ -421,13 +421,11 @@ const {
                     </tr>
                 )}
               </tbody>
-            </table>
-          </div>
-
-          {/* --- Pagination Controls --- */}
-        
-          {/* --- End Pagination Controls --- */}
-<Pagination
+              <tfoot>
+                <tr>
+                  <td colSpan={8}>
+                    <div className="w-full">
+                      <Pagination
   totalItems={totalItems}
   currentPage={currentPage}
   totalPages={totalPages}
@@ -437,6 +435,14 @@ const {
   indexOfFirstItem={indexOfFirstItem}
   indexOfLastItem={indexOfLastItem}
 />
+                    </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+
         </div>
 
             <QuestionModal

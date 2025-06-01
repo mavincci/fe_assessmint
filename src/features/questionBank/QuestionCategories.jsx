@@ -117,15 +117,15 @@ const QuestionCategories = ({
   };
   return (
     // Main container with background and padding
-    <div className="min-h-screen bg-blue-50/50 p-6">
+    <div className="min-h-screen bg-blue-50/50 p-6 dark:bg-gray-800 dark:text-bg-light">
       <div className="container mx-auto">
         {/* Header: Title and Create Category Button */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Question Categories</h1>
           {/* DaisyUI Button */}
-          <div className="flex flex-row justify-end gap-8 p-2 align-middle items-center">
+          <div className="flex flex-row justify-end gap-8 p-2 align-middle items-center w-full">
              <Link to="/ai" >
-                <Bot className="w-11 h-11 rounded-full text-btn-primary animate animate-pulse duration-300 "/>
+                <Bot className="w-11 h-11 rounded-full text-btn-primary animate animate-pulse duration-300  dark:text-bg-light "/>
               </Link>
             <button
               onClick={() => setIsModalOpen(!isModalOpen)}
@@ -149,7 +149,7 @@ const QuestionCategories = ({
           {Categories.map((category) => (
             <div
               key={category.id}
-              className={`card bg-base-100 shadow-xl cursor-pointer transition-colors duration-300  min-w-[300px] w-[384px]`}
+              className={`card bg-base-100 shadow-xl cursor-pointer transition-colors duration-300  min-w-[300px] w-[384px] dark:bg-gray-700 dark:text-bg-light`}
               onClick={() =>
                 setSelectedCastegories({
                   category_id: category.id,
@@ -197,7 +197,7 @@ const QuestionCategories = ({
                   <div className="badge badge-outline">
                     {category.questionsCount} Repositories
                   </div>
-                  <span>Created:{new Date().toDateString()}</span>
+                  <span>Created:{new Date(category.createdAt).toLocaleDateString()}</span>
                 </div>
 
                 {/* Manage Question Button */}

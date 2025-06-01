@@ -71,7 +71,7 @@ const QuestionBankQuestionPreview = ({ bankId, onSelectionChange }) => {
         transition={{ duration: 0.5 }}
         className={`${
           isAddFromBankPage
-            ? 'bg-white p-6 overflow-y-auto w-full rounded-lg shadow-md'
+            ? 'bg-white dark:bg-gray-800 dark:text-bg-light md:p-6 overflow-y-auto w-full rounded-lg shadow-md'
             : 'h-full bg-gray-50 flex p-4 rounded-lg'
         }`}
       >

@@ -51,7 +51,7 @@ console.log(QuestionType)
   }, [dispatch,selectedCategory]);
 
   return (
-    <div className="flex flex-row gap-4 min-fit space-x-1.5 h-11 ">
+    <div className="flex flex-col md:flex-row gap-4 min-fit space-x-1.5 h-11  mb-9">
       {/* Categories Autocomplete */}
           <Autocomplete
               className='max-w-96 w-72  focus:border-accent-teal-dark'

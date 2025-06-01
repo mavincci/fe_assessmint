@@ -26,7 +26,8 @@ const isQuestionBank = location.pathname === "/question-bank";
   const formattedLastName = user?.lastName
     ? user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1).toLowerCase()
     : "";
-
+  const showHeader =
+    location.pathname === "/assessment" || location.pathname === "/manage-assessment";
   return (
     <div className="h-full top-0 flex ">
       {/* left */}
@@ -73,7 +74,7 @@ const isQuestionBank = location.pathname === "/question-bank";
       <div className="w-[84%] md:w-[90%] lg:w-[88%] bg-bg-light dark:bg-gray-800 h-[100vh] overflow-auto scrollbar-hide relative">
          <AnimatePresence>
       {/* Conditionally render the motion.div based on the showHeader state */}
-      {/* {showHeader && ( */}
+      {showHeader && (
         <motion.div
           initial={{ opacity: 1 }}
           // We don't need an explicit 'animate' here if the initial state is the desired visible state.
@@ -83,7 +84,7 @@ const isQuestionBank = location.pathname === "/question-bank";
         >
           <Header />
         </motion.div>
-      {/* )} */}
+     )} 
     </AnimatePresence>
 
         {/* Toggle Chat Button */}

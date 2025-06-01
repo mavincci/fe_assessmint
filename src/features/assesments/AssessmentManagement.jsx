@@ -463,7 +463,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
       {/* if not Examines */}
       {isExaminer && (
         <div className="w-full bg-bg-light rounded-lg p-6 h-full font-display dark:bg-gray-800 dark:text-bg-light">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col space-y-7 md:flex-row justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-bold">Assessment Management</h1>
               <p className="text-base-content/70">
@@ -474,7 +474,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="btn bg-bg-secondary-light text-white"
+              className="btn bg-bg-secondary-light text-white w-full md:w-fit"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Assessment
@@ -484,9 +484,9 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="relative flex-1">
               <div className="join w-full">
-                <div className="join-item btn btn-square btn-ghost">
+                {/* <div className="join-item btn btn-square btn-ghost">
                   <Search className="h-4 w-4" />
-                </div>
+                </div> */}
                 <input
                   type="text"
                   placeholder="Search assessments..."
@@ -518,7 +518,7 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
           </div>
 
           <div className="overflow-x-auto h-fit">
-            <table className="table bg-white table-sm table-zebra dark:bg-gray-700 dark:text-bg-light ">
+            <table className="table bg-white table-sm table-zebra dark:bg-gray-700 dark:text-bg-light  ">
               <thead >
                 <tr>
                   <th>Assessment</th>
@@ -720,8 +720,11 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
                   </tr>
                 )}
               </tbody>
-            </table>
-            <Pagination
+              <tfoot>
+                <tr>
+                  <td colSpan={9}>
+                    <div className="w-full">
+                      <Pagination
   totalItems={totalItems}
   currentPage={currentPage}
   totalPages={totalPages}
@@ -731,6 +734,13 @@ const AssessmentManagement = ({ PublishAssessment, createAssessment }) => {
   indexOfFirstItem={indexOfFirstItem}
   indexOfLastItem={indexOfLastItem}
 />
+                    </div>
+
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+            
     
           </div>
       {/* {filteredAssignments.length > 0 && (

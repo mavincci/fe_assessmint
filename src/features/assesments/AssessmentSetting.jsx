@@ -124,7 +124,7 @@ console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDate
   }
 
   return (
-    <div className="max-h-fit bg-base-200 p-4 md:p-6 dark:bg-gray-700 dark:text-bg-light">
+    <div className="max-h-fit bg-base-200 p-4 md:p-2 dark:bg-gray-700 dark:text-bg-light">
       <div className="max-w-4xl mx-auto">
         <div className="card bg-base-100 shadow-xl">
           {/* Header */}

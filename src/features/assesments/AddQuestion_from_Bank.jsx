@@ -46,11 +46,11 @@ function sleep(ms) {
   setShowModal(false);
   }
   return (
-    <div className="max-h-screen bg-bg-light  flex flex-col items-center p-4 sm:p-6 lg:p-8 ">
+    <div className="max-h-screen bg-bg-light dark:bg-gray-800 dark:text-bg-light  flex flex-col items-center p-4 sm:p-6 lg:p-8 ">
       {/* Container for the entire component */}
-      <div className="w-full max-w-7xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
+      <div className="w-full max-w-7xl space-y-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
         {/* Header */}
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">
+        <h1 className="md:text-2xl text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">
           Question Repository Selection Area
         </h1>
  
@@ -77,10 +77,10 @@ function sleep(ms) {
         ) : selectedRepoID !== null ? (
             <div className="transition-opacity duration-300 ease-in-out">
                {selectedQuestionIds.length > 0 && (
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-4 mt-6">
           <button
             onClick={handleAddQuestion}
-            className="px-4 py-2 bg-accent-teal-light text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-accent-teal-light text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             Add {selectedQuestionIds.length} Question
             {selectedQuestionIds.length > 1 ? 's' : ''}

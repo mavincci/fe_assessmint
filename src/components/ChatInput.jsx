@@ -34,7 +34,7 @@ export default function ChatInput({ onSendMessage, isLoading }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative font-display">
+    <form onSubmit={handleSubmit} className="relative font-display w-full">
       <div className="flex items-end ">
         <textarea
           ref={inputRef}
@@ -42,13 +42,13 @@ export default function ChatInput({ onSendMessage, isLoading }) {
           onChange={handleTextareaChange}
           onKeyDown={handleKeyDown}
           placeholder="Type your message here... (e.g., 'Generate true/false questions about climate change')"
-          className="flex-1 resize-none rounded-lg border font-display font-semibold border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 pr-12 shadow-sm focus:outline-none focus:border-accent-teal-light  min-h-[100px] max-h-[220px] max-w-[75%] mx-auto transition-colors duration-200"
+          className="flex-1 resize-none rounded-lg border font-display font-semibold border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 pr-12 shadow-sm focus:outline-none focus:border-accent-teal-light  min-h-[100px] max-h-[220px] md:max-w-[75%] mx-auto transition-colors duration-200"
           disabled={isLoading}
           rows={1}
         />
         <button
           type="submit"
-          className={`absolute right-54 bottom-3 text-white p-2 rounded-full  hover:scale-110 duration-700 ${
+          className={`absolute right-2 md:right-54 bottom-3 text-white p-2 rounded-full  hover:scale-110 duration-700 ${
             message.trim() && !isLoading
               ? 'bg-accent-teal-dark  hover:bg-primary-700'
               : 'bg-gray-400 cursor-not-allowed'

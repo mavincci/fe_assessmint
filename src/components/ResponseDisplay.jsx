@@ -105,7 +105,7 @@ const handleAddQuestions = async ({ type }) => {
       <div className="space-y-6 animate-slide-in">
         <div className="overflow-x-auto">
           <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            <div className="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between">
+            <div className="p-5 border-b flex-col space-y-4 border-gray-200 dark:border-gray-700 flex justify-between">
               <div className="">
                     <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
                 True/False Questions
@@ -115,7 +115,7 @@ const handleAddQuestions = async ({ type }) => {
               </p>
           </div>
 
-                     <div className="flex flex-wrap gap-3">
+                     <div className="flex flex-col md:flex-row space-y-12 gap-3">
                            <SearchAutocomplete  onRepoSelect={handleRepoSelect} currentType="TRUE_OR_FALSE" />   <button
                   onClick={() => {
                     handleAddQuestions({type:"tf"})
@@ -277,7 +277,7 @@ const handleAddQuestions = async ({ type }) => {
       <div className="space-y-6 animate-slide-in">
         <div className="scrollbar-hide ">
           <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            <div className="p-5 border-b flex  justify-between gap-6 border-gray-200 dark:border-gray-700 z-10 sticky">
+            <div className="p-5 border-b flex  flex-col justify-between gap-6 border-gray-200 dark:border-gray-700 z-10 sticky">
               <div className="d">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
                 Multiple Choice Questions
@@ -287,7 +287,7 @@ const handleAddQuestions = async ({ type }) => {
                 questions
               </p>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col md:flex-row space-y-12 gap-3 ">
                            <SearchAutocomplete  onRepoSelect={handleRepoSelect} currentType="MULTIPLE_CHOICE" />   <button
                   onClick={() => {
                handleAddQuestions({type:"mcq"})
