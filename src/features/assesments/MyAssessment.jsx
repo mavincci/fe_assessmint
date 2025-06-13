@@ -3,7 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useLoadAssessment } from "../../hooks/useLoadMyAssessment";
 import { useDispatch, useSelector } from "react-redux";
 import { Autocomplete, TextField } from "@mui/material";
-import { fetch_results_by_assessment_Id, fetch_results_by_assessment_Id_for_examinee, load_my_inivitation } from "../../action/Auth";
+import {
+  fetch_results_by_assessment_Id,
+  fetch_results_by_assessment_Id_for_examinee,
+  load_my_inivitation,
+} from "../../action/Auth";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../../components/Pagination";
 
@@ -19,43 +23,37 @@ const MyAssessment = () => {
 
   useLoadAssessment();
   const rawAssessment = useSelector((state) => state.assessment.Assessments);
-  console.log("assessmetns", rawAssessment);
 
-  console.log(selectedAssessment);
+
   const fetch_results = async () => {
     const response = await dispatch(
       fetch_results_by_assessment_Id(selectedAssessment)
     );
     if (response?.body) {
       setFetchedResults(response.body);
-      console.log("Feetched results", response.body);
     } else {
       console.log("response", response);
     }
   };
 
-   
   const fetchExamineeAssessment = async () => {
-      const res = await dispatch(load_my_inivitation());
-      if (res?.body) {
-        setAssessmentData(res.body);
-        console.log(res.body);
-      }
+    const res = await dispatch(load_my_inivitation());
+    if (res?.body) {
+      setAssessmentData(res.body);
+    }
   };
-  
+
   const fetch_results_examinee = async () => {
     if (selectedAssessment) {
-           const response = await dispatch(
-      fetch_results_by_assessment_Id_for_examinee(selectedAssessment)
-    );
-    if (response?.body) {
-      setFetchedResults(response.body);
-      console.log("Feetched result examine", response.body);
-    } else {
-      console.log("response", response);
-    } 
+      const response = await dispatch(
+        fetch_results_by_assessment_Id_for_examinee(selectedAssessment)
+      );
+      if (response?.body) {
+        setFetchedResults(response.body);
+      } else {
+        console.log("response", response);
       }
-
+    }
   };
   useEffect(() => {
     if (isExaminee) {
@@ -67,9 +65,7 @@ const MyAssessment = () => {
     if (selectedAssessment && isExaminer) {
       fetch_results();
     }
-
   }, [selectedAssessment]);
-
 
   return (
     <div className="min-h-screen bg-bg-light flex flex-col md:flex-row p-4 sm:p-6 lg:p-8 antialiased font-display dark:bg-gray-800 dark:text-bg-light">
@@ -77,14 +73,19 @@ const MyAssessment = () => {
         <h1 className="text-4xl md:text-start font-bold light:text-gray-800 p-2 border-gray-200 ">
           Assessment Results Overview
         </h1>
-      { !isExaminee &&   <span className="md:p-2  text-start font-semibold ">
-        
-          View candidates ranked by their performance
-        </span> }
+        {!isExaminee && (
+          <span className="md:p-2  text-start font-semibold ">
+            View candidates ranked by their performance
+          </span>
+        )}
 
- 
-
-        <AssessmentTable data={fetchedresults} assessments = {rawAssessment?.body  || AssessmentData} SelectedID = {(id)=>setSelectedAssessment(id)}   Examiner={isExaminer} Examinee = {isExaminee} />
+        <AssessmentTable
+          data={fetchedresults}
+          assessments={rawAssessment?.body || AssessmentData}
+          SelectedID={(id) => setSelectedAssessment(id)}
+          Examiner={isExaminer}
+          Examinee={isExaminee}
+        />
       </div>
     </div>
   );
@@ -197,7 +198,13 @@ const SearchableSelect = ({ options, value, onChange, placeholder, label }) => {
 };
 
 // AssessmentTable component to display the data with search, sort, and filter
-const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => {
+const AssessmentTable = ({
+  data,
+  assessments,
+  SelectedID,
+  Examiner,
+  Examinee,
+}) => {
   // State to manage which rows are expanded to show attempt details
   const [expandedRows, setExpandedRows] = React.useState({});
   // State for generic search functionality (Examinee Name)
@@ -205,15 +212,13 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
   // State for searchable select for Assessment ID
   const [selectedAssessmentFilter, setSelectedAssessmentFilter] =
     React.useState("");
-  const [PassingScore, setPasingScore]= useState(0)
+  const [PassingScore, setPasingScore] = useState(0);
   // State for sorting functionality
   const [sortColumn, setSortColumn] = React.useState(null);
   const [sortDirection, setSortDirection] = React.useState("asc"); // 'asc' or 'desc'
   // State for pass/fail filtering
   const [passFailFilter, setPassFailFilter] = React.useState("all"); // 'all', 'pass', 'fail'
-  // console.log("assessment set", assessments.body.map(res)=> res.settings)
-  // Function to toggle the expanded state of a row
-  console.log("assessment setting" ,assessments)
+
   const toggleRow = (key) => {
     setExpandedRows((prev) => ({
       ...prev,
@@ -221,7 +226,6 @@ const AssessmentTable = ({ data,assessments,SelectedID,Examiner, Examinee }) => 
     }));
   };
 
-console.log("passingScore", PassingScore)
   // Helper function to calculate success percentage
   const calculatePercentage = (success, failure, skipped) => {
     const total = success + failure + skipped;
@@ -239,56 +243,53 @@ console.log("passingScore", PassingScore)
     }
     return percentage.toFixed(2) + "%";
   };
-  function ensureArray(input) {
-  return Array.isArray(input) ? input : [input];
-}
 
-const groupedData = React.useMemo(() => {
-  const safeData = Array.isArray(data) ? data : data ? [data] : [];
 
-  return safeData.reduce((acc, currentAttempt) => {
-    const key = `${currentAttempt.examineeEmail}-${currentAttempt.assessmentId}`;
-    if (!acc[key]) {
-      acc[key] = {
-        examineeName: currentAttempt.examineeName,
-        examineeEmail: currentAttempt.examineeEmail,
-        assessmentId: currentAttempt.assessmentId,
-        attempts: [],
-        highestSuccessCount: 0,
-        highestScoreAttempt: null,
-      };
-    }
+  const groupedData = React.useMemo(() => {
+    const safeData = Array.isArray(data) ? data : data ? [data] : [];
 
-    acc[key].attempts.push(currentAttempt);
+    return safeData.reduce((acc, currentAttempt) => {
+      const key = `${currentAttempt.examineeEmail}-${currentAttempt.assessmentId}`;
+      if (!acc[key]) {
+        acc[key] = {
+          examineeName: currentAttempt.examineeName,
+          examineeEmail: currentAttempt.examineeEmail,
+          assessmentId: currentAttempt.assessmentId,
+          attempts: [],
+          highestSuccessCount: 0,
+          highestScoreAttempt: null,
+        };
+      }
 
-    if (currentAttempt.successCount > acc[key].highestSuccessCount) {
-      acc[key].highestSuccessCount = currentAttempt.successCount;
-      acc[key].highestScoreAttempt = currentAttempt;
-    }
+      acc[key].attempts.push(currentAttempt);
 
-    return acc;
-  }, {});
-}, [data]);
+      if (currentAttempt.successCount > acc[key].highestSuccessCount) {
+        acc[key].highestSuccessCount = currentAttempt.successCount;
+        acc[key].highestScoreAttempt = currentAttempt;
+      }
+
+      return acc;
+    }, {});
+  }, [data]);
 
   // Get unique assessment IDs for the searchable select
- const uniqueAssessments = React.useMemo(() => {
-  const seenIds = new Set();
-  const unique = [];
+  const uniqueAssessments = React.useMemo(() => {
+    const seenIds = new Set();
+    const unique = [];
 
-  assessments?.forEach((item) => {
-    if (!seenIds.has(item.id)) {
-      seenIds.add(item.id);
-      unique.push({
-        id: item.id,
-        title: item.title, 
-        PassScore:item.settings.passingScore
-      });
-    }
-  });
+    assessments?.forEach((item) => {
+      if (!seenIds.has(item.id)) {
+        seenIds.add(item.id);
+        unique.push({
+          id: item.id,
+          title: item.title,
+          PassScore: item.settings.passingScore,
+        });
+      }
+    });
 
-  return unique.sort((a, b) => a.title.localeCompare(b.title)); // optional sort by title
-}, [assessments]);
-
+    return unique.sort((a, b) => a.title.localeCompare(b.title)); // optional sort by title
+  }, [assessments]);
 
   // Filter and sort data based on current state
   const processedData = React.useMemo(() => {
@@ -412,111 +413,109 @@ const groupedData = React.useMemo(() => {
     handlePageChange,
     handleItemsPerPageChange,
   } = usePagination(processedData, 7);
-console.log("SelectedID",SelectedID)
   return (
-   <div className="p-4 md:p-6 dark:bg-gray-800 dark:text-bg-light  w-full">
-  {/* Search and Filter Controls */}
-  <div className="flex flex-col gap-4 md:flex-row md:items-center w-full max-w-full md:max-w-7xl mx-auto my-4 justify-between">
-    
-    {/* Search Input */}
-    <div className="relative w-full md:w-72 dark:bg-gray-700 dark:text-bg-light">
-      <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-        <Search className="h-4 w-4" />
-      </span>
-      <input
-        type="text"
-        id="examinee-search-input"
-        className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm pl-10 pr-3 py-3 focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm h-12"
-        placeholder="Search by Examinee Name..."
-        value={examineeSearchTerm}
-        onChange={(e) => setExamineeSearchTerm(e.target.value)}
-      />
-    </div>
+    <div className="p-4 md:p-6 dark:bg-gray-800 dark:text-bg-light  w-full">
+      {/* Search and Filter Controls */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center w-full max-w-full md:max-w-7xl mx-auto my-4 justify-between">
+        {/* Search Input */}
+      {Examiner &&   <div className="relative w-full md:w-72 dark:bg-gray-700 dark:text-bg-light">
+          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+            <Search className="h-4 w-4" />
+          </span>
+          <input
+            type="text"
+            id="examinee-search-input"
+            className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm pl-10 pr-3 py-3 focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm h-12"
+            placeholder="Search by Examinee Name..."
+            value={examineeSearchTerm}
+            onChange={(e) => setExamineeSearchTerm(e.target.value)}
+          />
+        </div>}
 
-    {/* Right side controls */}
-    <div className="flex flex-col md:flex-row w-full md:w-auto gap-4">
-      
-      {/* Autocomplete */}
-      <div className="w-full md:w-72 dark:bg-gray-700 dark:text-bg-light">
-        <Autocomplete
-          options={uniqueAssessments}
-          getOptionLabel={(option) => option.title || ""}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          onChange={(e, newVal) => {
-            if (newVal) {
-              SelectedID(newVal.id);
-              setPasingScore(newVal.PassScore);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Select Assessment"
-              variant="outlined"
+        {/* Right side controls */}
+        <div className="flex flex-col md:flex-row w-full md:w-auto gap-4">
+          {/* Autocomplete */}
+          <div className="w-full md:w-72 dark:bg-gray-700 dark:text-bg-light">
+            <Autocomplete
+              tabIndex={0}
+              options={uniqueAssessments}
+              getOptionLabel={(option) => option.title || ""}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(e, newVal) => {
+                if (newVal) {
+                  SelectedID(newVal.id);
+                  setPasingScore(newVal.PassScore);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Assessment"
+                  variant="outlined"
+                  tabIndex={0}
+                  sx={{
+                    "& label": { color: "gray" },
+                    "& label.Mui-focused": { color: "#286575" },
+                    "& .MuiInputBase-root": { height: 48 },
+                    "& input": { padding: "12px 14px" },
+                  }}
+                />
+              )}
               sx={{
-                "& label": { color: "gray" },
-                "& label.Mui-focused": { color: "#286575" },
-                "& .MuiInputBase-root": { height: 48 },
-                "& input": { padding: "12px 14px" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "green" },
+                  "&:hover fieldset": { borderColor: "black" },
+                  "&.Mui-focused fieldset": { borderColor: "#286575" },
+                },
               }}
             />
+          </div>
+
+          {Examiner && (
+            <div className="w-full md:w-48">
+              <select
+                id="pass-fail-filter"
+                className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm py-3 px-5 h-12"
+                value={passFailFilter}
+                onChange={(e) => setPassFailFilter(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="pass">Pass (≥{PassingScore}%)</option>
+                <option value="fail">Fail (&lt;{PassingScore}%)</option>
+              </select>
+            </div>
           )}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": { borderColor: "green" },
-              "&:hover fieldset": { borderColor: "black" },
-              "&.Mui-focused fieldset": { borderColor: "#286575" },
-            },
-          }}
-        />
+        </div>
       </div>
-
-      {/* Pass/Fail Filter */}
-      <div className="w-full md:w-48">
-        <select
-          id="pass-fail-filter"
-          className="block w-full rounded-md border dark:bg-gray-700 dark:text-bg-light border-accent-teal-light shadow-sm focus:border-accent-teal-dark focus:ring-accent-teal-dark sm:text-sm py-3 px-5 h-12"
-          value={passFailFilter}
-          onChange={(e) => setPassFailFilter(e.target.value)}
-        >
-          <option value="all">All</option>
-          <option value="pass">Pass (≥{PASS_THRESHOLD}%)</option>
-          <option value="fail">Fail (&lt;{PASS_THRESHOLD}%)</option>
-        </select>
-      </div>
-
-    </div>
-  </div>
-
-
-
 
       {/* Assessment Results Table */}
       <div className="overflow-x-auto rounded-lg shadow-md ">
-        <table className="min-w-full divide-y bg-white table table-sm table-zebra dark:bg-gray-700 dark:text-bg-light">
+        <table className="min-w-full divide-y bg-white table table-sm table-zebra dark:bg-gray-700 dark:text-bg-light" tabIndex={0}>
           <thead className="">
             <tr>
-              {Examiner && <>
-                <th
-                scope="col"
-                className=" px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100 rounded-tl-lg"
-                onClick={() => handleSort("examineeName")}
-              >
-                <div className="flex items-center gap-1">
-                  Examinee Name {renderSortArrow("examineeName")}
-                </div>
-                {/* Examinee Name {renderSortArrow('examineeName')} */}
-              </th>
-              <th
-                scope="col"
-                className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort("examineeEmail")}
-              >
-                <div className="flex items-center gap-1">
-                  Examinee Email {renderSortArrow("examineeEmail")}
-                </div>
-              </th>
-              </>}
+              {Examiner && (
+                <>
+                  <th
+                    scope="col"
+                    className=" px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100 rounded-tl-lg"
+                    onClick={() => handleSort("examineeName")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Examinee Name {renderSortArrow("examineeName")}
+                    </div>
+                    {/* Examinee Name {renderSortArrow('examineeName')} */}
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("examineeEmail")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Examinee Email {renderSortArrow("examineeEmail")}
+                    </div>
+                  </th>
+                </>
+              )}
 
               <th
                 scope="col"
@@ -538,13 +537,16 @@ console.log("SelectedID",SelectedID)
                   {renderSortArrow("highestScorePercentage")}
                 </div>
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort("examineeEmail")}
-              >
-                <div className="flex items-center gap-1">Status</div>
-              </th>
+              {Examiner && (
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort("examineeEmail")}
+                >
+                  <div className="flex items-center gap-1">Status</div>
+                </th>
+              )}
+
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500  tracking-wider rounded-tr-lg"
@@ -579,32 +581,38 @@ console.log("SelectedID",SelectedID)
                       className="hover:bg-gray-50 dark:hover:bg-gray-400 cursor-pointer"
                       onClick={() => toggleRow(groupKey)}
                     >
-                      {Examiner && <>
-                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-400 text-gray-900">
-                        {group.examineeName}
-                      </td>
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm  text-gray-500 dark:text-gray-400">
-                        {group.examineeEmail}
-                      </td>
-                      </>}
+                      {Examiner && (
+                        <>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-gray-400 text-gray-900">
+                            {group.examineeName}
+                          </td>
+                          <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm  text-gray-500 dark:text-gray-400">
+                            {group.examineeEmail}
+                          </td>
+                        </>
+                      )}
 
                       <td className=" hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
-                        {group.highestSuccessCount}
+                        {group.highestSuccessCount} point(s)
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold dark:text-gray-400">
                         {highestScorePercentageDisplay}
                       </td>
-                      <td className={`px-6 py-4 whitespace-nowrap`}>
-                        <span
-                          className={`${parseFloat(highestScorePercentageDisplay) >= PassingScore ? "bg-accent-teal-light" : parseFloat(highestScorePercentageDisplay) == PassingScore ? "bg-[#B78B54]" : "bg-red-500"} p-1 rounded-full text-white text-sm`}
-                        >
-                          {parseFloat(highestScorePercentageDisplay) >= PassingScore
-                            ? "Passed"
-                            : parseFloat(highestScorePercentageDisplay) == PassingScore
+                      {Examiner && (
+                        <td className={`px-6 py-4 whitespace-nowrap`}>
+                          <span
+                            className={`${parseFloat(highestScorePercentageDisplay) >= PassingScore ? "bg-accent-teal-light" : parseFloat(highestScorePercentageDisplay) == PassingScore ? "bg-[#B78B54]" : "bg-red-500"} p-1 rounded-full text-white text-sm`}
+                          >
+                            {parseFloat(highestScorePercentageDisplay) >=
+                            PassingScore
                               ? "Passed"
-                              : "Failed"}
-                        </span>
-                      </td>
+                              : parseFloat(highestScorePercentageDisplay) ==
+                                  PassingScore
+                                ? "Passed"
+                                : "Failed"}
+                          </span>
+                        </td>
+                      )}
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <button
@@ -653,7 +661,10 @@ console.log("SelectedID",SelectedID)
                     {/* Detailed attempts row, shown only when expanded */}
                     {isExpanded && (
                       <tr>
-                        <td colSpan="6" className="px-6 py-4 bg-gray-50 dark:bg-gray-800 dark:text-bg-light">
+                        <td
+                          colSpan="6"
+                          className="px-6 py-4 bg-gray-50 dark:bg-gray-800 dark:text-bg-light"
+                        >
                           <div
                             id={`attempts-row-${groupKey}`}
                             className="space-y-4"
@@ -666,32 +677,33 @@ console.log("SelectedID",SelectedID)
                               {group.attempts.map((attempt, idx) => (
                                 <div
                                   key={attempt.attemptId}
+                                  tabIndex={0}
                                   className="bg-white dark:bg-gray-700 dark:text-bg-light rounded-xl shadow-sm border border-gray-200 p-4 transition hover:shadow-md"
                                 >
-                                  <div className="mb-2 text-sm font-medium bg-accent-teal-light p-2 rounded-xl text-bg-light">
-                                    Attempt: {idx +1}
+                                  <div className="mb-2 text-sm font-medium bg-accent-teal-light p-2 rounded-xl text-bg-light" tabIndex={0} aria-label={`Attempt ${idx +1}`}>
+                                    Attempt: {idx + 1}
                                   </div>
 
                                   <ul className="text-sm light:text-gray-700 space-y-1">
-                                    <li className="flex items-center gap-2  shadow-2xl">
-                                      <span className="text-green-600 font-medium">
+                                    <li className="flex items-center gap-2  shadow-2xl" tabIndex={0}>
+                                      <span className="text-green-600 font-medium" >
                                         ✔ Success:
                                       </span>{" "}
                                       {attempt.successCount}
                                     </li>
-                                    <li className="flex items-center gap-2">
+                                    <li className="flex items-center gap-2" tabIndex={0}>
                                       <span className="text-red-500 font-medium">
                                         ✖ Failure:
                                       </span>{" "}
                                       {attempt.failureCount}
                                     </li>
-                                    <li className="flex items-center gap-2">
+                                    <li className="flex items-center gap-2" tabIndex={0}>
                                       <span className="text-yellow-500 font-medium">
                                         ⏭ Skipped:
                                       </span>{" "}
                                       {attempt.skippedCount}
                                     </li>
-                                    <li className="mt-2 font-semibold light:text-blue-700">
+                                    <li className="mt-2 font-semibold light:text-blue-700" tabIndex={0}>
                                       🎯 Score:{" "}
                                       {formatPercentage(
                                         calculatePercentage(
@@ -723,22 +735,24 @@ console.log("SelectedID",SelectedID)
           <tfoot>
             <tr>
               <td colSpan={8}>
-                <div className="w-full">   <Pagination
-  totalItems={totalItems}
-  currentPage={currentPage}
-  totalPages={totalPages}
-  itemsPerPage={itemsPerPage}
-  handleItemsPerPageChange={handleItemsPerPageChange}
-  handlePageChange={handlePageChange}
-  indexOfFirstItem={indexOfFirstItem}
-  indexOfLastItem={indexOfLastItem}
-/></div>
+                <div className="w-full">
+                  {" "}
+                  <Pagination
+                    totalItems={totalItems}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    itemsPerPage={itemsPerPage}
+                    handleItemsPerPageChange={handleItemsPerPageChange}
+                    handlePageChange={handlePageChange}
+                    indexOfFirstItem={indexOfFirstItem}
+                    indexOfLastItem={indexOfLastItem}
+                  />
+                </div>
               </td>
-          </tr>
+            </tr>
           </tfoot>
         </table>
       </div>
-     
     </div>
   );
 };

@@ -4,7 +4,8 @@ import { Pencil, Trash2, Check, X } from 'lucide-react';
 export default function QuestionTable({ response, onDelete, onEdit }) {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editText, setEditText] = useState('');
-
+  
+// handles
   const handleEditStart = (index, text) => {
     setEditingIndex(index);
     setEditText(text);

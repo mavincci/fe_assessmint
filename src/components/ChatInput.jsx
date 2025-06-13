@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import  { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 
 export default function ChatInput({ onSendMessage, isLoading }) {
@@ -11,14 +11,16 @@ export default function ChatInput({ onSendMessage, isLoading }) {
     }
   }, []);
 
+  // handles differnt functions
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() && !isLoading) {
-      onSendMessage(message);
+      onSendMessage(message);  // call back for response display page 
       setMessage('');
     }
   };
-
+// Event listener for Enter key  to handle submit
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();

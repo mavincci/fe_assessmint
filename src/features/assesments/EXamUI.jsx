@@ -3,7 +3,7 @@ import { Clock, AlertCircle, SpellCheck, SkipForward, Shield, ShieldX, Timer } f
 import { shuffleArray } from '../../lib/Shuffle';
 import { load_my_assesment_by_Id ,Create_do_answer, Create_start_assessment, Create_finish_attempt} from '../../action/Auth';
 import { connect, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 
 
@@ -28,15 +28,12 @@ function ExamPage({ Create_do_answer,assessmentId,Create_start_assessment,Create
   const dispatch = useDispatch()
   // Fetch exam data and shuffle questions
 useEffect(() => {
-   console.log("ASSESSMENT ID", assessmentId);
     const start_assessment = async () => {
       try {
         setIsLoading(true);
         if (isStartAssessment) {
           const res = await Create_start_assessment(assessmentId);
-        console.log("Sent Start to ASSESSMENT", res);
         if (res?.data?.message === "ASSESSMENT_START_SUCCESS") {
-          console.log("HERE in Success")
           await fetchExamData(res.data.body.assessmentId);
         } else if(res?.response?.data?.message === "MAX_ATTEMPTS_REACHED") {
           setError(res?.response?.data?.message.replaceAll("_", " "));
@@ -62,9 +59,7 @@ useEffect(() => {
       try {
         setIsLoading(true);
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("assessmentId in fetchExam", assessmentID);
         const data = await dispatch(load_my_assesment_by_Id(assessmentID));
-          console.log(data.body)
         if (data) {
           const shuffledData = {
             ...data.body,
@@ -197,7 +192,6 @@ useEffect(() => {
     try {
      
         await new Promise((resolve) => setTimeout(resolve, 100));
-        console.log("answers" , answers[currentQuestionData.id][0])
     Create_do_answer(examData.id, currentSectionData.id,currentQuestionData.id,currentSectionData.questionType,currentSectionData.questionType === "TRUE_OR_FALSE" ? answers[currentQuestionData.id][0] :  answers[currentQuestionData.id] || [])
     
 
@@ -280,7 +274,6 @@ useEffect(() => {
       const payload = await Create_finish_attempt(assessmentId.assessmentId)
 
       // const payload = await dispatch(Create_finish_attempt(assessmentId.assessmentId));
-      console.log("Payload", payload)
       setresponses({
         rightanswer: payload?.body?.successCount,
         wronganswer: payload?.body?.failureCount,
@@ -302,9 +295,9 @@ useEffect(() => {
       <div className="container mx-auto max-w-4xl py-8 px-4 flex justify-center items-center min-h-[50vh]">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
-            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]" >Loading...</span>
           </div>
-          <p className="mt-4">Loading exam...</p>
+          <p className="mt-4" tabIndex={0}>Loading exam...</p>
         </div>
       </div>
     );
@@ -317,7 +310,7 @@ useEffect(() => {
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
           <div className="flex">
             <AlertCircle className="h-6 w-6 mr-2" />
-            <span>{error || "Failed to load exam. Please try again later."}</span>
+            <span tabIndex={0} aria-label={`${error}`}>{error || "Failed to load exam. Please try again later."}</span>
           </div>
         </div>
         <button className="mt-4 px-4 py-2 bg-btn-primary text-white rounded hover:bg-accent-teal-dark transition-colors" onClick={() => window.location.reload()}>
@@ -334,9 +327,9 @@ useEffect(() => {
       <div className="container mx-auto max-w-4xl py-8 px-4">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-8 text-center">
-            <h2 className="text-2xl font-bold mb-6">Get Ready for the Next Section!</h2>
+            <h2 className="text-2xl font-bold mb-6" tabIndex={0}>Get Ready for the Next Section!</h2>
             <div className="mb-8">
-              <p className="text-lg mb-2">Next up: {nextSection?.title}</p>
+              <p className="text-lg mb-2">Next up</p>
               <p className="text-gray-600">{nextSection?.description}</p>
             </div>
             <div className="flex flex-col items-center">
@@ -351,7 +344,7 @@ useEffect(() => {
                 ></div>
               </div>
             </div>
-            <p className="mt-6 text-sm text-gray-600">Take a moment to prepare yourself. The next section will begin automatically.</p>
+            <p className="mt-6 text-sm text-gray-600" tabIndex={0}>Take a moment to prepare yourself. The next section will begin automatically.</p>
           </div>
         </div>
       </div>
@@ -367,7 +360,7 @@ useEffect(() => {
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded">
           <div className="flex">
             <AlertCircle className="h-6 w-6 mr-2" />
-            <span>This exam has no questions yet. Please check back later.</span>
+            <span tabIndex={0}>This exam has no questions yet. Please check back later.</span>
           </div>
         </div>
         <button className="mt-4 px-4 py-2 bg-btn-primary text-white rounded hover:bg-accent-teal-dark transition-colors" onClick={() => window.location.reload()}>
@@ -441,7 +434,7 @@ useEffect(() => {
   if (examCompleted) {
     return (
       <div className="container mx-auto max-w-4xl py-8 px-4">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 dark:text-bg-light rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
             <h2
               className="text-2xl font-bold text-center mb-6"
@@ -454,10 +447,10 @@ useEffect(() => {
                 <p className="text-lg mb-4" aria-label={examData.title} tabIndex={0}>
                   Thank you for completing the <b>{examData.title}</b> exam!
                 </p>
-                <p  aria-label="Your answers have been submitted successfully" tabIndex={1}>Your answers have been submitted successfully.</p>
+                <p  aria-label="Your answers have been submitted successfully" tabIndex={0}>Your answers have been submitted successfully.</p>
               </div>
 
-              <div className="bg-gray-100 p-4 rounded-lg">
+              <div className="bg-gray-100 dark:bg-gray-800 dark:text-bg-light p-4 rounded-lg">
                 <h3 className="font-semibold mb-2" aria-label="Exam Summary">
                   Exam Summary
                 </h3>
@@ -509,12 +502,12 @@ useEffect(() => {
               </div>
             </div>
             <div className="flex justify-center mt-8">
-              <button
+              <Link to="/assessment"
                 className="px-4 py-2 bg-btn-primary text-white rounded hover:bg-accent-teal-dark transition-colors"
-                onClick={() => window.location.reload()}
+                // onClick={() => window.location.reload()}
               >
                 Return to Dashboard
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -538,18 +531,18 @@ useEffect(() => {
 
   return (
     <div className="container mx-auto max-w-4xl py-8 px-4">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800 dark:text-bg-light">
         {/* Header */}
         <div className="p-4 border-b">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold" aril-label={examData.title }>{examData.title}</h2>
-              <p className="text-sm text-gray-600 mt-1" aria-label={` Section ${currentSection + 1} of ${examData.sections.length}: ${currentSectionData.title}`}>
+              <h2 className="text-xl md:text-2xl font-bold" tabIndex={0} aril-label={examData.title }>{examData.title}</h2>
+              <p className="text-sm light:text-gray-600 mt-1" aria-label={` Section ${currentSection + 1} of ${examData.sections.length}: ${currentSectionData.title}`}>
                 Section {currentSection + 1} of {examData.sections.length}: {currentSectionData.title}
               </p>
             </div>
-            <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md">
-              <Clock className="h-4 w-4 text-gray-600" />
+            <div className="flex items-center gap-2 bg-gray-100 px-3 dark:bg-gray-800 dark:text-bg-light py-2 rounded-md">
+              <Clock className="h-4 w-4 light:text-gray-600" />
               <span className={`font-mono ${timeRemaining < 300 ? "text-red-600 font-bold" : ""}`}>
                 {formatTime(timeRemaining)}
               </span>
@@ -560,13 +553,13 @@ useEffect(() => {
         {/* Content */}
         <div className="p-6">
           <div className="mb-6">
-            <div className="flex justify-between text-sm mb-2" aria-label={`you answered ${calculateOverallQuestionNumber} from ${totalQuestions}`}>
+            <div className="flex justify-between text-sm mb-2" tabIndex={0} aria-label={`you answered ${calculateOverallQuestionNumber} from ${totalQuestions}`}>
               <span>Progress</span>
               <span>
                 {calculateOverallQuestionNumber()} of {totalQuestions}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-800 dark:text-bg-light">
               <div 
                 className="bg-accent-teal-dark h-2.5 rounded-full transition-all duration-300" 
                 style={{ width: `${progressPercentage}%` }}
@@ -581,9 +574,9 @@ useEffect(() => {
 
    <fieldset className="space-y-4" aria-labelledby={`question-${currentQuestionData.id}`}>
               <legend
-          tabIndex={1}
+          tabIndex={0}
                 
-                id={`question-${currentQuestionData.id}`} className="text-lg font-semibold text-gray-800 mb-2">
+                id={`question-${currentQuestionData.id}`} className="text-lg font-semibold light:text-gray-800 mb-2">
    Question {currentQuestion + 1}:  {currentQuestionData.questionData.questionText}
   </legend>
 
@@ -595,9 +588,9 @@ useEffect(() => {
           key={option}
           role="radio"
           aria-checked={isSelected}
-          tabIndex={1}
-          className={`flex items-center border p-3 rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-teal-light ${
-            isSelected ? "border-accent-teal-light bg-blue-50" : "border-gray-200"
+          tabIndex={0}
+          className={`flex items-center border p-3 rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-teal-light dark:bg-gray-800 dark:text-bg-light ${
+            isSelected ? "border-accent-teal-light bg-blue-50 " : "border-gray-200"
           }`}
           onClick={() => handleAnswerSelect(currentQuestionData.id, option, false)}
           onKeyDown={(e) => {
@@ -609,15 +602,15 @@ useEffect(() => {
         >
           <input
             type="radio"
-          tabIndex={1}
+          tabIndex={0}
             
             name={`question-${currentQuestionData.id}`}
-            className="checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+            className="checkbox w-6 h-6 text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-bg-light border-gray-300 focus:ring-blue-500"
             checked={isSelected}
             onChange={() => {}}
             aria-label={option}
           />
-          <span className="ml-3 text-gray-700 capitalize" id={`label-${currentQuestionData.id}-${option}`}>
+          <span className="ml-3 light:text-gray-700 capitalize" id={`label-${currentQuestionData.id}-${option}`}>
             {option}
           </span>
         </div>
@@ -643,12 +636,11 @@ useEffect(() => {
           return (
             <div
               key={option.id}
-          tabIndex={1}
+          tabIndex={0}
 
               role={allowsMultiple ? "checkbox" : "radio"}
               aria-checked={isSelected}
               aria-labelledby={`label-${currentQuestionData.id}-${option.id}`}
-              // tabIndex={0}
               className={`flex items-center border p-3 rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-teal-light ${
                 isSelected ? "border-accent-teal-light bg-blue-50" : "border-gray-200"
               }`}
@@ -674,7 +666,7 @@ useEffect(() => {
                 {allowsMultiple ? (
                   <input
                     type="checkbox"
-                    className="w-4 h-4 text-accent-teal-light bg-gray-100 border-gray-300 rounded focus:ring-accent-teal-dark"
+                    className="w-4 h-4 text-accent-teal-light bg-gray-100 dark:bg-gray-800 dark:text-bg-light border-gray-300 rounded focus:ring-accent-teal-dark"
                     checked={isSelected || false}
                     onChange={() => {}}
                     aria-describedby={`multi-select-hint-${currentQuestionData.id}`}
@@ -683,12 +675,12 @@ useEffect(() => {
                   <input
                     type="radio"
                     name={`question-${currentQuestionData.id}`}
-                    className="w-4 h-4 text-accent-teal-light bg-gray-100 border-gray-300 focus:ring-accent-teal-dark"
+                    className="w-4 h-4 text-accent-teal-light bg-gray-100 dark:bg-gray-800 dark:text-bg-light border-gray-300 focus:ring-accent-teal-dark"
                     checked={answers[currentQuestionData.id]?.[0] === option.id}
                     onChange={() => {}}
                   />
                 )}
-                <span className="ml-3 text-gray-700">{option.answerText}</span>
+                <span className="ml-3 light:text-gray-700">{option.answerText}</span>
               </label>
             </div>
           );
@@ -709,8 +701,8 @@ useEffect(() => {
               : ""}
           </div>
           <button
-            aria-label={ isLastQuestion() ? "Submit Exam" : "Next Question"}
-            className={`px-4 py-2 rounded transition-colors ${
+            // aria-label={ isLastQuestion() ? "Submit Exam" : "Next Question"}
+            className={`px-4 py-2 rounded transition-colors dark:bg-gray-800 dark:text-bg-light ${
               answers[currentQuestionData.id]?.length
                 ? isSubmitting
                   ? "bg-gray-400 cursor-not-allowed"

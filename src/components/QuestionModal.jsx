@@ -1,5 +1,4 @@
 import { X } from 'lucide-react';
-import React from 'react'
 const QuestionModal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
   return (

@@ -27,7 +27,7 @@ const StateCard = ({ title, value, subtitle, Icon, color = 'primary', delay = 0,
 
   return (
     <div 
-      className={`flex flex-row justify-between  items-center p-2 py-4 rounded-3xl ${bg ? bg : "bg-gradient-to-r animate-fade-in from-bg-secondary-light to-[#648F9A]" }  opacity-0 ${isVisible ? 'opacity-100' : ''}`} 
+      className={`flex flex-row justify-between w-full  items-center p-2 py-4 rounded-3xl ${bg ? bg : "bg-gradient-to-r animate-fade-in from-bg-secondary-light to-[#648F9A]" }  opacity-0 ${isVisible ? 'opacity-100' : ''}`} 
       style={{ 
         animationDelay: `${delay}ms`,
         transitionDelay: `${delay}ms`

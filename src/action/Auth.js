@@ -1,6 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
 import {
   ADD_ASSESSMENT_FAIL,
   ADD_ASSESSMENT_SUCCESS,
@@ -16,7 +14,6 @@ import {
   LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_SUCCESS,
   LOAD_BANK_REPOSITORY_SUCCESS,
   LOAD_INVITED_BY_ASSESSMENT_ID_FAIL,
-  LOAD_INVITED_BY_ASSESSMENT_ID_SUCCESS,
   LOAD_INVITED_CANDIDATES_FAIL,
   LOAD_INVITED_CANDIDATES_SUCCESS,
   LOAD_QUESTION_FAIL,
@@ -37,11 +34,9 @@ import {
   USER_ASSESSMENT_FAIL,
   USER_ASSESSMENT_SUCCESS,
 } from "./Types";
-import { Flip, toast, ToastContainer } from "react-toastify";
-import NoInternetPage from "../layouts/NoInternet";
+import { Flip, toast } from "react-toastify";
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
-// import { toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
+
 
 // load assesment
 export const load_my_assesment = () => async (dispatch) => {
@@ -62,7 +57,6 @@ export const load_my_assesment = () => async (dispatch) => {
       });
       return res.data; // Return response instead of JSX
     } catch (err) {
-      console.log(err);
       dispatch({ type: USER_ASSESSMENT_FAIL });
       return null;
     }
@@ -92,10 +86,8 @@ export const load_my_assesment_by_Id = (assessmentId) => async (dispatch) => {
         type: LOAD_ASSESSMENT_BY_ID_SUCCESS,
         payload: res.data,
       });
-      // console.log(res.data)
       return res.data; // Return response instead of JSX
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_ASSESSMENT_BY_ID_FAIL });
       return null;
     }
@@ -126,7 +118,6 @@ export const load_my_assesment_setting = (assessmentId) => async (dispatch) => {
       });
       return res.data; // Return response instead of JSX
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_ASSESSMENT_SETTING_FAIL });
       return null;
     }
@@ -155,10 +146,8 @@ export const load_my_section = (assessmentId) => async (dispatch) => {
         type: LOAD_SECTION_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
       return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_SECTION_FAIL });
       return null;
     }
@@ -167,7 +156,7 @@ export const load_my_section = (assessmentId) => async (dispatch) => {
     return null;
   }
 };
-
+// load all assessment for current user
 export const load_all_assessment = (assessmentId) => async (dispatch) => {
   if (localStorage.getItem("access") && assessmentId) {
     const config = {
@@ -187,10 +176,8 @@ export const load_all_assessment = (assessmentId) => async (dispatch) => {
         type: LOAD_SECTION_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
       return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_SECTION_FAIL });
       return null;
     }
@@ -202,7 +189,6 @@ export const load_all_assessment = (assessmentId) => async (dispatch) => {
 //  load questions
 export const load_my_questions = (sectionID) => async (dispatch) => {
   if (localStorage.getItem("access") && sectionID) {
-    console.log("token access", localStorage.getItem("access"));
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -220,10 +206,8 @@ export const load_my_questions = (sectionID) => async (dispatch) => {
         type: LOAD_QUESTION_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
       return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_QUESTION_FAIL });
       return null;
     }
@@ -254,7 +238,6 @@ export const load_question_type = () => async (dispatch) => {
       });
       return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: QUESTION_TYPE_FAIL });
       return null;
     }
@@ -316,10 +299,8 @@ export const login = (email, password) => async (dispatch) => {
   try {
     const res = await axios.post(`${API_BASE_URL}/auth/signin`, body, config);
 
-    // console.log("this res.data.body ", res.data.body.token)
 
     const { refreshToken, token, user } = res.data.body;
-    console.log("body", res.data.body);
     // role = user.roles[1]
 
     dispatch({
@@ -327,7 +308,6 @@ export const login = (email, password) => async (dispatch) => {
       payload: { token, refreshToken, user },
     });
 
-    // console.log(res.data)
 
     toast.success("👋 Welcome Back!  you're Succesfully Logged in!", {
       position: "bottom-center",
@@ -344,15 +324,13 @@ export const login = (email, password) => async (dispatch) => {
 
     // dispatch(load_user()); // Optional, if you want to validate token later
   } catch (err) {
-    // console.error(err.response.status);
-    console.log("err", err);
     {
       err.response.status === 401 || (axios.isAxiosError(err) && err?.code =="Network Error")
-        ? toast.error(
+        ? toast.error(err.response.data.message || 
             "You're unauthorized! Please check your credentials and try again.",
             {
               position: "bottom-left",
-              autoClose: 3000,
+              autoClose: 500,
               hideProgressBar: false,
               closeOnClick: false,
               pauseOnHover: true,
@@ -364,7 +342,7 @@ export const login = (email, password) => async (dispatch) => {
             }
           )
         : err.response.status == 500
-          ? toast.error("You're  not connected To localhost", {
+          ? toast.error("You're  not connected To server", {
               position: "bottom-left",
               autoClose: 3000,
               hideProgressBar: false,
@@ -376,7 +354,18 @@ export const login = (email, password) => async (dispatch) => {
               transition: Flip,
               style: { width: "400px" },
             })
-          : "";
+          :  err.response?.data?.message == "USER_IS_DISABLED"? toast.error("your acount is disabled", {
+              position: "bottom-left",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            }): "";
     }
 
     dispatch({
@@ -400,14 +389,12 @@ export const signup =
         "Content-Type": "application/json",
       },
     };
-    console.log("API", import.meta.env.VITE_API_URL);
     const body = JSON.stringify({
       firstName,
       lastName,
       email,
       password,
     });
-    // console.log("reference" + process.env.REACT_APP_API_URL)
     try {
       const res = await axios.post(
         `${API_BASE_URL}/auth${role == "EXAMINER" ? "/signup_as_examiner" : "/signup_as_examinee"}`,
@@ -426,16 +413,13 @@ export const signup =
           theme: "colored",
           transition: Flip,
         });
-        // console.log("registered");
-        //  <Navigate to="/login"/>
-        // <Navigate to="/login"/>
+      
       }
       dispatch({
         type: SIGNUP_SUCCESS,
         payload: res.data,
       });
     } catch (err) {
-      console.log(err);
       {
         err.response && err.response.status === 409
           ? toast.error("This user already Exist in this platform.", {
@@ -471,7 +455,6 @@ export const createAssessment = (title, description) => async (dispatch) => {
     title,
     description,
   });
-  console.log("Auth body", body);
   try {
     const res = await axios.post(
       `${API_BASE_URL}/assessments/create`,
@@ -493,16 +476,13 @@ export const createAssessment = (title, description) => async (dispatch) => {
           transition: Flip,
         }
       );
-      // console.log("registered");
-      //  <Navigate to="/login"/>
-      // <Navigate to="/login"/>
+    
     }
     dispatch({
       type: ADD_ASSESSMENT_SUCCESS,
       payload: res.data,
     });
   } catch (err) {
-    console.log(err);
     {
       err.response && err.response.status === 409
         ? toast.error("This user already Exist in this platform.", {
@@ -546,7 +526,6 @@ export const PublishAssessment = (assessmentID) => async (dispatch) => {
   };
 
   try {
-    console.log("Here in Publish auth", assessmentID)
     const res = await axios.post(
       `${API_BASE_URL}/assessments/publish/${assessmentID}`, {},
       config
@@ -573,8 +552,7 @@ export const PublishAssessment = (assessmentID) => async (dispatch) => {
       payload: res.data,
     });
   } catch (err) {
-    console.log("Error in Publish Assessment", assessmentID)
-    console.log(err);
+   
     {
       err.response && err.response.status === 409
         ? toast.error("Already Published", {
@@ -623,7 +601,6 @@ export const Sendrequest =
       topic,
       numberOfQuestions,
     });
-    console.log("Auth body", body);
     try {
       const res = await axios.post(
         `${API_BASE_URL}/assessments/create`,
@@ -645,16 +622,13 @@ export const Sendrequest =
             transition: Flip,
           }
         );
-        // console.log("registered");
-        //  <Navigate to="/login"/>
-        // <Navigate to="/login"/>
+      
       }
       dispatch({
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
     } catch (err) {
-      console.log(err);
       {
         err.response && err.response.status === 409
           ? toast.error("This user already Exist in this platform.", {
@@ -706,13 +680,11 @@ export const createSection =
     });
 
     try {
-      console.log("section body", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/add_section`,
         body,
         config
       );
-      console.log("Message", res.data.message);
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -737,9 +709,7 @@ export const createSection =
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
       {
         err.response && (err.response.status === 409 || err.response.data.message === "ASSESSMENT_ALREADY_PUBLISHED")
           ? toast.error( err.response.data.message.replaceAll("_", " ").toLowerCase(), {
@@ -773,7 +743,7 @@ export const createSection =
     }
   };
 
-// fetch results
+// fetch results for examiner
 export const fetch_results_by_assessment_Id = (assessmentId) => async (dispatch) => {
   
     const config = {
@@ -793,30 +763,40 @@ export const fetch_results_by_assessment_Id = (assessmentId) => async (dispatch)
         res.status === 200 ||
         res.data.message == "RESULT_FETCH_SUCCESS"
       ) {
-        toast.success(
-          `✅ Fetch result Success.`,
-          {
-            position: "bottom-left",
-            autoClose: 80,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Flip,
-          }
-        );
+       if (res.data.body?.length === 0) {
+         toast.info("No one taken the assessment yet", {
+           position: "bottom-left",
+           autoClose: 300,
+           hideProgressBar: false,
+           closeOnClick: false,
+           pauseOnHover: true,
+           draggable: true,
+           progress: undefined,
+           theme: "colored",
+           transition: Flip,
+         });
+       } else {
+         toast.success("✅ Successfully fetched your assessments!", {
+           position: "bottom-left",
+           autoClose: 300,
+           hideProgressBar: false,
+           closeOnClick: false,
+           pauseOnHover: true,
+           draggable: true,
+           progress: undefined,
+           theme: "colored",
+           transition: Flip,
+         });
+       }
+     
      }
     
       dispatch({
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-     console.log(res);
      return res.data
     } catch (err) {
-      console.log(err);
       {
         err.response && (err.response.status === 409 || err.response.data.message === "ASSESSMENT_ALREADY_PUBLISHED")
           ? toast.error( err.response.data.message.replaceAll("_", " ").toLowerCase(), {
@@ -882,39 +862,45 @@ export const fetch_results_by_assessment_Id_for_examinee = (assessmentId) => asy
         `${API_BASE_URL}/assessments/attempts/result/fetch_my_results/${assessmentId}`,
         config
       );
-      if (
-        res.status === 201 ||
-        res.status === 200 ||
-        res.data.message == "RESULT_FETCH_SUCCESS"
-      ) {
-        toast.success(
-          `✅ Successfully created your Section ! Your item is now live.`,
-          {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Flip,
-          }
-        );
-      }
-      dispatch({
-        type: ADD_ASSESSMENT_SUCCESS,
-        payload: res.data,
-      });
-     console.log(res);
+     if (
+       res.status === 201 ||
+       res.status === 200 ||
+       res.data.message == "RESULT_FETCH_SUCCESS"
+     ) {
+        
+       if (res.data.body?.length === 0) {
+         toast.info("You haven't taken the assessment yet", {
+           position: "bottom-left",
+           autoClose: 300,
+           hideProgressBar: false,
+           closeOnClick: false,
+           pauseOnHover: true,
+           draggable: true,
+           progress: undefined,
+           theme: "colored",
+           transition: Flip,
+         });
+       } else {
+         toast.success("✅ Successfully fetched your assessments!", {
+           position: "bottom-left",
+           autoClose: 300,
+           hideProgressBar: false,
+           closeOnClick: false,
+           pauseOnHover: true,
+           draggable: true,
+           progress: undefined,
+           theme: "colored",
+           transition: Flip,
+         });
+       }
+     }
      return res.data
     } catch (err) {
-      console.log(err);
       {
         err.response && (err.response.status === 409 || err.response.data.message === "ASSESSMENT_ALREADY_PUBLISHED")
           ? toast.error( err.response.data.message.replaceAll("_", " ").toLowerCase(), {
               position: "bottom-left",
-              autoClose: 3000,
+              autoClose: 300,
               hideProgressBar: false,
               closeOnClick: false,
               pauseOnHover: true,
@@ -926,7 +912,7 @@ export const fetch_results_by_assessment_Id_for_examinee = (assessmentId) => asy
             })
           : toast.error("somthing Error please try Again", {
               position: "bottom-left",
-              autoClose: 3000,
+              autoClose: 300,
               hideProgressBar: false,
               closeOnClick: false,
               pauseOnHover: true,
@@ -943,6 +929,26 @@ export const fetch_results_by_assessment_Id_for_examinee = (assessmentId) => asy
     }
 
 }
+export const fetch_results_for_admin = async () => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+
+  try {
+    const res = await axios.get(`${API_BASE_URL}/dashboard/admin`, config);
+    
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    throw error; // rethrow so SWR can detect the error
+    }
+  }
+}
 
  // create Question
 export const createquestion =
@@ -955,8 +961,7 @@ export const createquestion =
         Accept: "application/json",
       },
     };
-    console.log("options", options);
-    console.log("answers", answers);
+
     const bodyData = {
       questionType,
       sectionId,
@@ -974,15 +979,12 @@ export const createquestion =
     }
 
     const body = JSON.stringify(bodyData);
-    console.log("here inauth", bodyData, body);
     try {
-      console.log("section body", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/add_question`,
         body,
         config
       );
-      console.log("Message", res.data.message);
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -1004,9 +1006,7 @@ export const createquestion =
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
       {
         err.response || err.response.status === 409
           ? toast.error("Error with Adding Question", {
@@ -1057,7 +1057,6 @@ export const add_Questions_from_bank = (bankId,questionId,sectionId ) =>
     };
     try {
       const res = await axios.post( `${API_BASE_URL}/assessments/add_from_bank`, bodyData, config);
-      console.log(res.data);
      
     }
     catch (err) {
@@ -1104,8 +1103,7 @@ export const Add_question_from_bank =
         Accept: "application/json",
       },
     };
-    console.log("options", options);
-    console.log("answers", answers);
+
     const bodyData = {
       questionType,
       sectionId,
@@ -1123,15 +1121,12 @@ export const Add_question_from_bank =
     }
 
     const body = JSON.stringify(bodyData);
-    console.log("here inauth", bodyData, body);
     try {
-      console.log("section body", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/add_question`,
         body,
         config
       );
-      console.log("Message", res.data.message);
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -1153,9 +1148,7 @@ export const Add_question_from_bank =
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
       {
         err.response || err.response.status === 409
           ? toast.error("Error with Adding Question", {
@@ -1211,13 +1204,11 @@ export const CreateSetting_for_assessment =
     });
 
     try {
-      console.log("setting body in Auth", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/update_settings`,
         body,
         config
       );
-      console.log("Message", res.data.message);
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -1242,9 +1233,7 @@ export const CreateSetting_for_assessment =
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
       {
         (err.response && err.response.status === 409) ||
         err.response.data.message == "VALIDATION_ERROR"
@@ -1306,13 +1295,11 @@ export const Create_do_answer =
     const body = JSON.stringify(bodyData);
 
     try {
-      console.log("setting body in Auth", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/attempts/do_answer`,
         body,
         config
       );
-      console.log("Message", res.data.message);
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -1334,9 +1321,7 @@ export const Create_do_answer =
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
       {
         (err.response && err.response.status === 409) ||
         err.response.data.message == "VALIDATION_ERROR"
@@ -1384,9 +1369,7 @@ export const Create_start_assessment = (assessmentID) => async (dispatch) => {
   const body = JSON.stringify({
     assessmentId: assessmentID.assessmentId,
   });
-  // Log to check the ID and the Authorization token
-  console.log("Assessment ID:", assessmentID.assessmentId);
-  console.log("Authorization Token:", localStorage.getItem("access"));
+
 
   try {
     // Ensure assessmentId is correctly passed and used
@@ -1396,7 +1379,6 @@ export const Create_start_assessment = (assessmentID) => async (dispatch) => {
       config
     );
 
-    console.log("Message", res);
 
     if (
       res.status === 201 ||
@@ -1422,27 +1404,8 @@ export const Create_start_assessment = (assessmentID) => async (dispatch) => {
     });
     return res;
   } catch (err) {
-    console.log("ERROR", err);
 
-    const errorMessage =
-      err.response?.data.statusCode === 409
-        ? "Retry, please"
-        : err.response?.status === 500
-          ? "SERVER ERROR"
-          : "Something went wrong";
 
-    toast.error(errorMessage, {
-      position: "bottom-left",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Flip,
-      style: { width: "400px" },
-    });
 
     dispatch({
       type: ADD_ASSESSMENT_FAIL,
@@ -1465,13 +1428,11 @@ export const Create_finish_attempt = (assessmentID) => async (dispatch) => {
   });
 
   try {
-    console.log("setting body in Auth create finish attempt", body);
     const res = await axios.post(
       `${API_BASE_URL}/assessments/attempts/finish`,
       body,
       config
     );
-    console.log("Message", res);
     if (
       res.status === 201 ||
       res.status === 200 ||
@@ -1496,10 +1457,8 @@ export const Create_finish_attempt = (assessmentID) => async (dispatch) => {
       type: ADD_ASSESSMENT_SUCCESS,
       payload: res.data,
     });
-    console.log("res, res", res);
     return res.data;
   } catch (err) {
-    console.log("ERROR", err);
     {
       (err.response && err.response?.statusCode === 409) ||
       err.data?.message == "NOT_AUTHORIZED"
@@ -1548,7 +1507,6 @@ export const fetchAllUsers = async () => {
 
   try {
     const res = await axios.get(`${API_BASE_URL}/auth/get_all_users`, config);
-    // console.log(res.data)
     
     return res.data;
   } catch (error) {
@@ -1558,6 +1516,32 @@ export const fetchAllUsers = async () => {
   }
     
 };
+// activate user
+export const Toggle_Activate_user = async (userId) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+  const body = JSON.stringify({
+      userId,
+      
+    });
+  try {
+    const res = await axios.post(`${API_BASE_URL}/auth/toggle_active`,body,config);
+    
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    throw error; // rethrow so SWR can detect the error
+    }
+  }
+    
+};
+
 // fetch all roles 
 export const fetchAllRoles = async () => {
   if (localStorage.getItem("access")) {
@@ -1571,7 +1555,6 @@ export const fetchAllRoles = async () => {
 
   try {
     const res = await axios.get(`${API_BASE_URL}/auth/get_roles`, config);
-    // console.log(res.data)
     
     return res.data;
   } catch (error) {
@@ -1596,7 +1579,6 @@ export const create_question_bank_category =
       name,
       description,
     });
-    console.log("Auth body", body);
     try {
       const res = await axios.post(
         `${API_BASE_URL}/assessments/bank/categories/create`,
@@ -1618,16 +1600,13 @@ export const create_question_bank_category =
             transition: Flip,
           }
         );
-        // console.log("registered");
-        //  <Navigate to="/login"/>
-        // <Navigate to="/login"/>
+       
       }
       dispatch({
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
     } catch (err) {
-      console.log(err);
       {
         err.response && err.response.status === 409
           ? toast.error("This user already Exist in this platform.", {
@@ -1683,7 +1662,6 @@ export const load_my_categories = () => async (dispatch) => {
       });
       return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_BANK_CATEGORIES_FAIL });
       return null;
     }
@@ -1710,7 +1688,6 @@ export const create_question_bank =
       categoryId,
       difficultyLevel,
     });
-    console.log("Auth body", body);
     try {
       const res = await axios.post(
         `${API_BASE_URL}/assessments/bank/create`,
@@ -1738,7 +1715,6 @@ export const create_question_bank =
         payload: res.data,
       });
     } catch (err) {
-      console.log(err);
       {
         err.response && err.response.status === 409
           ? toast.error("This user already Exist in this platform.", {
@@ -1793,7 +1769,6 @@ export const load_my_question_Bank = () => async (dispatch) => {
       });
       return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_BANK_REPOSITORY_FAIL });
       return null;
     }
@@ -1825,7 +1800,6 @@ export const load_my_question_Bank_by_CategoryId =
         });
         // return res.data;
       } catch (err) {
-        console.log(err);
         dispatch({ type: LOAD_BANK_REPOSITORY_BY_CATEGORY_ID_FAIL });
         return null;
       }
@@ -1856,7 +1830,6 @@ export const load_my_question_Bank_by_BankId = (bankId) => async (dispatch) => {
       });
       // return res.data;
     } catch (err) {
-      console.log(err);
       dispatch({ type: LOAD_REPOSITORY_QUESTIONS_FAIL });
       return null;
     }
@@ -1877,8 +1850,7 @@ export const createquestion_for_question_bank =
         Accept: "application/json",
       },
     };
-    console.log("options", options);
-    console.log("answers", answers);
+   
     const bodyData = {
       bankId,
       questionType,
@@ -1896,66 +1868,19 @@ export const createquestion_for_question_bank =
     }
 
     const body = JSON.stringify(bodyData);
-    console.log("here inauth bank", bodyData);
     try {
-      console.log("section body", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/bank/add_question`,
         body,
         config
       );
-      console.log("Message", res.data.message);
-      // if (
-      //   res.status === 201 ||
-      //   res.status === 200 ||
-      //   res.data.message == "QUESTION_BANK_ADD_QUESTION_SUCCESS"
-      // ) {
-      //   toast.success(`✅ Successfully created your your question !`, {
-      //     position: "top-center",
-      //     autoClose: 80,
-      //     hideProgressBar: false,
-      //     closeOnClick: false,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "colored",
-      //     transition: Flip,
-      //   });
-      // }
+   
       dispatch({
         type: ADD_CATEGORY_FOR_BANK_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
-      // {
-      //   err.response || err.response.status === 409
-      //     ? toast.error("Error with Adding Question", {
-      //         position: "bottom-left",
-      //         autoClose: 80,
-      //         hideProgressBar: false,
-      //         closeOnClick: false,
-      //         pauseOnHover: true,
-      //         draggable: true,
-      //         progress: undefined,
-      //         theme: "colored",
-      //         transition: Flip,
-      //         style: { width: "400px" },
-      //       })
-      //     : toast.error("somthing Error please try Again", {
-      //         position: "bottom-left",
-      //         autoClose: 80,
-      //         hideProgressBar: false,
-      //         closeOnClick: false,
-      //         pauseOnHover: true,
-      //         draggable: true,
-      //         progress: undefined,
-      //         theme: "colored",
-      //         transition: Flip,
-      //         style: { width: "400px" },
-      //       });
-      // }
+    
       dispatch({
         type: ADD_CATEGORY_FOR_BANK_FAIL,
       });
@@ -1978,13 +1903,11 @@ export const create_send_invitation =
     });
 
     try {
-      console.log("section body", body);
       const res = await axios.post(
         `${API_BASE_URL}/assessments/invitations/invite`,
         body,
         config
       );
-      console.log("Message", res.data.message);
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -2009,9 +1932,7 @@ export const create_send_invitation =
         type: ADD_ASSESSMENT_SUCCESS,
         payload: res.data,
       });
-      console.log(res.data);
     } catch (err) {
-      console.log(err);
       {
         err.response || err.response.status === 409
           ? toast.error("Error with Adding Question", {
@@ -2065,7 +1986,6 @@ export const load_my_inivitation =
       
         return res.data;
       } catch (err) {
-        console.log(err);
         dispatch({ type: LOAD_INVITED_BY_ASSESSMENT_ID_FAIL });
         return null;
       }
@@ -2089,51 +2009,14 @@ export const load_invited_candidates_by_assessment_ID =
         `${API_BASE_URL}/assessments/invitations/get_invited/${assessmentId}`,
         config
       );
-      console.log("Message", res.data.message);
-      // if (res.status === 201 || res.status === 200 || res.data.message == "GET_INVITED_SUCCESS") {
-      //   toast.success( `✅ Invited Candidates are Fetched Successfully !`, {
-      //     position: "bottom-center",
-      //     autoClose: 500,
-      //     hideProgressBar: false,
-      //     closeOnClick: false,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "colored",
-      //     transition: Flip,
-      //   });
 
-      // }
       dispatch({
         type: LOAD_INVITED_CANDIDATES_SUCCESS,
         payload: res.data,
       });
       return res.data;
     } catch (err) {
-      console.log(err);
-      // {err.response || err.response.status === 409  ? toast.error( "INVITATION_NOT_FOUND", {
-      //   position: "bottom-left",
-      //   autoClose: 3000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "colored",
-      //   transition: Flip,
-      //   style: {width:"400px"}
-      //   }) : toast.error( "somthing Error please try Again", {
-      //     position: "bottom-left",
-      //     autoClose: 3000,
-      //     hideProgressBar: false,
-      //     closeOnClick: false,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "colored",
-      //     transition: Flip,
-      //     style: {width:"400px"}
-      //     })}
+     
       dispatch({
         type: LOAD_INVITED_CANDIDATES_FAIL,
       });

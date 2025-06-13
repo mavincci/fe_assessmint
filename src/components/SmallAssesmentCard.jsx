@@ -1,5 +1,3 @@
-"use client"
-
 export default function MiniAssignmentCard({
   title = "assignment",
   progress = 33,

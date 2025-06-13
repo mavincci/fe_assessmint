@@ -33,7 +33,6 @@ const initialState = {
 
 export default function assessment(state = initialState, action) {
   const { type, payload } = action;
-
   switch (type) {
     case USER_ASSESSMENT_SUCCESS:
       return {

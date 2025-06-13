@@ -1,36 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Save, Trash2, XCircle } from 'lucide-react'; // Lucide icons for Save, Delete, Cancel
-
+import React, { useState, useEffect } from "react";
+import { Save, Trash2, XCircle } from "lucide-react"; // Lucide icons for Save, Delete, Cancel
 
 const CreateQuestionBank = ({ initialData, onSubmit, onDelete, onCancel }) => {
   // State to hold form data
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    questionType: 'MULTIPLE_CHOICE', // Default value
-    // categoryId: '', // Assuming this might be handled outside the form or as a select
-    difficultyLevel: 'EASY', // Default value
+    name: "",
+    description: "",
+    questionType: "MULTIPLE_CHOICE", // Default value
+    difficultyLevel: "EASY", // Default value
   });
 
   // Effect to populate form data when initialData prop changes (for editing)
   useEffect(() => {
     if (initialData) {
       setFormData({
-        name: initialData.name || '',
-        description: initialData.description || '',
-        questionType: initialData.questionType || 'MULTIPLE_CHOICE',
-        // categoryId: initialData.categoryId || '',
-        difficultyLevel: initialData.difficultyLevel || 'EASY',
+        name: initialData.name || "",
+        description: initialData.description || "",
+        questionType: initialData.questionType || "MULTIPLE_CHOICE",
+        difficultyLevel: initialData.difficultyLevel || "EASY",
       });
     } else {
-       // Reset form if no initial data is provided (for creation)
-       setFormData({
-         name: '',
-         description: '',
-         questionType: 'MULTIPLE_CHOICE',
-         // categoryId: '',
-         difficultyLevel: 'EASY',
-       });
+      // Reset form if no initial data is provided (for creation)
+      setFormData({
+        name: "",
+        description: "",
+        questionType: "MULTIPLE_CHOICE",
+        difficultyLevel: "EASY",
+      });
     }
   }, [initialData]); // Re-run effect when initialData changes
 
@@ -54,12 +50,13 @@ const CreateQuestionBank = ({ initialData, onSubmit, onDelete, onCancel }) => {
   const handleDelete = () => {
     // In a real app, you would show a confirmation modal here
     if (initialData && initialData.id && onDelete) {
-      if (window.confirm("Are you sure you want to delete this category?")) { // Basic confirmation
-         onDelete(initialData.id); // Call the onDelete prop
+      if (window.confirm("Are you sure you want to delete this category?")) {
+        // Basic confirmation
+        onDelete(initialData.id); // Call the onDelete prop
       }
     } else {
-        console.warn("Delete called without initialData or onDelete handler.");
-        // Handle case where delete is not possible or handler is missing
+      console.warn("Delete called without initialData or onDelete handler.");
+      // Handle case where delete is not possible or handler is missing
     }
   };
 
@@ -68,7 +65,7 @@ const CreateQuestionBank = ({ initialData, onSubmit, onDelete, onCancel }) => {
     <div className="p-6 bg-white rounded-lg shadow-xl max-w-md mx-auto">
       {/* Form Title */}
       <h2 className="text-2xl font-bold mb-6 text-center">
-        {initialData ? 'Edit Category' : 'Create New Category'}
+        {initialData ? "Edit Category" : "Create New Category"}
       </h2>
 
       {/* Form */}
@@ -142,32 +139,34 @@ const CreateQuestionBank = ({ initialData, onSubmit, onDelete, onCancel }) => {
 
         {/* --- Action Buttons --- */}
         <div className="flex justify-end gap-4 mt-6">
-           {/* Delete Button (only shown for editing) */}
-           {initialData && initialData.id && (
-              <button
-                 type="button" // Important: Use type="button" to prevent form submission
-                 className="btn btn-error flex items-center" // DaisyUI error button
-                 onClick={handleDelete}
-              >
-                 <Trash2 className="mr-1 h-4 w-4" /> {/* Lucide Trash icon */}
-                 Delete
-              </button>
-           )}
+          {/* Delete Button (only shown for editing) */}
+          {initialData && initialData.id && (
+            <button
+              type="button" // Important: Use type="button" to prevent form submission
+              className="btn btn-error flex items-center" // DaisyUI error button
+              onClick={handleDelete}
+            >
+              <Trash2 className="mr-1 h-4 w-4" /> {/* Lucide Trash icon */}
+              Delete
+            </button>
+          )}
 
-           {/* Cancel Button */}
-           <button
-              type="button" // Important: Use type="button"
-              className="btn btn-outline flex items-center" // DaisyUI outline button
-              onClick={onCancel} // Call the onCancel prop
-           >
-              <XCircle className="mr-1 h-4 w-4" /> {/* Lucide Cancel icon */}
-              Cancel
-           </button>
+          {/* Cancel Button */}
+          <button
+            type="button" // Important: Use type="button"
+            className="btn btn-outline flex items-center" // DaisyUI outline button
+            onClick={onCancel} // Call the onCancel prop
+          >
+            <XCircle className="mr-1 h-4 w-4" /> {/* Lucide Cancel icon */}
+            Cancel
+          </button>
 
           {/* Submit Button */}
-          <button type="submit" className="btn btn-primary flex items-center"> {/* DaisyUI primary button */}
+          <button type="submit" className="btn btn-primary flex items-center">
+            {" "}
+            {/* DaisyUI primary button */}
             <Save className="mr-1 h-4 w-4" /> {/* Lucide Save icon */}
-            {initialData ? 'Save Changes' : 'Create Category'}
+            {initialData ? "Save Changes" : "Create Category"}
           </button>
         </div>
         {/* --- End Action Buttons --- */}

@@ -1,11 +1,15 @@
-import { useEffect, useRef } from 'react';
-import QuestionTable from './QuestionTable';
+import { useEffect, useRef } from "react";
+import QuestionTable from "./QuestionTable";
 
-export default function MessageDisplay({ messages, onDeleteQuestion, onEditQuestion }) {
+export default function MessageDisplay({
+  messages,
+  onDeleteQuestion,
+  onEditQuestion,
+}) {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
@@ -13,11 +17,13 @@ export default function MessageDisplay({ messages, onDeleteQuestion, onEditQuest
       {messages.map((message) => (
         <div
           key={message.id}
-          className={`chat ${message.sender === 'user' ? 'chat-end' : 'chat-start'}`}
+          className={`chat ${message.sender === "user" ? "chat-end" : "chat-start"}`}
         >
           <div
             className={`chat-bubble ${
-              message.sender === 'user' ? 'chat-bubble-primary' : 'chat-bubble-secondary'
+              message.sender === "user"
+                ? "chat-bubble-primary"
+                : "chat-bubble-secondary"
             }`}
           >
             <p className="mb-2">{message.text}</p>
@@ -25,7 +31,9 @@ export default function MessageDisplay({ messages, onDeleteQuestion, onEditQuest
               <QuestionTable
                 response={message.response}
                 onDelete={(index) => onDeleteQuestion(message.id, index)}
-                onEdit={(index, newText) => onEditQuestion(message.id, index, newText)}
+                onEdit={(index, newText) =>
+                  onEditQuestion(message.id, index, newText)
+                }
               />
             )}
           </div>
@@ -34,4 +42,4 @@ export default function MessageDisplay({ messages, onDeleteQuestion, onEditQuest
       <div ref={messagesEndRef} />
     </div>
   );
-}   
+}

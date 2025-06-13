@@ -94,7 +94,6 @@ const updateField = (field, value) => {
   }, []);
   const handleBanksubmission = () => {
     setIsRepoSubmitting(true);
-    console.log("Data to send", formData);
     create_question_bank(
       formData.name,
       formData.description,
@@ -102,7 +101,6 @@ const updateField = (field, value) => {
       formData.categoryId,
       formData.difficultyLevel
     );
-    console.log("Sent data", formData);
 
     setIsRepoSubmitting(false);
   };
@@ -118,7 +116,6 @@ const updateField = (field, value) => {
 
  
  
-    console.log(categoryId)
     const questionsData = useSelector((state)=> state.bankreducer.BankRepository?.body)
         useEffect(() => {
                const fetch_my_question_bank_by_category_Id = async () => {
@@ -129,13 +126,11 @@ const updateField = (field, value) => {
            
         },[])
 
-    console.log("Question bank", questionsData)
   // Get unique categories from the data
 const categories = [
   { id: 'All categories', name: 'All Categories' }, // The "All Categories" option
   ...Array.from(new Map(questionsData?.map(q => [q.category.id, q.category])).values())
 ];
-console.log("cat",categories)
   // Function to render difficulty badge with appropriate color (using Tailwind classes)
   const renderDifficultyBadge = (difficulty) => {
     const baseClasses = "badge border-0 ";
@@ -185,8 +180,7 @@ console.log("cat",categories)
 
   // Apply all filters to questions - Use useMemo to avoid re-calculating on every render
   const filteredQuestions = useMemo(() => {
-    console.log("Filtering questions...");
-    console.log("State",state)
+
       return questionsData?.filter(question => {
       const matchesSearch = question.name.toLowerCase().includes(searchQuery.toLowerCase()) ||question.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesType = state.selectedType === 'All' || question.questionType === state.selectedType;
@@ -337,10 +331,10 @@ const {
                       className="hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-600 "
                       onClick={() => toggleExpandQuestion(repo.id, repo.questionType)}
                     >
-                      <td className="font-medium">
-                        <div className=''>
+                      <td className="font-medium table-cell">
+                        <div className=' max-w-80 '>
                           {repo.name}
-                          <div className="text-xs text-gray-500">description: {repo.description.slice(0,120)}</div>
+                          <p className="text-xs text-gray-500 w-fit">description: {repo.description.length >=120 ? repo.description.slice(0,120) +"...": repo.description}</p>
                         </div>
                       </td>
                       <td>{renderTypeBadge(repo.questionType)}</td>

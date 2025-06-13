@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import  { useState } from 'react';
 import CategoryRepoAutocomplete from '../../components/AutoCompleteSearch';
 import QuestionBankQuestionPreview from '../questionBank/Managequestion';
 import NoDataAvailable from '../../components/NoDataAvailable';
 import { X } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { sync } from 'framer-motion';
-import { add_Questions_from_bank, createquestion } from '../../action/Auth';
+import { add_Questions_from_bank } from '../../action/Auth';
 import { connect } from 'react-redux';
 
 
@@ -23,21 +22,17 @@ function sleep(ms) {
   const handleRepoSelect = (repoID) => {
     setIsLoading(true);
     setSelectedRepoID(repoID);
-    // Simulate async operation (e.g., fetching questions)
     setTimeout(() => {
       setIsLoading(false);
     }, 500); // Adjust delay as needed
   };
 
   const handleAddQuestion = async () => {
-    console.log("Selected Repo,", selectedRepoID, "sectionId", sectionId, "Questions", selectedQuestionIds)
   setShowModal(true);
 
     for (let i = 0; i < selectedQuestionIds.length  ; i++) {
       const question = selectedQuestionIds[i];
-      console.log(`Submitting  question`, i + 1);
      await add_Questions_from_bank(selectedRepoID, question, sectionId)
-    console.log("Selected Repo,", selectedRepoID, "sectionId", sectionId, "Questions", question)
       
   setProgress({ current: i + 1, total: selectedQuestionIds.length });
       await sleep(500);

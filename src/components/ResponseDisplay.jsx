@@ -5,14 +5,15 @@ import SearchAutocomplete from "./AutoCompleteSearch";
 import { connect } from "react-redux";
 import { createquestion_for_question_bank } from "../action/Auth";
 
-const ResponseDisplay= ({
+const ResponseDisplay = ({
   tfQuestions = [],
   mcqQuestions = [],
   onDeleteTF,
   onEditTF,
   onDeleteMCQ,
-  onEditMCQ,createquestion_for_question_bank
-}) =>{
+  onEditMCQ,
+  createquestion_for_question_bank,
+}) => {
   const [editingTFId, setEditingTFId] = useState(null);
   const [editingMCQId, setEditingMCQId] = useState(null);
   const [editedTFQuestion, setEditedTFQuestion] = useState(null);
@@ -20,12 +21,12 @@ const ResponseDisplay= ({
   const [Submitquestion, setSubmitquestion] = useState(false);
   const [isAddButtonActive, setIsAddButtonActive] = useState(false);
   const [selectedRepoId, setSelectedRepoId] = useState(null);
-const [showModal, setShowModal] = React.useState(false);
-const [progress, setProgress] = React.useState({ current: 0, total: 0 });
+  const [showModal, setShowModal] = React.useState(false);
+  const [progress, setProgress] = React.useState({ current: 0, total: 0 });
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
   const handleRepoSelect = (repoId) => {
     setSelectedRepoId(repoId);
     setIsAddButtonActive(!!repoId); // Activate only if repoId is truthy
@@ -35,42 +36,41 @@ function sleep(ms) {
     setEditedTFQuestion({ ...question });
   };
 
-const handleAddQuestions = async ({ type }) => {
-  let questions = [];
-  if (type === "tf") {
-    questions = tfQuestions;
-  } else if (type === "mcq") {
-    questions = mcqQuestions;
-  } else {
-    console.log("Something went wrong with adding questions");
-    return;
-  }
+  const handleAddQuestions = async ({ type }) => {
+    let questions = [];
+    if (type === "tf") {
+      questions = tfQuestions;
+    } else if (type === "mcq") {
+      questions = mcqQuestions;
+    } else {
+      console.log("Something went wrong with adding questions");
+      return;
+    }
 
-  // Show modal
-  setProgress({ current: 0, total: questions.length });
-  setShowModal(true);
+    // Show modal
+    setProgress({ current: 0, total: questions.length });
+    setShowModal(true);
 
-  for (let i = 0; i < questions.length; i++) {
-    const question = questions[i];
-    console.log(`Submitting ${type.toUpperCase()} question`, i + 1);
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      console.log(`Submitting ${type.toUpperCase()} question`, i + 1);
 
-    await createquestion_for_question_bank(
-      selectedRepoId,
-      type === "tf" ? "TRUE_OR_FALSE" : "MULTIPLE_CHOICE",
-      question.questionText,
-      type === "tf" ? null : question.options,
-      type === "tf" ? question.answer : question.answers
-      
-    );
+      await createquestion_for_question_bank(
+        selectedRepoId,
+        type === "tf" ? "TRUE_OR_FALSE" : "MULTIPLE_CHOICE",
+        question.questionText,
+        type === "tf" ? null : question.options,
+        type === "tf" ? question.answer : question.answers
+      );
 
-    setProgress({ current: i + 1, total: questions.length });
-    await sleep(200);
-  }
+      setProgress({ current: i + 1, total: questions.length });
+      await sleep(200);
+    }
 
-  console.log(`${type.toUpperCase()} Questions Sent`);
-  setSubmitquestion(true);
-  setShowModal(false);
-};
+    console.log(`${type.toUpperCase()} Questions Sent`);
+    setSubmitquestion(true);
+    setShowModal(false);
+  };
 
   const handleStartEditMCQ = (id, question) => {
     setEditingMCQId(id);
@@ -107,29 +107,33 @@ const handleAddQuestions = async ({ type }) => {
           <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-300">
             <div className="p-5 border-b flex-col space-y-4 border-gray-200 dark:border-gray-700 flex justify-between">
               <div className="">
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                True/False Questions
-              </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Response contains {tfQuestions.length} true/false questions
-              </p>
-          </div>
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                  True/False Questions
+                </h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Response contains {tfQuestions.length} true/false questions
+                </p>
+              </div>
 
-                     <div className="flex flex-col md:flex-row space-y-12 gap-3">
-                           <SearchAutocomplete  onRepoSelect={handleRepoSelect} currentType="TRUE_OR_FALSE" />   <button
+              <div className="flex flex-col md:flex-row space-y-12 gap-3">
+                <SearchAutocomplete
+                  onRepoSelect={handleRepoSelect}
+                  currentType="TRUE_OR_FALSE"
+                />{" "}
+                <button
                   onClick={() => {
-                    handleAddQuestions({type:"tf"})
-        }}
-        disabled={!isAddButtonActive}
-        className={`px-4 py-2 rounded ${
-          isAddButtonActive
-            ? 'bg-btn-primary text-white'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        }  h-10`}
-      >
-        Add
-      </button>
-    </div>
+                    handleAddQuestions({ type: "tf" });
+                  }}
+                  disabled={!isAddButtonActive}
+                  className={`px-4 py-2 rounded ${
+                    isAddButtonActive
+                      ? "bg-btn-primary text-white"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }  h-10`}
+                >
+                  Add
+                </button>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -260,14 +264,18 @@ const handleAddQuestions = async ({ type }) => {
           </div>
         </div>
         {showModal && (
-  <dialog id="submit_modal" className="modal modal-open">
-    <div className="modal-box text-center">
-      <h3 className="font-bold text-lg mb-4">Submitting Questions</h3>
-      <p>{`${progress.current}/${progress.total} Submitted`}</p>
-      <progress className="progress progress-primary w-full mt-4" value={progress.current} max={progress.total}></progress>
-    </div>
-  </dialog>
-)}
+          <dialog id="submit_modal" className="modal modal-open">
+            <div className="modal-box text-center">
+              <h3 className="font-bold text-lg mb-4">Submitting Questions</h3>
+              <p>{`${progress.current}/${progress.total} Submitted`}</p>
+              <progress
+                className="progress progress-primary w-full mt-4"
+                value={progress.current}
+                max={progress.total}
+              ></progress>
+            </div>
+          </dialog>
+        )}
       </div>
     );
   }
@@ -280,29 +288,32 @@ const handleAddQuestions = async ({ type }) => {
             <div className="p-5 border-b flex  flex-col justify-between gap-6 border-gray-200 dark:border-gray-700 z-10 sticky">
               <div className="d">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                Multiple Choice Questions
-              </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Response contains {mcqQuestions.length} multiple choice
-                questions
-              </p>
+                  Multiple Choice Questions
+                </h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Response contains {mcqQuestions.length} multiple choice
+                  questions
+                </p>
               </div>
               <div className="flex flex-col md:flex-row space-y-12 gap-3 ">
-                           <SearchAutocomplete  onRepoSelect={handleRepoSelect} currentType="MULTIPLE_CHOICE" />   <button
+                <SearchAutocomplete
+                  onRepoSelect={handleRepoSelect}
+                  currentType="MULTIPLE_CHOICE"
+                />{" "}
+                <button
                   onClick={() => {
-               handleAddQuestions({type:"mcq"})
-        }}
-        disabled={!isAddButtonActive}
-        className={`px-4 py-2 rounded ${
-          isAddButtonActive
-            ? 'bg-btn-primary text-white '
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        }  h-10`}
-      >
-        Add
-      </button>
-    </div>
-             
+                    handleAddQuestions({ type: "mcq" });
+                  }}
+                  disabled={!isAddButtonActive}
+                  className={`px-4 py-2 rounded ${
+                    isAddButtonActive
+                      ? "bg-btn-primary text-white "
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }  h-10`}
+                >
+                  Add
+                </button>
+              </div>
             </div>
 
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -367,7 +378,6 @@ const handleAddQuestions = async ({ type }) => {
                         </>
                       )}
                     </div>
-              
                   </div>
 
                   {editingMCQId === index ? (
@@ -440,18 +450,21 @@ const handleAddQuestions = async ({ type }) => {
               ))}
             </div>
 
-<dialog id="my_modal_3" className="modal">
-  <div className="modal-box">
-    <form method="dialog">
-      {/* if there is a button in form, it will close the modal */}
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                  
-    </form>
-    <h3 className="font-bold text-lg">Hello!</h3>
-                <p className="py-4">Press ESC key or click on ✕ button to close</p>
-  </div>
-</dialog>
-                    
+            <dialog id="my_modal_3" className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    ✕
+                  </button>
+                </form>
+                <h3 className="font-bold text-lg">Hello!</h3>
+                <p className="py-4">
+                  Press ESC key or click on ✕ button to close
+                </p>
+              </div>
+            </dialog>
+
             {/* <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
               <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">
                 {JSON.stringify({
@@ -465,14 +478,19 @@ const handleAddQuestions = async ({ type }) => {
           </div>
         </div>
         {/* {Submitquestion && <SelectCategoryandRepo/>} */}
-           {showModal && (
-  <dialog id="submit_modal" className="modal modal-open">
-    <div className="modal-box text-center">
-      <h3 className="font-bold text-lg mb-4">Submitting Questions</h3>
-      <p>{`${progress.current}/${progress.total} Submitted`}</p>
-      <progress className="progress progress-accent w-full mt-4" value={progress.current} max={progress.total}></progress>
-    </div>
-  </dialog>)}
+        {showModal && (
+          <dialog id="submit_modal" className="modal modal-open">
+            <div className="modal-box text-center">
+              <h3 className="font-bold text-lg mb-4">Submitting Questions</h3>
+              <p>{`${progress.current}/${progress.total} Submitted`}</p>
+              <progress
+                className="progress progress-accent w-full mt-4"
+                value={progress.current}
+                max={progress.total}
+              ></progress>
+            </div>
+          </dialog>
+        )}
       </div>
     );
   }
@@ -490,8 +508,10 @@ const handleAddQuestions = async ({ type }) => {
       </div>
     </div>
   );
-}
+};
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, { createquestion_for_question_bank})(ResponseDisplay)
+export default connect(mapStateToProps, { createquestion_for_question_bank })(
+  ResponseDisplay
+);

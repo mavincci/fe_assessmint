@@ -15,10 +15,10 @@ const Pagination = ({
   return (
     <div className="mt-0 flex md:flex-row min-w-full justify-between items-center bg-accent-teal-light p-3 text-white rounded-b-xl">
       {/* Items per page selector */}
-      <div className="flex flex-row items-center gap-2 mb-3 md:mb-0 w-[20%]">
+      <div className="flex flex-row items-center gap-2 mb-3 md:mb-0 md:w-[20%]">
         <span className='w-fit'>Items/page:</span>
         <select
-          className="select select-bordered select-sm bg-accent-teal-light"
+          className="select select-bordered select-sm bg-accent-teal-light w-fit"
           value={itemsPerPage}
           onChange={(e) => handleItemsPerPageChange(e.target.value)}
         >
@@ -29,7 +29,7 @@ const Pagination = ({
       </div>
 
       {/* Page Info */}
-      <div className="hidden md:visible text-sm text-gray-700 mb-3 md:mb-0">
+      <div className="hidden md:block text-sm text-gray-700 mb-3 md:mb-0">
         Showing {Math.min(totalItems, indexOfFirstItem + 1)}-{Math.min(totalItems, indexOfLastItem)} of {totalItems} questions
       </div>
 

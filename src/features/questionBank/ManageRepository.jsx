@@ -10,20 +10,7 @@ import { useParams } from 'react-router-dom';
 import { useLoadQuestionType } from '../../hooks/useQuestionType';
 import { usePagination } from '../../hooks/usePagination';
 import Pagination from '../../components/Pagination';
-// Import statements for ShadCN/UI components are removed
 
-
-// Question type definition (keeping it for clarity, though removed from state type)
-// type QuestionType = 'MCQ' | 'Subjective' | 'Coding' | 'All';
-// type Question = {
-//   id: number;
-//   question: string;
-//   lastModified: string;
-//   difficulty: 'Easy' | 'Medium' | 'Hard';
-//   category: string;
-//   usedIn: string;
-//   type: QuestionType;
-// };
 
 const ManageRepository = ({create_question_bank}) => {
   const categoryId = useParams().categoryId
@@ -90,9 +77,8 @@ const updateField = (field, value) => {
       });
     }
   }, []);
-  const handleBanksubmission = () => {
+  const handleBanksubmission = async() => {
     setIsRepoSubmitting(true);
-    console.log("Data to send", formData);
     create_question_bank(
       formData.name,
       formData.description,
@@ -100,8 +86,16 @@ const updateField = (field, value) => {
       formData.categoryId,
       formData.difficultyLevel
     );
-    console.log("Sent data", formData);
+       await new Promise((resolve) => setTimeout(resolve, 300)); 
 
+          await dispatch(load_my_question_Bank_by_CategoryId(categoryId));
+ setFormData({
+        name: "",
+        description: "",
+        questionType: "MULTIPLE_CHOICE",
+        categoryId: categoryId || "",
+        difficultyLevel: "EASY",
+      });
     setIsRepoSubmitting(false);
   };
 
@@ -117,18 +111,17 @@ const updateField = (field, value) => {
   // Mock data for questions with added type property
   // Casting to the type implicitly or explicitly is good practice if you remove the type alias
  
-    console.log(categoryId)
-    const questionsData = useSelector((state)=> state.bankreducer.BankRepositoryByID?.body)
-        useEffect(() => {
-               const fetch_my_question_bank_by_category_Id = async () => {
+  const questionsData = useSelector((state) => state.bankreducer.BankRepositoryByID?.body)
+    const fetch_my_question_bank_by_category_Id = async () => {
           await dispatch(load_my_question_Bank_by_CategoryId(categoryId));
           };
           
+        useEffect(() => {
+             
             fetch_my_question_bank_by_category_Id();
            
         },[])
 
-    console.log("Question bank", questionsData)
   // Get unique categories from the data
   const categories = ['all-categories', ...Array.from(new Set(questionsData?.map(q => q.name)))];
 
@@ -181,7 +174,6 @@ const updateField = (field, value) => {
 
   // Apply all filters to questions - Use useMemo to avoid re-calculating on every render
   const filteredQuestions = useMemo(() => {
-      console.log("Filtering questions..."); // Log to see when filtering happens
       return questionsData?.filter(question => {
       const matchesSearch = question.name.toLowerCase().includes(searchQuery.toLowerCase()) ||question.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesType = state.selectedType === 'All' || question.questionType === state.selectedType;
@@ -209,9 +201,9 @@ const {
   currentItems,
   handlePageChange,
   handleItemsPerPageChange,
-} = usePagination(filteredQuestions, 4);
+} = usePagination(filteredQuestions, filteredQuestions?.length <=4 ? filteredQuestions.length : 5);
   return (
-    <div className="min-h-screen bg-blue-50/50 p-6 dark:bg-gray-800 dark:text-bg-light">
+    <div className="min-h-screen bg-blue-50/50 p-6 dark:bg-gray-800 dark:text-bg-light ">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row  space-y-5 md:justify-between md:items-center mb-6">
           <h1 className="text-2xl font-bold  ">Question Repository under <span className='px-2 bg-accent-teal-light text-white'> {categoryName}</span></h1>
@@ -334,7 +326,7 @@ const {
                       <td className="font-medium">
                         <div className=''>
                           {repo.name}
-                          <div className="text-xs text-gray-500">description: {repo.description.slice(0,120)}</div>
+                          <div className="text-xs text-gray-500">description: {repo.description.length >=120 ? repo.description.slice(0,120) +"...": repo.description }</div>
                         </div>
                       </td>
                       <td>{renderTypeBadge(repo.questionType)}</td>

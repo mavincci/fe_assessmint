@@ -106,11 +106,8 @@ const handleCorrectOption = (id) => {
         id: Date.now(),
       }
       setIsSubmitting(true)
-      // console.log("New Questins", newQuestion)
-console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, newQuestion.options, newQuestion.answer)
       // await new Promise((resolve) => setTimeout(resolve, 1500));
       if (bankId) {
-        console.log("sending to question bank")
         createquestion_for_question_bank(bankId, sectionType, currentQuestion.text,newQuestion.options.map((options)=>options.text), currentQuestion.answer )
       } 
       else {
@@ -221,8 +218,7 @@ console.log("Create Question MCQ ", sectionType, sectionID, newQuestion.text, ne
             </div>
 
            
-            <div className="text-sm text-gray-500 alert alert-info">  <Info/>* Check the boxes next to all correct answers</div>
-              {/* <span>Check all options that are correct answers. You must select at least one correct answer.</span> */}
+            <div className="text-md text-gray-50 alert alert-success">  <Info/>* Check the boxes next to all correct answers</div>
             
 
             {currentQuestion.options.map((option) => (

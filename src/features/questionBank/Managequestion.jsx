@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import { load_my_question_Bank_by_BankId } from '../../action/Auth';
-import LoadingPage from '../../components/Loading';
-import NoDataAvailable from '../../components/NoDataAvailable';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { load_my_question_Bank_by_BankId } from "../../action/Auth";
+import LoadingPage from "../../components/Loading";
+import NoDataAvailable from "../../components/NoDataAvailable";
 
 const QuestionBankQuestionPreview = ({ bankId, onSelectionChange }) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const isAddFromBankPage = location.pathname.includes('add-from-bank');
+  const isAddFromBankPage = location.pathname.includes("add-from-bank");
 
   const data = useSelector((state) => state.bankreducer.RepositoryQuestions);
   const loading = useSelector((state) => state.bankreducer.loading);
@@ -46,33 +46,16 @@ const QuestionBankQuestionPreview = ({ bankId, onSelectionChange }) => {
     );
   };
 
-  const handleAddQuestion = () => {
-    if (selectedQuestions.length === 0) {
-      alert('Please select at least one question.');
-      return;
-    }
-
-    const payload = {
-      bankId,
-      questionIds: selectedQuestions,
-    };
-
-    console.log('Sending API request with payload:', payload);
-    alert(`Selected questions: ${selectedQuestions.join(', ')}`);
-    setSelectedQuestions([]);
-  };
-
   return (
     <div className="w-full">
-     
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className={`${
           isAddFromBankPage
-            ? 'bg-white dark:bg-gray-800 dark:text-bg-light md:p-6 overflow-y-auto w-full rounded-lg shadow-md'
-            : 'h-full bg-gray-50 flex p-4 rounded-lg'
+            ? "bg-white dark:bg-gray-800 dark:text-bg-light md:p-6 overflow-y-auto w-full rounded-lg shadow-md"
+            : "h-full bg-gray-50 flex p-4 rounded-lg"
         }`}
       >
         <table className="w-full bg-white rounded-lg overflow-hidden table-zebra">
@@ -104,25 +87,26 @@ const QuestionBankQuestionPreview = ({ bankId, onSelectionChange }) => {
                   key={question.id}
                   className={`border-b transition-colors ${
                     index % 2 === 0
-                      ? 'bg-gray-50 dark:bg-gray-800'
-                      : 'bg-white dark:bg-gray-700'
+                      ? "bg-gray-50 dark:bg-gray-800"
+                      : "bg-white dark:bg-gray-700"
                   } hover:bg-gray-100 dark:hover:bg-gray-600`}
                 >
                   {isAddFromBankPage && (
                     <td className="p-3">
-                     <input
-  type="checkbox"
-  checked={selectedQuestions.includes(question.id)}
-  onChange={() => handleCheckboxChange(question.id)}
-  className="h-5 w-5 accent-accent-teal-light rounded focus:ring-accent-teal-light dark:bg-gray-700 dark:border-gray-600"
-/>
+                      <input
+                        type="checkbox"
+                        checked={selectedQuestions.includes(question.id)}
+                        onChange={() => handleCheckboxChange(question.id)}
+                        className="h-5 w-5 accent-accent-teal-light rounded focus:ring-accent-teal-light dark:bg-gray-700 dark:border-gray-600"
+                      />
                     </td>
                   )}
                   <td className="p-3 text-gray-700 dark:text-gray-300">
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
                   <td className="p-3 text-gray-700 dark:text-gray-300">
-                    {question.questionData?.questionText || 'No question text available'}
+                    {question.questionData?.questionText ||
+                      "No question text available"}
                   </td>
                 </tr>
               ))
@@ -155,8 +139,8 @@ const QuestionBankQuestionPreview = ({ bankId, onSelectionChange }) => {
                 onClick={() => setCurrentPage(i + 1)}
                 className={`px-4 py-2 rounded-lg ${
                   currentPage === i + 1
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                 } transition-colors`}
               >
                 {i + 1}
@@ -164,7 +148,9 @@ const QuestionBankQuestionPreview = ({ bankId, onSelectionChange }) => {
             ))}
 
             <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
               className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors"
             >

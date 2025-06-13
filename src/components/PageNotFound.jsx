@@ -5,14 +5,14 @@ const PageNotFound = () => {
   // 'null' or an empty string can represent empty spaces if needed,
   // but for a full 8x8 grid, we'll just have 64 characters.
   const gridLetters = [
-    'k', 'v', 'n', 'z', 'i', 'x', 'm', 'e',
+    's', 'e', 'g', 'n', 'i', 'x', 'm', 'e',
     't', 'a', 'x', 'l', '4', '0', '4', 'y',
-    'y', 'w', 'v', 'b', 'o', 'q', 'd', 'y',
-    'p', 'a', 'p', 'a', 'g', 'e', 'v', 'j',
-    'a', 'n', 'o', 't', 's', 'c', 'e', 'w',
-    'v', 'x', 'e', 'p', 'c', 'f', 'h', 'q',
-    'e', 'f', 'o', 'u', 'n', 'd', 's', 'w',
-    'q', 'v', 'o', 's', 'm', 'v', 'f', 'u',
+    'm', 'e', 'k', 'd', 'i', 'q', 'd', 'y',
+    'p', 'a', 'p', 'a', 'g', 'e', 'v', 'a',
+    'a', 'n', 'o', 't', 's', 'c', 'e', 's',
+    'v', 'x', 'e', 'm', 'i', 'c', 'k', 's',
+    'e', 'f', 'o', 'u', 'n', 'd', 's', 'e',
+    'q', 'v', 'o', 't', 'n', 'i', 'm', 's',
   ];
 
   // Indices of the letters that should be highlighted (404 page not found)

@@ -1,10 +1,8 @@
+import { useState } from "react";
+import { Download, ArrowLeftCircle } from "lucide-react";
 
-
-import { useState } from "react"
-import { Bell, Search, Filter, Download, ArrowLeft, ArrowLeftCircle } from "lucide-react"
-
-export default function ResultDetail({ assignment, onBack }) {
-  const [activeTab, setActiveTab] = useState("all-results")
+export default function ResultDetail({ assignent, onBack }) {
+  const [activeTab, setActiveTab] = useState("all-results");
 
   // Sample data for the detailed view
   const performanceSummary = {
@@ -12,13 +10,13 @@ export default function ResultDetail({ assignment, onBack }) {
     assessmentsCompleted: "3/5",
     averageScore: "85%",
     highestScore: "92%",
-  }
+  };
 
   const skillBreakdown = [
     { skill: "Technical Knowledge", score: 78 },
     { skill: "Problem Solving", score: 92 },
     { skill: "Communication", score: 85 },
-  ]
+  ];
 
   const detailedResults = [
     {
@@ -28,7 +26,8 @@ export default function ResultDetail({ assignment, onBack }) {
       completedOn: "April 28, 2025",
       score: "85%",
       status: "PASSED",
-      feedback: "Strong in communication and teamwork. Areas for improvement include time management.",
+      feedback:
+        "Strong in communication and teamwork. Areas for improvement include time management.",
     },
     {
       id: 2,
@@ -37,7 +36,8 @@ export default function ResultDetail({ assignment, onBack }) {
       completedOn: "May 1, 2025",
       score: "78%",
       status: "PASSED",
-      feedback: "Good understanding of core concepts. Consider strengthening knowledge in advanced topics.",
+      feedback:
+        "Good understanding of core concepts. Consider strengthening knowledge in advanced topics.",
     },
     {
       id: 3,
@@ -46,15 +46,19 @@ export default function ResultDetail({ assignment, onBack }) {
       completedOn: "May 3, 2025",
       score: "92%",
       status: "PASSED",
-      feedback: "Excellent problem-solving abilities. Creative approaches to complex challenges.",
+      feedback:
+        "Excellent problem-solving abilities. Creative approaches to complex challenges.",
     },
-  ]
+  ];
 
   return (
     <div className="max-w-7xl mx-auto bg-bg-light p-6 rounded-lg max-h-[90vh] ">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="text-gray-600 hover:text-gray-900">
+          <button
+            onClick={onBack}
+            className="text-gray-600 hover:text-gray-900"
+          >
             <ArrowLeftCircle className="w-7 h-7" />
           </button>
           <div>
@@ -62,7 +66,6 @@ export default function ResultDetail({ assignment, onBack }) {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          
           <div className="flex items-center gap-1">
             {/* <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm">JD</div> */}
           </div>
@@ -95,7 +98,14 @@ export default function ResultDetail({ assignment, onBack }) {
           <div className="flex justify-center mb-6">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#e6e6e6" strokeWidth="10" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="#e6e6e6"
+                  strokeWidth="10"
+                />
                 <circle
                   cx="50"
                   cy="50"
@@ -104,27 +114,39 @@ export default function ResultDetail({ assignment, onBack }) {
                   stroke="#3b5b67"
                   strokeWidth="10"
                   strokeDasharray="283"
-                  strokeDashoffset={283 - (283 * Number.parseInt(performanceSummary.overallScore)) / 100}
+                  strokeDashoffset={
+                    283 -
+                    (283 * Number.parseInt(performanceSummary.overallScore)) /
+                      100
+                  }
                   transform="rotate(-90 50 50)"
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-3xl font-bold">{performanceSummary.overallScore}</span>
+                <span className="text-3xl font-bold">
+                  {performanceSummary.overallScore}
+                </span>
               </div>
             </div>
           </div>
           <div className="space-y-4">
             <div className="flex justify-between border-b border-gray-300">
               <span className="text-gray-600">Assessments Completed</span>
-              <span className="font-medium">{performanceSummary.assessmentsCompleted}</span>
+              <span className="font-medium">
+                {performanceSummary.assessmentsCompleted}
+              </span>
             </div>
             <div className="flex justify-between border-b border-gray-300">
               <span className="text-gray-600">Average Score</span>
-              <span className="font-medium">{performanceSummary.averageScore}</span>
+              <span className="font-medium">
+                {performanceSummary.averageScore}
+              </span>
             </div>
             <div className="flex justify-between border-b border-gray-300">
               <span className="text-gray-600">Highest Score</span>
-              <span className="font-medium">{performanceSummary.highestScore}</span>
+              <span className="font-medium">
+                {performanceSummary.highestScore}
+              </span>
             </div>
           </div>
         </div>
@@ -140,7 +162,10 @@ export default function ResultDetail({ assignment, onBack }) {
                   <span className="font-medium">{item.score}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-[#3b5b67] h-2.5 rounded-full" style={{ width: `${item.score}%` }}></div>
+                  <div
+                    className="bg-[#3b5b67] h-2.5 rounded-full"
+                    style={{ width: `${item.score}%` }}
+                  ></div>
                 </div>
               </div>
             ))}
@@ -153,7 +178,9 @@ export default function ResultDetail({ assignment, onBack }) {
         <div className="flex space-x-8">
           <button
             className={`py-2 px-1 ${
-              activeTab === "all-results" ? "border-b-2 border-[#3b5b67] text-[#3b5b67] font-medium" : "text-gray-500"
+              activeTab === "all-results"
+                ? "border-b-2 border-[#3b5b67] text-[#3b5b67] font-medium"
+                : "text-gray-500"
             }`}
             onClick={() => setActiveTab("all-results")}
           >
@@ -195,11 +222,13 @@ export default function ResultDetail({ assignment, onBack }) {
                 <Download className="w-4 h-4" />
                 Download Report
               </button>
-              <button className="px-4 py-2 bg-[#3b5b67] text-white rounded-md">View Detailed Results</button>
+              <button className="px-4 py-2 bg-[#3b5b67] text-white rounded-md">
+                View Detailed Results
+              </button>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

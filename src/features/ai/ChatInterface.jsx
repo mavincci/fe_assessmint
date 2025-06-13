@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Moon, Sun, Send, Trash2, Bot, CornerDownLeft } from "lucide-react";
-import { sampleMCQQuestions, sampleTFQuestions } from "../../lib/data";
+import  { useState } from "react";
+import { Bot, CornerDownLeft } from "lucide-react";
 import ResponseDisplay from "../../components/ResponseDisplay";
 import ChatInput from "../../components/ChatInput";
 import { API_BASE_URL } from "../../action/Auth";
@@ -8,7 +7,6 @@ import aiImage from "../../assets/chatAi.png";
 import NoInternetPage from "../../layouts/NoInternet";
 
 export default function ChatInterface() {
-  //   const { theme, toggleTheme } = useTheme();
   const [messages, setMessages] = useState([
     {
       id: "1",
@@ -27,12 +25,14 @@ export default function ChatInterface() {
     const mcqKeywords = [
       /multiple[-\s]?choice/i,
       /\bmcq(s)?\b/i,
+      /\bMCQ(s)?\b/i,
       /\bchoice(s)?\b/i,
     ];
     const tfKeywords = [
       /true\s*\/\s*false/i,
       /true\s+or\s+false/i,
       /\btf\b/i,
+      /\bTF\b/i,
       /true[-\s]?false/i,
     ];
 
@@ -41,69 +41,7 @@ export default function ChatInterface() {
 
     return { hasMCQ, hasTF };
   };
-  // const handleSendMessage = async (message) => {
-  //   if (!message.trim()) return;
-
-  //   const newUserMessage = {
-  //     id: Date.now().toString(),
-  //     type: 'user',
-  //     content: message,
-  //     timestamp: new Date().toISOString(),
-  //   };
-
-  //   setMessages((prev) => [...prev, newUserMessage]);
-  //   setLoading(true);
-
-  //   try {
-  //       const response = await fetch(`${API_BASE_URL}/ai/generate_mcq`, {
-  //       method: 'POST',
-  //       headers: {
-  //           'Content-Type': 'application/json',
-  //            Authorization: `Bearer ${localStorage.getItem("access")}`,
-  //            Accept: "application/json",
-  //       },
-  //       body: JSON.stringify({ topic: message, numberOfQuestions:10}),
-  //     });
-
-  //       const data = await response.json();
-
-  //     let responseMessage = {
-  //       id: (Date.now() + 1).toString(),
-  //       type: 'assistant',
-  //       content: 'Here are your questions.',
-  //       timestamp: new Date().toISOString(),
-  //       hasQuestions: true,
-  //       questionType:data.message === "MCQ_QUESTIONS_GENERATION_SUCCESS" ? "mcq" :data.message === "TF_QUESTIONS_GENERATION_SUCCESS"? "tf":"chat",
-  //       };
-  //       console.log(responseMessage)
-
-  //     if (responseMessage.questionType==='tf' && data?.statusCode !==500) {
-  //       setTfQuestions(data.body);
-  //       setActiveTab('tf');
-  //     } else if (responseMessage.questionType=== 'mcq'  && data?.statusCode !==500) {
-  //       setMcqQuestions(data.body);
-  //         setActiveTab('mcq');
-  //         console.log(data.body)
-  //     } else {
-  //         setNoConnection(true)
-  //     }
-
-  //     setMessages((prev) => [...prev, responseMessage]);
-  //   } catch (error) {
-  //       console.log("error", error)
-  //     setMessages((prev) => [
-  //       ...prev,
-  //       {
-  //         id: (Date.now() + 2).toString(),
-  //         type: 'assistant',
-  //         content: 'Sorry, something went wrong while fetching questions.',
-  //         timestamp: new Date().toISOString(),
-  //       },
-  //     ]);
-  //   }
-
-  //   setLoading(false);
-  // };
+ 
 
   const handleSendMessage = async (message) => {
     if (!message.trim()) return;
@@ -254,17 +192,7 @@ export default function ChatInterface() {
               AssessMint AI Question Generator
             </h1>
           </div>
-          {/* <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="h-5 w-5 text-yellow-400" />
-            ) : (
-              <Moon className="h-5 w-5 text-gray-600" />
-            )}
-          </button> */}
+      
         </div>
       </header>
 

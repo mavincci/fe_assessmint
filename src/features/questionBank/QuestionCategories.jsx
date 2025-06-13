@@ -6,11 +6,9 @@ import {
   create_question_bank_category,
   load_my_categories,
   load_my_question_Bank_by_CategoryId,
-  load_question_type,
 } from "../../action/Auth";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { useLoadQuestionType } from "../../hooks/useQuestionType";
 
 const QuestionCategories = ({
   create_question_bank_category,
@@ -18,7 +16,6 @@ const QuestionCategories = ({
 }) => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [IsBankModalOpen, setIsBankModalOpen] = useState(false);
   const [IscategorySubmitting, setiscategorysubmitting] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -66,7 +63,6 @@ const QuestionCategories = ({
   }, [SelectedCategories]);
   const handleBanksubmission = () => {
     setiscategorysubmitting(true);
-    console.log("Data to send", formData);
     create_question_bank(
       formData.name,
       formData.description,
@@ -74,7 +70,6 @@ const QuestionCategories = ({
       formData.categoryId,
       formData.difficultyLevel
     );
-    console.log("Sent data", formData);
 
     setiscategorysubmitting(false);
   };
@@ -90,30 +85,28 @@ const QuestionCategories = ({
 
   const fetchBank_by_categoryId = async (categoryID) => {
      const response = await dispatch(load_my_question_Bank_by_CategoryId(categoryID))
-     console.log("response", response)
-    }
-  useEffect(() => {
-    const fetch_my_categories = async () => {
+  }
+     const fetch_my_categories = async () => {
       const res = await dispatch(load_my_categories());
       if (res?.body) {
         setCastegories(res.body);
-        console.log("FetchCategories", res.body);
       }
     };
+  useEffect(() => {
+ 
     fetch_my_categories();
   }, []);
-  // load question type 
 
  
-
   const handleCreateCategory = async () => {
     setiscategorysubmitting(true);
-    console.log("Create Assessment", title, description);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     create_question_bank_category(formData.name, formData.description);
-    console.log("Sent to Auth...");
-    setiscategorysubmitting(false);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  setiscategorysubmitting(false);
     setIsModalOpen(false);
+    await fetch_my_categories()
+  
   };
   return (
     // Main container with background and padding
@@ -121,7 +114,7 @@ const QuestionCategories = ({
       <div className="container mx-auto">
         {/* Header: Title and Create Category Button */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Question Categories</h1>
+          <h1 className="text-2xl font-bold w-full">Question Categories</h1>
           {/* DaisyUI Button */}
           <div className="flex flex-row justify-end gap-8 p-2 align-middle items-center w-full">
              <Link to="/ai" >
@@ -190,14 +183,14 @@ const QuestionCategories = ({
                 </div>
 
                 {/* Card Description */}
-                <p className=" mb-4">{category.description}</p>
+                <p className=" mb-4">{category.description.length >=200  ?  category.description.slice(0,200) + "...":category.description }</p>
 
                 {/* Question Count and Created Date */}
                 <div className="flex flex-wrap items-center justify-between gap-2 text-sm mb-6">
                   <div className="badge badge-outline">
-                    {category.questionsCount} Repositories
+                    {category.bankCount} Repositories
                   </div>
-                  <span>Created:{new Date(category.createdAt).toLocaleDateString()}</span>
+                  <span>Created: {new Date(category.createdAt).toLocaleDateString()}</span>
                 </div>
 
                 {/* Manage Question Button */}

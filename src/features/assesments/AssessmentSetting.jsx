@@ -5,15 +5,12 @@ import { connect } from "react-redux"
 import { CreateSetting_for_assessment } from "../../action/Auth"
 
 const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_assessment, assessment_setting_data }) => {
-  console.log("assessment_setting_data",assessment_setting_data)
   const today = new Date();
   const formattedToday = today.toISOString().slice(0, 16).replace("T", " ");
   
-  // Set default end date to 2 days from now
   const defaultEndDate = new Date(today);
   defaultEndDate.setDate(today.getDate() + 2);
   const formattedEndDate = defaultEndDate.toISOString().slice(0, 16).replace("T", " ");
-  console.log("ASSESSEMENT SETTING DATA", assessment_setting_data.isPublic)
   const [settings, setSettings] = useState({
     title: assessmentTitle || "Assessment Title",
     timeLimit: parseInt(assessment_setting_data?.duration) || 30,
@@ -55,7 +52,7 @@ const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_a
           ...prev,
           startDateTime: "Start date cannot be in the past",
         }))
-        return // Don't update state with invalid date
+        return 
       }
 
       // If end date is now before start date, update end date
@@ -115,12 +112,8 @@ const AssessmentSettings = ({ assessmentID, assessmentTitle, CreateSetting_for_a
     if (hasErrors) {
       return 
     }
-    console.log("startTime", settings.startDateTime.replace("T", " "))
     CreateSetting_for_assessment(assessmentID,settings.startDateTime.replace("T", " "),settings.endDateTime.replace("T", " "),settings.timeLimit,settings.attemptsAllowed,settings.passingScore, settings.isPublic )
-console.log("Sent to Auth", assessmentID,settings.startDateTime,settings.endDateTime,settings.timeLimit,settings.attemptsAllowed, settings.isPublic)
-    console.log("Saved settings:", settings)
-    // Here you would save the settings to your backend
-    // document.getElementById("save-modal").showModal()
+
   }
 
   return (

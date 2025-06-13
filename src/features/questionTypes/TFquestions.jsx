@@ -5,7 +5,6 @@ import { createquestion,createquestion_for_question_bank } from "../../action/Au
 import { connect } from "react-redux"
 
 const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,createquestion_for_question_bank}) => {
-  console.log("imported datas", sectionID, sectionType)
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState({
     id: null,
@@ -49,7 +48,6 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault()
-    console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
     await new Promise((resolve) => setTimeout(resolve, 1500));
     if (bankId) {
         console.log("sending to question bank")
@@ -117,7 +115,6 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
   }
   const handleCreateQuestion = async () => {
     // setIsassessementSubmitting(true)
-    console.log("Create Question", sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
     
     await new Promise((resolve) => setTimeout(resolve, 1500));
     // createquestion(sectionType, sectionID, , type);

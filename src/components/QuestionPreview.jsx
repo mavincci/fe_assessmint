@@ -13,7 +13,6 @@ const QuestionPreview = ({ questions = [], isLoading = false }) => {
     transition: { delay: i * 0.05 },
   }),
 };
-  console.log("getc", questions)
   if (isLoading) {
     return (
       <div className="text-center p-10 text-gray-500 text-lg animate-pulse">
@@ -40,9 +39,8 @@ const QuestionPreview = ({ questions = [], isLoading = false }) => {
               variants={fadeUp}
             >
               <div className="flex items-start gap-2">
-                {console.log("q",q)}
                 <p className="font-semibold text-gray-700">{idx + 1}.</p>
-                <p className="font-medium light:text-gray-800">{q?.questionData?.questionText}</p>
+                <p className="font-medium light:text-gray-800">{q?.questionData.questionText}</p>
                 <span className="flex ms-auto space-x-1">
                   <Edit size={18} className="text-amber-500 hover:text-amber-600 cursor-pointer" />
                   <Delete size={18} className="text-red-500 hover:text-red-600 cursor-pointer" />

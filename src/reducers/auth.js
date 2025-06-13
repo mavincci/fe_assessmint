@@ -32,7 +32,6 @@ import {
   };
 
   export default function auth (state = initialState ,  action) {
-  // console.log("action" ,action)
     
     const { type, payload } = action;
     switch (type) {
@@ -42,7 +41,6 @@ import {
           isAuthenticated: true,
         };
       case LOGIN_SUCCESS:
-        console.log("From Auth payload", payload)
         localStorage.setItem("access", payload.token);
         localStorage.setItem("refresh", payload.refreshToken);
         localStorage.setItem("user", JSON.stringify(payload.user));

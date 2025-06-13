@@ -1,5 +1,3 @@
-import { List } from 'lucide-react'
-import React from 'react'
 
 const NoElements = ({core_item, todo, type, icon}) => {
   return (

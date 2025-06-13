@@ -1,16 +1,20 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR, { mutate, useSWRConfig } from "swr";
 import { useEffect, useState } from "react"
 import { Search, MoreHorizontal, UserPlus, ChevronLeft, ChevronRight } from "lucide-react"
 import QuestionModal from "../components/QuestionModal"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
-import { fetchAllRoles, fetchAllUsers } from "../action/Auth"
+import { fetchAllRoles, fetchAllUsers, Toggle_Activate_user } from "../action/Auth"
 import { usePagination } from "../hooks/usePagination";
 import Pagination from "../components/Pagination";
 
 
 
 export default function UserManagement() {
-  const ONE_DAY = 1000 * 60 * 60 * 24; 
+  const ONE_DAY = 1000 * 60 * 60 * 24;  const [searchQuery, setSearchQuery] = useState("")
+  const [roleFilter, setRoleFilter] = useState("All Roles")
+  const [statusFilter, setStatusFilter] = useState("All Status")
+    // const [currentPage, setCurrentPage] = useState(1)
+    const [isModalOpen, setIsModalOpen] = useState(false)
   //  const { cache } = useSWRConfig();
 const { data: users, error, isLoading } = useSWR("all_users_list", fetchAllUsers, {
   dedupingInterval: ONE_DAY,
@@ -19,7 +23,6 @@ const { data: users, error, isLoading } = useSWR("all_users_list", fetchAllUsers
   revalidateOnReconnect: false,
   errorRetryCount:2
 });
-
 const { data: roles } = useSWR("all_roles", fetchAllRoles, {
   dedupingInterval: ONE_DAY,
   revalidateIfStale: false,
@@ -27,18 +30,19 @@ const { data: roles } = useSWR("all_roles", fetchAllRoles, {
   revalidateOnReconnect: false,
   errorRetryCount:2
 });
-  //   useEffect(() => {
-  //   const isCached = cache.get("all_users_list") !== undefined;
-  //   console.log("Is 'all_users_list' cached?", isCached);
-  // }, []);
 
-  // console.log("roles", roles.body)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [roleFilter, setRoleFilter] = useState("All Roles")
-  const [statusFilter, setStatusFilter] = useState("All Status")
-    // const [currentPage, setCurrentPage] = useState(1)
-    const [isModalOpen, setIsModalOpen] = useState(false)
-  // const itemsPerPage = 10
+  //  handle activation and deactivation
+const handleactivate = async (id) => {
+  try {
+    const res = await Toggle_Activate_user(id);
+    if (res) {
+      await mutate("all_users_list"); // Refresh SWR cache after update
+    }
+  } catch (error) {
+    console.error("Activation error:", error);
+  }
+};
+
 
   // Filter users based on search query and filters
   const filteredUsers = users?.body.filter((user) => {
@@ -56,46 +60,19 @@ const matchesRole =
     return matchesSearch && matchesRole && matchesStatus
   })
 
-  // // // Calculate pagination
-  // const totalPages = Math.ceil(filteredUsers?.length / itemsPerPage)
-  // const startIndex = (currentPage - 1) * itemsPerPage
-  // const paginatedUsers = filteredUsers?.slice(startIndex, startIndex + itemsPerPage)
-
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pages = []
-    const maxVisiblePages = 3
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i)
-      }
-    } else {
-      if (currentPage <= 2) {
-        pages.push(1, 2, 3)
-      } else if (currentPage >= totalPages - 1) {
-        pages.push(totalPages - 2, totalPages - 1, totalPages)
-      } else {
-        pages.push(currentPage - 1, currentPage, currentPage + 1)
-      }
-    }
-
-    return pages
-  }
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case "Active":
+      case true:
         return "badge badge-neutral"
-      case "Inactive":
+      case false:
         return "badge badge-ghost"
-      case "Pending":
-        return "badge badge-outline"
+    
       default:
         return "badge"
     }
   }
-
+// pagination -start here
     const {
       currentPage,
       itemsPerPage,
@@ -107,7 +84,7 @@ const matchesRole =
       handlePageChange,
       handleItemsPerPageChange,
     } = usePagination(filteredUsers, 5);
-
+// pagination end here
   return (
     <div className="w-full bg-bg-light rounded-lg p-6  h-full dark:bg-gray-800 dark:text-bg-light ">
       <div className="flex justify-between items-center mb-6">
@@ -170,8 +147,8 @@ const matchesRole =
               <th>Last Name</th>
               <th>Email</th>
               <th>Role</th>
-              {/* <th>Status</th>
-              <th>Last Active</th> */}
+               <th>Status</th>
+            {/*  <th>Last Active</th> */}
               <th className="text-right">Actions</th>
             </tr>
           </thead>
@@ -190,10 +167,13 @@ const matchesRole =
                   <td className="font-medium">{user?.lastName}</td>
                   <td>{user?.email}</td>
                   <td>{user?.roles?.filter((role)=>role !== "USER")}</td>
-                  {/* <td>
-                    <span className={getStatusBadgeClass(user.status)}>{user.status}</span>
+                  <td>
+                    <button onClick={()=>handleactivate(user.id)} className="cursor-pointer ">
+                    <span className={`${getStatusBadgeClass(user?.isActive)} hover:bg-accent-teal-light`}>{user?.isActive ? "Active" : "Inactive"}</span>
+
+                    </button>
                   </td>
-                  <td>{user.lastActive}</td> */}
+                 {/*  <td>{user.lastActive}</td> */}
                   <td className="text-right">
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="btn btn-ghost btn-xs">
