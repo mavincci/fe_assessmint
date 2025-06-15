@@ -356,7 +356,7 @@ const AssessmentPage = () => {
           </div>
 
           <div className="w-full h-full bg-white rounded-lg shadow-lg p-5 overflow-auto">
-            <EXamUI assessmentId={assessmentId} isStartAssessment={startAssessment} />
+            <EXamUI assessmentId={assessmentId} isStartAssessment={startAssessment}  />
           </div>
         </>
       )}

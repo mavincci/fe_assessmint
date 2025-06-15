@@ -38,6 +38,210 @@ import { Flip, toast } from "react-toastify";
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 
+// Authentication start here
+
+
+// Login or sign in
+export const login = (email, password) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify({ email, password });
+
+  try {
+    const res = await axios.post(`${API_BASE_URL}/auth/signin`, body, config);
+
+
+    const { refreshToken, token, user } = res.data.body;
+    // role = user.roles[1]
+
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: { token, refreshToken, user },
+    });
+
+
+    toast.success("👋 Welcome Back!  you're Succesfully Logged in!", {
+      position: "bottom-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Flip,
+    });
+
+
+    // dispatch(load_user()); // Optional, if you want to validate token later
+  } catch (err) {
+    {
+      err.response.status === 401 || (axios.isAxiosError(err) && err?.code =="Network Error")
+        ? toast.error(err.response.data.message || 
+            "You're unauthorized! Please check your credentials and try again.",
+            {
+              position: "bottom-left",
+              autoClose: 500,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            }
+          )
+        : err.response.status == 500
+          ? toast.error("You're  not connected To server", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          :  err.response?.data?.message == "USER_IS_DISABLED"? toast.error("your acount is disabled", {
+              position: "bottom-left",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            }): "";
+    }
+
+    dispatch({
+      type: LOGIN_FAIL,
+    });
+  }
+};
+// logout
+export const logout = () => (dispatch) => {
+  localStorage.clear();
+
+  dispatch({
+    type: LOGOUT,
+  });
+};
+// signup API
+export const signup =
+  (firstName, lastName, email, role, password) => async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const body = JSON.stringify({
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/auth${role == "EXAMINER" ? "/signup_as_examiner" : "/signup_as_examinee"}`,
+        body,
+        config
+      );
+      if (res.status === 201) {
+        toast.success("✅ Successfully created! Your item is now live.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Flip,
+        });
+      
+      }
+      dispatch({
+        type: SIGNUP_SUCCESS,
+        payload: res.data,
+      });
+    } catch (err) {
+      {
+        err.response && err.response.status === 409
+          ? toast.error("This user already Exist in this platform.", {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : "";
+      }
+      dispatch({
+        type: SIGNUP_FAIL,
+      });
+    }
+  };
+
+  // check is Authenticated
+export const checkAuthenticated = () => async (dispatch) => {
+  if (localStorage.getItem("access")) {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    };
+
+    const body = JSON.stringify({ token: localStorage.getItem("access") });
+
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/apexx/jwt/verify/`,
+        body,
+        config
+      );
+
+      if (res.data.code !== "token_not_valid") {
+        dispatch({
+          type: AUTHENTICATED_SUCCESS,
+        });
+      } else {
+        dispatch({
+          type: AUTHENTICATED_FAIL,
+        });
+      }
+    } catch (err) {
+      dispatch({
+        type: AUTHENTICATED_FAIL,
+      });
+    }
+  } else {
+    dispatch({
+      type: AUTHENTICATED_FAIL,
+    });
+  }
+};
+// Auth end Here
+  
+
+
+// loading assessment related start here
+
 // load assesment
 export const load_my_assesment = () => async (dispatch) => {
   if (localStorage.getItem("access")) {
@@ -247,200 +451,9 @@ export const load_question_type = () => async (dispatch) => {
   }
 };
 
-// check is Authenticated
-export const checkAuthenticated = () => async (dispatch) => {
-  if (localStorage.getItem("access")) {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    };
 
-    const body = JSON.stringify({ token: localStorage.getItem("access") });
+//  Assessment  related 
 
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/apexx/jwt/verify/`,
-        body,
-        config
-      );
-
-      if (res.data.code !== "token_not_valid") {
-        dispatch({
-          type: AUTHENTICATED_SUCCESS,
-        });
-      } else {
-        dispatch({
-          type: AUTHENTICATED_FAIL,
-        });
-      }
-    } catch (err) {
-      dispatch({
-        type: AUTHENTICATED_FAIL,
-      });
-    }
-  } else {
-    dispatch({
-      type: AUTHENTICATED_FAIL,
-    });
-  }
-};
-// Login or sign in
-export const login = (email, password) => async (dispatch) => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  const body = JSON.stringify({ email, password });
-
-  try {
-    const res = await axios.post(`${API_BASE_URL}/auth/signin`, body, config);
-
-
-    const { refreshToken, token, user } = res.data.body;
-    // role = user.roles[1]
-
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload: { token, refreshToken, user },
-    });
-
-
-    toast.success("👋 Welcome Back!  you're Succesfully Logged in!", {
-      position: "bottom-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Flip,
-    });
-
-
-    // dispatch(load_user()); // Optional, if you want to validate token later
-  } catch (err) {
-    {
-      err.response.status === 401 || (axios.isAxiosError(err) && err?.code =="Network Error")
-        ? toast.error(err.response.data.message || 
-            "You're unauthorized! Please check your credentials and try again.",
-            {
-              position: "bottom-left",
-              autoClose: 500,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            }
-          )
-        : err.response.status == 500
-          ? toast.error("You're  not connected To server", {
-              position: "bottom-left",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            })
-          :  err.response?.data?.message == "USER_IS_DISABLED"? toast.error("your acount is disabled", {
-              position: "bottom-left",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            }): "";
-    }
-
-    dispatch({
-      type: LOGIN_FAIL,
-    });
-  }
-};
-// logout
-export const logout = () => (dispatch) => {
-  localStorage.clear();
-
-  dispatch({
-    type: LOGOUT,
-  });
-};
-// signup API
-export const signup =
-  (firstName, lastName, email, role, password) => async (dispatch) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const body = JSON.stringify({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-    try {
-      const res = await axios.post(
-        `${API_BASE_URL}/auth${role == "EXAMINER" ? "/signup_as_examiner" : "/signup_as_examinee"}`,
-        body,
-        config
-      );
-      if (res.status === 201) {
-        toast.success("✅ Successfully created! Your item is now live.", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Flip,
-        });
-      
-      }
-      dispatch({
-        type: SIGNUP_SUCCESS,
-        payload: res.data,
-      });
-    } catch (err) {
-      {
-        err.response && err.response.status === 409
-          ? toast.error("This user already Exist in this platform.", {
-              position: "bottom-left",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            })
-          : "";
-      }
-      dispatch({
-        type: SIGNUP_FAIL,
-      });
-    }
-  };
 
 // Create Assessment
 export const createAssessment = (title, description) => async (dispatch) => {
@@ -742,7 +755,96 @@ export const createSection =
       });
     }
   };
+// create settings for assessment
+export const CreateSetting_for_assessment =
+  (assessmentId, startDateTime, endDateTIme, duration, maxAttempts,passingScore, isPublic) =>
+  async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        Accept: "application/json",
+      },
+    };
+    const body = JSON.stringify({
+      assessmentId,
+      startDateTime,
+      endDateTIme,
+      duration,
+      maxAttempts,
+      passingScore,
+      isPublic: typeof isPublic === "boolean" ? isPublic : isPublic === "true",
+    });
 
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/assessments/update_settings`,
+        body,
+        config
+      );
+      if (
+        res.status === 201 ||
+        res.status === 200 ||
+        res.data.message == "ASSESSMENT_SETTINGS_UPDATE_SUCCESS"
+      ) {
+        toast.success(
+          `✅ Successfully set your your setting for your assessment !`,
+          {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Flip,
+          }
+        );
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_SUCCESS,
+        payload: res.data,
+      });
+    } catch (err) {
+      {
+        (err.response && err.response.status === 409) ||
+        err.response.data.message == "VALIDATION_ERROR"
+          ? toast.error(err.response.message.replaceAll("_", " "), {
+              position: "bottom-left",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Flip,
+              style: { width: "400px" },
+            })
+          : err.response.status == -500
+            ? toast.error("somthing Error please try Again", {
+                position: "bottom-left",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Flip,
+                style: { width: "400px" },
+              })
+            : "";
+      }
+      dispatch({
+        type: ADD_ASSESSMENT_FAIL,
+      });
+    }
+  };
+
+
+  // results related apis start here 
 // fetch results for examiner
 export const fetch_results_by_assessment_Id = (assessmentId) => async (dispatch) => {
   
@@ -929,6 +1031,10 @@ export const fetch_results_by_assessment_Id_for_examinee = (assessmentId) => asy
     }
 
 }
+
+  // results related apis end here
+
+  // admin inputs
 export const fetch_results_for_admin = async () => {
   if (localStorage.getItem("access")) {
     const config = {
@@ -949,6 +1055,9 @@ export const fetch_results_for_admin = async () => {
     }
   }
 }
+
+
+// Bank related Apis start here 
 
  // create Question
 export const createquestion =
@@ -1182,93 +1291,9 @@ export const Add_question_from_bank =
     }
   };    
 
-// create settings for assessment
-export const CreateSetting_for_assessment =
-  (assessmentId, startDateTime, endDateTIme, duration, maxAttempts,passingScore, isPublic) =>
-  async (dispatch) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
-        Accept: "application/json",
-      },
-    };
-    const body = JSON.stringify({
-      assessmentId,
-      startDateTime,
-      endDateTIme,
-      duration,
-      maxAttempts,
-      passingScore,
-      isPublic: typeof isPublic === "boolean" ? isPublic : isPublic === "true",
-    });
 
-    try {
-      const res = await axios.post(
-        `${API_BASE_URL}/assessments/update_settings`,
-        body,
-        config
-      );
-      if (
-        res.status === 201 ||
-        res.status === 200 ||
-        res.data.message == "ASSESSMENT_SETTINGS_UPDATE_SUCCESS"
-      ) {
-        toast.success(
-          `✅ Successfully set your your setting for your assessment !`,
-          {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Flip,
-          }
-        );
-      }
-      dispatch({
-        type: ADD_ASSESSMENT_SUCCESS,
-        payload: res.data,
-      });
-    } catch (err) {
-      {
-        (err.response && err.response.status === 409) ||
-        err.response.data.message == "VALIDATION_ERROR"
-          ? toast.error(err.response.message.replaceAll("_", " "), {
-              position: "bottom-left",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Flip,
-              style: { width: "400px" },
-            })
-          : err.response.status == -500
-            ? toast.error("somthing Error please try Again", {
-                position: "bottom-left",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                transition: Flip,
-                style: { width: "400px" },
-              })
-            : "";
-      }
-      dispatch({
-        type: ADD_ASSESSMENT_FAIL,
-      });
-    }
-  };
+  // Take Assessment related Apis
+
 // create settings for assessment
 export const Create_do_answer =
   (assessmentId, sectionId, questionId, questionType, answer) =>
@@ -1494,6 +1519,11 @@ export const Create_finish_attempt = (assessmentID) => async (dispatch) => {
     });
   }
 };
+
+
+
+
+// admin 
 // fetch all users
 export const fetchAllUsers = async () => {
   if (localStorage.getItem("access")) {
@@ -1983,7 +2013,6 @@ export const load_my_inivitation =
           `${API_BASE_URL}/assessments/invitations/mine`,
           config
         );
-      
         return res.data;
       } catch (err) {
         dispatch({ type: LOAD_INVITED_BY_ASSESSMENT_ID_FAIL });
