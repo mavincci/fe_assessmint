@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Edit, Trash2, Save, X, PlusIcon } from "lucide-react";
-import SelectCategoryandRepo from "./SelectCategory";
 import SearchAutocomplete from "./AutoCompleteSearch";
 import { connect } from "react-redux";
 import { createquestion_for_question_bank } from "../action/Auth";
@@ -64,7 +63,7 @@ const ResponseDisplay = ({
       );
 
       setProgress({ current: i + 1, total: questions.length });
-      await sleep(200);
+      await sleep(150);
     }
 
     console.log(`${type.toUpperCase()} Questions Sent`);
@@ -248,19 +247,7 @@ const ResponseDisplay = ({
               </table>
             </div>
 
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">
-                {JSON.stringify(
-                  {
-                    statusCode: 200,
-                    message: "TF_QUESTIONS_GENERATION_SUCCESS",
-                    body: tfQuestions,
-                  },
-                  null,
-                  2
-                )}
-              </pre>
-            </div>
+         
           </div>
         </div>
         {showModal && (
@@ -269,7 +256,7 @@ const ResponseDisplay = ({
               <h3 className="font-bold text-lg mb-4">Submitting Questions</h3>
               <p>{`${progress.current}/${progress.total} Submitted`}</p>
               <progress
-                className="progress progress-primary w-full mt-4"
+                className="progress progress-accent w-full mt-4"
                 value={progress.current}
                 max={progress.total}
               ></progress>
@@ -465,16 +452,7 @@ const ResponseDisplay = ({
               </div>
             </dialog>
 
-            {/* <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">
-                {JSON.stringify({
-                  statusCode: 200,
-                  message: "MCQ_QUESTIONS_GENERATION_SUCCESS",
-                  body: mcqQuestions,
-                  timestamp: new Date().toISOString(),
-                }, null, 2)}
-              </pre>
-            </div> */}
+        
           </div>
         </div>
         {/* {Submitquestion && <SelectCategoryandRepo/>} */}
