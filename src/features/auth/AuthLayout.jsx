@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import hero from '../../assets/hero1.png';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.svg';
 
 const AuthLayout = () => {
   return (
@@ -13,7 +13,7 @@ const AuthLayout = () => {
             <img
               src={logo}
               alt="logo"
-              className="absolute rounded-full inset-0 w-10 h-10 md:w-24 md:h-24 md:top-7 md:left-7  top-1 left-2"
+              className="absolute rounded-full inset-0 w-16 h-16 md:w-24 md:h-24 md:top-7 md:left-7  top-7 left-5 dark:text-white"
             />
           </div>
           <Outlet />
