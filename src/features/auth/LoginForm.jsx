@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { Mail, Lock, AlertCircle, Info } from 'lucide-react';
-import { login } from '../../action/Auth';
-import { connect } from 'react-redux';
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { Mail, Lock, AlertCircle, Info, EyeOff, Eye } from "lucide-react";
+import { login } from "../../action/Auth";
+import { connect } from "react-redux";
 
-const LoginForm =({login, isAuthenticated}) =>{
+const LoginForm = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -18,13 +18,13 @@ const LoginForm =({login, isAuthenticated}) =>{
     const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email address is invalid';
+      newErrors.email = "Email address is invalid";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     }
 
     setErrors(newErrors);
@@ -35,20 +35,16 @@ const LoginForm =({login, isAuthenticated}) =>{
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
-const {email,password} = formData
+  const { email, password } = formData;
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting...");
     if (validate()) {
-      console.log("Validated...")
       setIsSubmitting(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      login(email, password)
-      console.log("sent to Auth page")
-      console.log('Form submitted:', formData);
+      login(email, password);
       setIsSubmitting(false);
     }
   };
@@ -56,14 +52,21 @@ const {email,password} = formData
     return <Navigate to="/dashboard" />;
   }
   return (
-    <div className='border-0  '>
+    <div className="border-0  ">
       <h1 className="text-3xl font-bold mb-2 text-center ">Welcome back!</h1>
-      <p className="text-gray-600 mb-8 text-center alert bg-amber-100"> <Info/>Enter your credentials to access your account</p>
+      <p className="text-gray-600 mb-8 text-center alert bg-amber-100">
+        {" "}
+        <Info />
+        Enter your credentials to access your account
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Email Field */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Email address
           </label>
           <div className="relative">
@@ -77,7 +80,7 @@ const {email,password} = formData
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full pl-10 pr-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+              className={`w-full pl-10 pr-3 py-2 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
             />
           </div>
           {errors.email && (
@@ -89,37 +92,36 @@ const {email,password} = formData
         </div>
 
         {/* Password Field */}
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <a href="#" className="text-sm text-accent-teal-light hover:text-emerald-800 transition duration-200">
-              Forgot password?
-            </a>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <Lock size={18} />
           </div>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-              <Lock size={18} />
-            </div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              className={`w-full pl-10 pr-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
-            />
-          </div>
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600 flex items-center">
-              <AlertCircle size={14} className="mr-1" />
-              {errors.password}
-            </p>
-          )}
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={handleChange}
+            className={`w-full pl-10 pr-10 py-2 border ${
+              errors.password ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
         </div>
-
+        {errors.password && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <AlertCircle size={14} className="mr-1" />
+            {errors.password}
+          </p>
+        )}
         {/* Remember Me */}
         <div className="flex items-center">
           <input
@@ -130,7 +132,10 @@ const {email,password} = formData
             onChange={handleChange}
             className="h-5 w-5 text-btn-primary checkbox checkbox-accent focus:ring-emerald-500 border-gray-300 rounded transition duration-200"
           />
-          <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+          <label
+            htmlFor="remember"
+            className="ml-2 block text-sm text-gray-700"
+          >
             Remember for 30 days
           </label>
         </div>
@@ -139,30 +144,29 @@ const {email,password} = formData
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""}`}
         >
-          {isSubmitting ? 'Signing in...' : 'Sign in'}
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
       {/* Or Continue With */}
       <div className="mt-6">
-    
-
-
-
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="font-medium text-btn-primary  hover:text-emerald-800 transition duration-200">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="font-medium text-btn-primary  hover:text-emerald-800 transition duration-200"
+          >
             Sign up
           </Link>
         </p>
       </div>
     </div>
   );
-}
+};
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, {login} )(LoginForm)
+export default connect(mapStateToProps, { login })(LoginForm);

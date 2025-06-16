@@ -5,7 +5,6 @@ import { createquestion,createquestion_for_question_bank } from "../../action/Au
 import { connect } from "react-redux"
 
 const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,createquestion_for_question_bank}) => {
-  console.log("imported datas", sectionID, sectionType)
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState({
     id: null,
@@ -49,7 +48,6 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault()
-    console.log("Create Question inTF ", sectionType, sectionID, currentQuestion.text,null, currentQuestion.correctAnswer)
     await new Promise((resolve) => setTimeout(resolve, 1500));
     if (bankId) {
         console.log("sending to question bank")
@@ -117,7 +115,6 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
   }
   const handleCreateQuestion = async () => {
     // setIsassessementSubmitting(true)
-    console.log("Create Question", sectionType, sectionID, currentQuestion.text, currentQuestion.correctAnswer)
     
     await new Promise((resolve) => setTimeout(resolve, 1500));
     // createquestion(sectionType, sectionID, , type);
@@ -128,12 +125,12 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
 
   }
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">True/False Question Builder</h1>
+    <div className=" mx-auto p-2 w-full dark:bg-gray-700 dark:text-bg-light">
+      <h1 className="hidden md:block text-md md:text-2xl font-bold text-center mb-8">True/False Question Builder</h1>
 
       {/* Question Form */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 className="text-xl font-bold mb-4">{isEditing ? "Edit Question" : "Create New Question"}</h2>
+      <div className="bg-white rounded-lg shadow-lg p-2 mb-8 dark:bg-gray-700 dark:text-bg-light ">
+        <h2 className="md:text-xl text-lg font-bold mb-4">{isEditing ? "Edit Question" : "Create New Question"}</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Question Text */}
           <div className="space-y-2">
@@ -229,7 +226,7 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
       </div>
 
       {/* Questions List */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-gray-800 dark:text-bg-light">
         <h2 className="text-xl font-bold mb-4">Your True/False Questions</h2>
         {questions.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
@@ -284,7 +281,7 @@ const TrueFalseBuilder = ({ createquestion, sectionID, sectionType, bankId ,crea
       {/* Preview Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div ref={modalRef} className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div ref={modalRef} className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 dark:bg-gray-800 dark:text-bg-light">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold">Question Preview</h3>

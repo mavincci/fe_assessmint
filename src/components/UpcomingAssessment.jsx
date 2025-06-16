@@ -3,20 +3,20 @@ import { Calendar, Clock, Users } from 'lucide-react';
 import { Button } from '@mui/material';
 const UpcomingAssignment = ({ title, date, time, candidates }) => {
   return (
-    <div className="rounded-xl md:p-4 p-1 border-b border-2 space-y-4 border-gray-100">
-      <h3 className="font-medium text-gray-800">{title}</h3>
+    <div className="rounded-xl md:p-4 p-1 border-b border-2 space-y-4 border-gray-100 dark:bg-gray-700 dark:text-bg-light">
+      <h3 className="font-medium text-gray-800 dark:text-bg-light">{title}</h3>
       <div className="mt-2 flex items-center gap-4 text-sm">
-        <div className="flex items-center gap-1 text-gray-500">
+        <div className="flex items-center gap-1 text-gray-500  dark:text-gray-300">
           <Calendar className="h-4 w-4" />
           <span>{date}</span>
         </div>
-        <div className="flex items-center gap-1 text-gray-500">
+        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-300">
           <Clock className="h-4 w-4" />
           <span>{time}</span>
         </div>
       </div>
       <div className="mt-2 flex items-center justify-between">
-        <div className="flex items-center gap-1 text-gray-500 text-xs">
+        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-300 text-xs">
           <Users className="h-4 w-4" />
           <span>{candidates} candidates</span>
         </div>

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search, Filter, FileText, Video, Clock, Square } from "lucide-react"
-import { Link } from "react-router-dom"
+import { useState } from "react";
+import { Filter, FileText, Video, Clock, Square } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Notifications() {
-  const [activeTab, setActiveTab] = useState("all")
+  const [activeTab, setActiveTab] = useState("all");
 
   // Sample notifications data
   const notifications = [
@@ -49,24 +49,22 @@ export default function Notifications() {
       icon: <Clock className="w-5 h-5 text-white" />,
       iconBg: "bg-orange-500",
     },
-  ]
+  ];
 
   // Filter notifications based on active tab
   const filteredNotifications = notifications.filter((notification) => {
-    if (activeTab === "all") return true
-    if (activeTab === "unread") return !notification.read
-    if (activeTab === "read") return notification.read
-    return true
-  })
+    if (activeTab === "all") return true;
+    if (activeTab === "unread") return !notification.read;
+    if (activeTab === "read") return notification.read;
+    return true;
+  });
 
   return (
-    <div className="max-w-7xl mx-auto bg-bg-light max-h-[90vh] ">
+    <div className="max-w-7xl mx-auto bg-bg-light max-h-[90vh] table= dark:bg-gray-800 dark:text-bg-light ">
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          
-
           <div className="relative">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-md border border-gray-300">
+            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 rounded-md border border-gray-300">
               <Filter className="w-4 h-4" />
               <span>All notification</span>
               <svg
@@ -91,7 +89,9 @@ export default function Notifications() {
           <div className="flex space-x-8">
             <button
               className={`py-2 px-1 ${
-                activeTab === "all" ? "border-b-2 border-accent-teal-light text-accborder-accent-teal-light font-medium" : "text-gray-500"
+                activeTab === "all"
+                  ? "border-b-2 border-accent-teal-light text-accborder-accent-teal-light font-medium"
+                  : "text-gray-500"
               }`}
               onClick={() => setActiveTab("all")}
             >
@@ -99,7 +99,9 @@ export default function Notifications() {
             </button>
             <button
               className={`py-2 px-1 ${
-                activeTab === "unread" ? "border-b-2 border-accent-teal-light text-accborder-accent-teal-light font-medium" : "text-gray-500"
+                activeTab === "unread"
+                  ? "border-b-2 border-accent-teal-light text-accborder-accent-teal-light font-medium"
+                  : "text-gray-500"
               }`}
               onClick={() => setActiveTab("unread")}
             >
@@ -107,7 +109,9 @@ export default function Notifications() {
             </button>
             <button
               className={`py-2 px-1 ${
-                activeTab === "read" ? "border-b-2 border-accent-teal-light text-accborder-accent-teal-light font-medium" : "text-gray-500"
+                activeTab === "read"
+                  ? "border-b-2 border-accent-teal-light text-accborder-accent-teal-light font-medium"
+                  : "text-gray-500"
               }`}
               onClick={() => setActiveTab("read")}
             >
@@ -120,22 +124,30 @@ export default function Notifications() {
           {filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`bg-white p-6 rounded-md border ${
+              className={`bg-white p-6 rounded-md border  dark:bg-gray-700 dark:text-bg-light ${
                 notification.read ? "border-gray-200" : "border-blue-200"
               } relative`}
             >
               <div className="flex gap-4">
-                <div className={`w-10 h-10 ${notification.iconBg} rounded-md flex items-center justify-center`}>
+                <div
+                  className={`w-10 h-10 ${notification.iconBg} rounded-md flex items-center justify-center`}
+                >
                   {notification.icon}
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="text-lg font-bold">{notification.title}</h3>
-                    <span className="text-sm text-gray-500">{notification.time}</span>
+                    <span className="text-sm text-gray-500">
+                      {notification.time}
+                    </span>
                   </div>
-                  <p className="text-gray-600 mb-4">{notification.message}</p>
+                  <p className="text-gray-600  dark:text-gray-400 mb-4">
+                    {notification.message}
+                  </p>
                   <Link to="/assignment-detail">
-                    <button className="px-4 py-2 bg-btn-primary text-white rounded-md text-sm">View Details</button>
+                    <button className="px-4 py-2 bg-btn-primary text-white rounded-md text-sm">
+                      View Details
+                    </button>
                   </Link>
                 </div>
               </div>
@@ -150,5 +162,5 @@ export default function Notifications() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const QuestionForm = () => {
+const useSleep = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const QuestionForm = () => {
   )
 }
 
-export default QuestionForm
+export default useSleep

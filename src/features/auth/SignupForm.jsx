@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { Mail, Lock, User, AlertCircle } from 'lucide-react';
-import { signup } from '../../action/Auth';
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { Mail, Lock, User, AlertCircle, EyeOff, Eye } from "lucide-react";
+import { signup } from "../../action/Auth";
 import { connect } from "react-redux";
-const SignupForm = ({signup, isAuthenticated})=> {
-  // debugger;
+const SignupForm = ({ signup, isAuthenticated }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
     roles: "",
     agreeToTerms: false,
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,31 +20,31 @@ const SignupForm = ({signup, isAuthenticated})=> {
     const newErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = "First name is required";
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = "Last name is required";
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email address is invalid';
+      newErrors.email = "Email address is invalid";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = "Password must be at least 8 characters";
     }
 
     if (!formData.roles) {
-      newErrors.role = 'Please select your role';
+      newErrors.role = "Please select your role";
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = 'You must agree to the terms and policy';
+      newErrors.agreeToTerms = "You must agree to the terms and policy";
     }
 
     setErrors(newErrors);
@@ -56,20 +55,19 @@ const SignupForm = ({signup, isAuthenticated})=> {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
-  const {firstName, lastName,email,roles,password } = formData
+  const { firstName, lastName, email, roles, password } = formData;
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting...");
     if (validate()) {
       setIsSubmitting(true);
       console.log("validated...");
-     
+
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      signup(firstName,lastName,email,roles,password)
-      console.log('Form submitted ,sent:', formData);
+      signup(firstName, lastName, email, roles, password);
 
       setIsSubmitting(false);
     }
@@ -80,13 +78,18 @@ const SignupForm = ({signup, isAuthenticated})=> {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2 text-center">Get Started Now</h1>
-      <p className="text-gray-600 mb-8 text-center">Create your account and start grading smarter</p>
+      <p className="text-gray-600 mb-8 text-center">
+        Create your account and start grading smarter
+      </p>
 
-      <form  className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6" onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           {/* First Name */}
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               First Name
             </label>
             <div className="relative">
@@ -100,7 +103,7 @@ const SignupForm = ({signup, isAuthenticated})=> {
                 placeholder="Segni"
                 value={formData.firstName}
                 onChange={handleChange}
-                className={`w-full pl-10 pr-3 py-2 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+                className={`w-full pl-10 pr-3 py-2 border ${errors.firstName ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
               />
             </div>
             {errors.firstName && (
@@ -113,7 +116,10 @@ const SignupForm = ({signup, isAuthenticated})=> {
 
           {/* Last Name */}
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Last Name
             </label>
             <div className="relative">
@@ -127,7 +133,7 @@ const SignupForm = ({signup, isAuthenticated})=> {
                 placeholder="Asrat"
                 value={formData.lastName}
                 onChange={handleChange}
-                className={`w-full pl-10 pr-3 py-2 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+                className={`w-full pl-10 pr-3 py-2 border ${errors.lastName ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
               />
             </div>
             {errors.lastName && (
@@ -141,7 +147,10 @@ const SignupForm = ({signup, isAuthenticated})=> {
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Email address
           </label>
           <div className="relative">
@@ -155,7 +164,7 @@ const SignupForm = ({signup, isAuthenticated})=> {
               placeholder="segni.ase@example.com"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full pl-10 pr-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+              className={`w-full pl-10 pr-3 py-2 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
             />
           </div>
           {errors.email && (
@@ -167,30 +176,29 @@ const SignupForm = ({signup, isAuthenticated})=> {
         </div>
 
         {/* Password */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-              <Lock size={18} />
-            </div>
-            <input
-              id="password"
-              name="password"
-              type="text"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              className={`w-full pl-10 pr-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
-            />
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <Lock size={18} />
           </div>
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600 flex items-center">
-              <AlertCircle size={14} className="mr-1" />
-              {errors.password}
-            </p>
-          )}
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={handleChange}
+            className={`w-full pl-10 pr-10 py-2 border ${
+              errors.password ? "border-red-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
         </div>
 
         {/* Agree to Terms */}
@@ -201,12 +209,26 @@ const SignupForm = ({signup, isAuthenticated})=> {
             type="checkbox"
             checked={formData.agreeToTerms}
             onChange={handleChange}
-            className={`h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded transition duration-200 ${errors.agreeToTerms ? 'border-red-500' : ''}`}
+            className={`h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded transition duration-200 ${errors.agreeToTerms ? "border-red-500" : ""}`}
           />
-          <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
-            I agree to the{' '}
-            <a href="#" className="text-accent-teal-light hover:text-emerald-800">terms</a> and{' '}
-            <a href="#" className="text-accent-teal-light hover:text-emerald-800">policy</a>
+          <label
+            htmlFor="agreeToTerms"
+            className="ml-2 block text-sm text-gray-700"
+          >
+            I agree to the{" "}
+            <a
+              href="#"
+              className="text-accent-teal-light hover:text-emerald-800"
+            >
+              terms
+            </a>{" "}
+            and{" "}
+            <a
+              href="#"
+              className="text-accent-teal-light hover:text-emerald-800"
+            >
+              policy
+            </a>
           </label>
         </div>
         {errors.agreeToTerms && (
@@ -215,66 +237,64 @@ const SignupForm = ({signup, isAuthenticated})=> {
             {errors.agreeToTerms}
           </p>
         )}
-         <span className='text-start font-semibold p-1'>Register As:</span>
-        <div className='flex flex-col  gap-5  justify-center items-center  align-middle '> 
-         
-<div className="flex flex-row gap-4">
-  <button
-    type="button"
-    onClick={() => setFormData({ ...formData, roles: 'EXAMINER' })}
-    className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
-      formData.roles === 'EXAMINER'
-        ? 'bg-btn-primary text-white'
-        : 'bg-white text-black border border-btbg-btn-primary'
-    }`}
-  >
-    Examiner
-  </button>
+        <span className="text-start font-semibold p-1">Register As:</span>
+        <div className="flex flex-col  gap-5  justify-center items-center  align-middle ">
+          <div className="flex flex-row gap-4">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, roles: "EXAMINER" })}
+              className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
+                formData.roles === "EXAMINER"
+                  ? "bg-btn-primary text-white"
+                  : "bg-white text-black border border-btbg-btn-primary"
+              }`}
+            >
+              Examiner
+            </button>
 
-  <button
-    type="button"
-    onClick={() => setFormData({ ...formData, roles: 'EXAMINEE' })}
-    className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
-      formData.roles === 'EXAMINEE'
-        ? 'bg-btn-primary text-white'
-        : 'bg-white text-black border border-bg-btn-primary'
-    }`}
-  >
-    Examinee
-  </button>
-</div>
-
-         
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, roles: "EXAMINEE" })}
+              className={`p-3 w-32 h-14 rounded-xl font-bold transition-all duration-200 ${
+                formData.roles === "EXAMINEE"
+                  ? "bg-btn-primary text-white"
+                  : "bg-white text-black border border-bg-btn-primary"
+              }`}
+            >
+              Examinee
+            </button>
+          </div>
 
           {errors.roles && (
-              <p className="mt-1 text-sm text-red-600 flex items-center">
-                <AlertCircle size={14} className="mr-1" />
-                {errors.roles}
-              </p>
-            )}
+            <p className="mt-1 text-sm text-red-600 flex items-center">
+              <AlertCircle size={14} className="mr-1" />
+              {errors.roles}
+            </p>
+          )}
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-         
-          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-btn-primary hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200 ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""}`}
         >
-          {isSubmitting ? 'Creating account...' : 'Sign up'}
+          {isSubmitting ? "Creating account..." : "Sign up"}
         </button>
-          
-        
+
         <p className="mt-6 text-center text-sm text-gray-600">
-                  Have an account?{' '}
-                  <Link to="/login" className="font-medium text-[#085c43] hover:text-emerald-800 transition duration-200">
-                    Sign in
-                  </Link>
-                </p>
+          Have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-[#085c43] hover:text-emerald-800 transition duration-200"
+          >
+            Sign in
+          </Link>
+        </p>
       </form>
     </div>
   );
-}
+};
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, {signup} )(SignupForm)
+export default connect(mapStateToProps, { signup })(SignupForm);

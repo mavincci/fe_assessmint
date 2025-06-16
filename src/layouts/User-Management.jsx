@@ -1,173 +1,92 @@
-"use client"
-
-import { useState } from "react"
+import useSWR, { mutate, useSWRConfig } from "swr";
+import { useEffect, useState } from "react"
 import { Search, MoreHorizontal, UserPlus, ChevronLeft, ChevronRight } from "lucide-react"
 import QuestionModal from "../components/QuestionModal"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
+import { fetchAllRoles, fetchAllUsers, Toggle_Activate_user } from "../action/Auth"
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../components/Pagination";
 
-// Sample user data
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Admin",
-    status: "Active",
-    lastActive: "2 hours ago",
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "1 day ago",
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    email: "michael@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "3 days ago",
-  },
-  {
-    id: 4,
-    name: "Emily Wilson",
-    email: "emily@example.com",
-    role: "Examiner",
-    status: "Inactive",
-    lastActive: "2 weeks ago",
-  },
-  {
-    id: 5,
-    name: "David Brown",
-    email: "david@example.com",
-    role: "Examiner",
-    status: "Active",
-    lastActive: "5 hours ago",
-  },
-  {
-    id: 6,
-    name: "Lisa Garcia",
-    email: "lisa@example.com",
-    role: "Examinee",
-    status: "Pending",
-    lastActive: "Never",
-  },
-  {
-    id: 7,
-    name: "Robert Johnson",
-    email: "robert@example.com",
-    role: "Admin",
-    status: "Active",
-    lastActive: "1 hour ago",
-  },
-  {
-    id: 8,
-    name: "Jennifer Lee",
-    email: "jennifer@example.com",
-    role: "Examiner",
-    status: "Active",
-    lastActive: "4 days ago",
-  },
-  {
-    id: 9,
-    name: "Thomas Wright",
-    email: "thomas@example.com",
-    role: "Examinee",
-    status: "Inactive",
-    lastActive: "1 month ago",
-  },
-  {
-    id: 10,
-    name: "Patricia Miller",
-    email: "patricia@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "12 hours ago",
-  },
-  {
-    id: 11,
-    name: "James Wilson",
-    email: "james@example.com",
-    role: "Examiner",
-    status: "Pending",
-    lastActive: "Never",
-  },
-  {
-    id: 12,
-    name: "Elizabeth Taylor",
-    email: "elizabeth@example.com",
-    role: "Examinee",
-    status: "Active",
-    lastActive: "2 days ago",
-  },
-]
+
 
 export default function UserManagement() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const ONE_DAY = 1000 * 60 * 60 * 24;  const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("All Roles")
   const [statusFilter, setStatusFilter] = useState("All Status")
-    const [currentPage, setCurrentPage] = useState(1)
+    // const [currentPage, setCurrentPage] = useState(1)
     const [isModalOpen, setIsModalOpen] = useState(false)
-  const itemsPerPage = 10
+  //  const { cache } = useSWRConfig();
+const { data: users, error, isLoading } = useSWR("all_users_list", fetchAllUsers, {
+  dedupingInterval: ONE_DAY,
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  errorRetryCount:2
+});
+const { data: roles } = useSWR("all_roles", fetchAllRoles, {
+  dedupingInterval: ONE_DAY,
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  errorRetryCount:2
+});
+
+  //  handle activation and deactivation
+const handleactivate = async (id) => {
+  try {
+    const res = await Toggle_Activate_user(id);
+    if (res) {
+      await mutate("all_users_list"); // Refresh SWR cache after update
+    }
+  } catch (error) {
+    console.error("Activation error:", error);
+  }
+};
+
 
   // Filter users based on search query and filters
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = users?.body.filter((user) => {
     const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||  user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
 
-    const matchesRole = roleFilter === "All Roles" || user.role === roleFilter
-
-    const matchesStatus = statusFilter === "All Status" || user.status === statusFilter
+const matchesRole =
+  roleFilter === "All Roles" ||
+  user.roles?.some((role) => role !== "USER" && role === roleFilter);
+    const matchesStatus = statusFilter === "All Status"
+    //   || 
+    // user.status === statusFilter
 
     return matchesSearch && matchesRole && matchesStatus
   })
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage)
-
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pages = []
-    const maxVisiblePages = 3
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i)
-      }
-    } else {
-      if (currentPage <= 2) {
-        pages.push(1, 2, 3)
-      } else if (currentPage >= totalPages - 1) {
-        pages.push(totalPages - 2, totalPages - 1, totalPages)
-      } else {
-        pages.push(currentPage - 1, currentPage, currentPage + 1)
-      }
-    }
-
-    return pages
-  }
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case "Active":
+      case true:
         return "badge badge-neutral"
-      case "Inactive":
+      case false:
         return "badge badge-ghost"
-      case "Pending":
-        return "badge badge-outline"
+    
       default:
         return "badge"
     }
   }
-
+// pagination -start here
+    const {
+      currentPage,
+      itemsPerPage,
+      totalItems,
+      totalPages,
+      indexOfFirstItem,
+      indexOfLastItem,
+      currentItems,
+      handlePageChange,
+      handleItemsPerPageChange,
+    } = usePagination(filteredUsers, 5);
+// pagination end here
   return (
-    <div className="w-full bg-bg-light rounded-lg p-6  h-full ">
+    <div className="w-full bg-bg-light rounded-lg p-6  h-full dark:bg-gray-800 dark:text-bg-light ">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">User Management</h1>
@@ -181,10 +100,10 @@ export default function UserManagement() {
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <div className="join w-full">
-            <div className="join-item btn btn-square btn-ghost">
-              <Search className="h-4 w-4" />
-            </div>
+          <div className="join w-full relative">
+            {/* <div className="join-item btn btn-square btn-ghost absolute left-1">
+              <Search className="h-4 w-4   " />
+            </div> */}
             <input
               type="text"
               placeholder="Search users..."
@@ -194,16 +113,20 @@ export default function UserManagement() {
             />
           </div>
         </div>
-        <select
-          className="select select-bordered w-full md:w-[180px]"
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-        >
-          <option value="All Roles">All Roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Examiner">Examiner</option>
-          <option value="Examinee">Examinee</option>
-        </select>
+       <select
+  className="select select-bordered w-full md:w-[180px]"
+  value={roleFilter}
+  onChange={(e) => setRoleFilter(e.target.value)}
+>
+  <option value="All Roles">All Roles</option>
+  {roles?.body
+    ?.filter((role) => role !== "USER")
+    .map((role) => (
+      <option key={role} value={role}>
+        {role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}
+      </option>
+    ))}
+</select>
         <select
           className="select select-bordered w-full md:w-[180px]"
           value={statusFilter}
@@ -217,28 +140,40 @@ export default function UserManagement() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="table bg-white">
+        <table className="table bg-white dark:bg-gray-700 dark:text-bg-light">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
               <th>Email</th>
               <th>Role</th>
-              <th>Status</th>
-              <th>Last Active</th>
+               <th>Status</th>
+            {/*  <th>Last Active</th> */}
               <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.length > 0 ? (
-              paginatedUsers.map((user) => (
+            {isLoading && <>
+              <tbody>
+                            <tr>
+              <div className="animate animate-pulse duration-500 text-lg text-gray-400">Loading...</div>
+  </tr> 
+               </tbody>
+            </>}
+            {currentItems?.length > 0 && isLoading == false  ? (
+              currentItems.map((user) => (
                 <tr key={user.id} className="hover">
-                  <td className="font-medium">{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
+                  <td className="font-medium">{user?.firstName}</td>
+                  <td className="font-medium">{user?.lastName}</td>
+                  <td>{user?.email}</td>
+                  <td>{user?.roles?.filter((role)=>role !== "USER")}</td>
                   <td>
-                    <span className={getStatusBadgeClass(user.status)}>{user.status}</span>
+                    <button onClick={()=>handleactivate(user.id)} className="cursor-pointer ">
+                    <span className={`${getStatusBadgeClass(user?.isActive)} hover:bg-accent-teal-light`}>{user?.isActive ? "Active" : "Inactive"}</span>
+
+                    </button>
                   </td>
-                  <td>{user.lastActive}</td>
+                 {/*  <td>{user.lastActive}</td> */}
                   <td className="text-right">
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="btn btn-ghost btn-xs">
@@ -267,45 +202,28 @@ export default function UserManagement() {
               </tr>
             )}
           </tbody>
-        </table>
+         <tfoot>
+  <tr>
+    <td colSpan={6}>
+      <div className="w-full">
+        <Pagination
+          totalItems={totalItems}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          handleItemsPerPageChange={handleItemsPerPageChange}
+          handlePageChange={handlePageChange}
+          indexOfFirstItem={indexOfFirstItem}
+          indexOfLastItem={indexOfLastItem}
+        />
       </div>
-
-      {filteredUsers.length > 0 && (
-        <div className="flex justify-center mt-4">
-          <div className="join">
-            <button
-              className="join-item btn"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-
-            {getPageNumbers().map((page) => (
-              <button
-                key={page}
-                className={`join-item btn ${currentPage === page ? "btn-active" : ""}`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
-
-            {totalPages > 3 && currentPage < totalPages - 2 && (
-              <button className="join-item btn btn-disabled">...</button>
-            )}
-
-            <button
-              className="join-item btn"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-          )}
-
+    </td>
+  </tr>
+</tfoot>
+        </table>
+                   
+      </div>
+            
            <QuestionModal isOpen={isModalOpen} onClose={() => {
           setIsModalOpen(false)
           }}>

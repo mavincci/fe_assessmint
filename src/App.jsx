@@ -8,7 +8,7 @@ import LoginForm from "./features/auth/LoginForm";
 import SignupForm from "./features/auth/SignupForm";
 
 import Dashboard from "./layouts/Dashboard";
-import CreateAssessment from "./features/assesments/CreateAssessment";
+import SetupAssessment from "./features/assesments/SetupAssessment";
 import TakeAssessment from "./features/assesments/TakeAssessment";
 import Resultpage from "./layouts/ResultPage";
 import NoInternetPage from "./layouts/NoInternet";
@@ -21,21 +21,28 @@ import ExaminerDashboard from "./layouts/DefaultDashboard";
 
 import store from "./Store";
 import useAuthCheck from "./hooks/useAuthCheck";
-import MyAssessment from "./features/assesments/MyAssessment";
+// import MyAssessment from "./features/assesments/MyAssessment";
 import Questions from "./features/questionBank/QuestionBank";
 import QuestionCategories from "./features/questionBank/QuestionCategories";
 import InvitePeople from "./features/assesments/Invitation";
 import ScreenReaderComponent from "./features/assesments/CheckVoice";
 import ManageRepository from "./features/questionBank/ManageRepository";
+import ProtectedRoutes from "./utils/ProtectedRoute";
+import PageNotFound from "./components/PageNotFound";
+import ChatInterface from "./features/ai/ChatInterface";
+import AddQuestion_from_Bank from "./features/assesments/AddQuestion_from_Bank";
+import ResultsRanking from "./features/assesments/MyAssessment";
+import LandingPage from "./layouts/Landing";
 // import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  // useAuthCheck(); 
+  // useAuthCheck();
 
   return (
     <Provider store={store}>
       <Routes>
         {/* Public Auth Routes */}
+        <Route path="/home" element={<LandingPage/>}/>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
@@ -43,37 +50,52 @@ function App() {
         </Route>
 
         {/* Protected Routes */}
-        {/* <Route element={<ProtectedRoute />}> */}
+        <Route element={<ProtectedRoutes />}>
           <Route element={<Dashboard />}>
-            <Route path="/create-assessment" element={<CreateAssessment />} />
+            <Route path="/setup-assessment" element={<SetupAssessment />} />
+            <Route path="/setup-assessment/:assessmentTitle/:assessmentId" element={<SetupAssessment />} />
             <Route path="/take-assessment" element={<TakeAssessment />} />
-            <Route path="/take-assessment/:assessmentId" element={<TakeAssessment />} />
+            <Route
+              path="/take-assessment/:assessmentId"
+              element={<TakeAssessment />}
+            />
             <Route path="/assessment-results" element={<Resultpage />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/dashboard" element={<ExaminerDashboard />} />
             <Route path="/user-management" element={<UserManagement />} />
-            <Route path="/manage-assessment" element={<AssessmentManagement />} />
+            <Route
+              path="/manage-assessment"
+              element={<AssessmentManagement />}
+            />
             <Route path="/assessment/:assessmentId" element={<Full />} />
-          <Route path="/another" element={<ExamUI />} />
-          <Route path="/assessment" element={<MyAssessment/>}/>
-          <Route path="/question-bank" element={<Questions/>}/>
-          <Route path="/categories" element={<QuestionCategories/>}/>
-          <Route path="/invitiation/:assessmentId/:name" element={<InvitePeople />} />
-          <Route path="/checkvoice" element={<ScreenReaderComponent />} />
-          <Route path="/my-question-repository/:categoryName/:categoryId" element={<ManageRepository />} />
+            <Route path="/another" element={<ExamUI />} />
+            <Route path="/assessment" element={<ResultsRanking />} />
+            <Route path="/question-bank" element={<Questions />} />
+            <Route path="/categories" element={<QuestionCategories />} />
+            <Route
+              path="/invitiation/:name/:assessmentId"
+              element={<InvitePeople />}
+            />
+            <Route path="/checkvoice" element={<ScreenReaderComponent />} />
+            <Route
+              path="/my-question-repository/:categoryName/:categoryId"
+              element={<ManageRepository />}
+            />
+            <Route path="/ai" element={<ChatInterface />} />
+            <Route path="/add-from-bank/:QuestionType/:sectionId" element={<AddQuestion_from_Bank/>}/>
 
+            {/* <Route path="*" element={<NoInternetPage />} /> */}
 
-          
+            <Route path="/*" element={<PageNotFound />} />
           </Route>
-        {/* </Route> */}
+        </Route>
 
         {/* Fallback route for 404 / no internet */}
-        <Route path="*" element={<NoInternetPage />} />
       </Routes>
 
       <ToastContainer
         position="top-center"
-        autoClose={3000}
+        autoClose={500}
         hideProgressBar={false}
         newestOnTop
         closeOnClick={false}
