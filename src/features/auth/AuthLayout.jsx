@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import hero from '../../assets/hero1.png';
+import hero from '../../assets/hero1-min.png';
 import logo from '../../assets/logo.svg';
 
 const AuthLayout = () => {
