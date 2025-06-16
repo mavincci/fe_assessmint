@@ -88,7 +88,7 @@ const SignupForm = ({ signup, isAuthenticated }) => {
           <div>
             <label
               htmlFor="firstName"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-1  dark:bg-gray-900 dark:text-white"
             >
               First Name
             </label>
@@ -118,7 +118,7 @@ const SignupForm = ({ signup, isAuthenticated }) => {
           <div>
             <label
               htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 mb-1  dark:bg-gray-900 dark:text-white"
             >
               Last Name
             </label>
@@ -149,7 +149,7 @@ const SignupForm = ({ signup, isAuthenticated }) => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 mb-1  dark:bg-gray-900 dark:text-white"
           >
             Email address
           </label>
@@ -176,6 +176,12 @@ const SignupForm = ({ signup, isAuthenticated }) => {
         </div>
 
         {/* Password */}
+         <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1  dark:bg-gray-900 dark:text-white"
+          >
+            Password
+          </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
             <Lock size={18} />
@@ -213,7 +219,7 @@ const SignupForm = ({ signup, isAuthenticated }) => {
           />
           <label
             htmlFor="agreeToTerms"
-            className="ml-2 block text-sm text-gray-700"
+            className="ml-2 block text-sm text-gray-700  dark:bg-gray-900 dark:text-white"
           >
             I agree to the{" "}
             <a

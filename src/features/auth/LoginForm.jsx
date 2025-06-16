@@ -65,7 +65,7 @@ const LoginForm = ({ login, isAuthenticated }) => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 mb-1  dark:bg-gray-900 dark:text-white"
           >
             Email address
           </label>
@@ -92,10 +92,18 @@ const LoginForm = ({ login, isAuthenticated }) => {
         </div>
 
         {/* Password Field */}
+         <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1  dark:bg-gray-900 dark:text-white"
+          >
+            Password
+          </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+          
+          <div className="absolute inset-y-1 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
             <Lock size={18} />
           </div>
+         
           <input
             id="password"
             name="password"
@@ -105,7 +113,7 @@ const LoginForm = ({ login, isAuthenticated }) => {
             onChange={handleChange}
             className={`w-full pl-10 pr-10 py-2 border ${
               errors.password ? "border-red-500" : "border-gray-300"
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200`}
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-200 `}
           />
           <button
             type="button"
@@ -134,7 +142,7 @@ const LoginForm = ({ login, isAuthenticated }) => {
           />
           <label
             htmlFor="remember"
-            className="ml-2 block text-sm text-gray-700"
+            className="ml-2 block text-sm text-gray-700  dark:bg-gray-900 dark:text-gray-400"
           >
             Remember for 30 days
           </label>
