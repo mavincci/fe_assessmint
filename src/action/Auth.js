@@ -80,7 +80,7 @@ export const login = (email, password) => async (dispatch) => {
     // dispatch(load_user()); // Optional, if you want to validate token later
   } catch (err) {
     {
-      err.response.status === 401 || (axios.isAxiosError(err) && err?.code =="Network Error")
+      err.response?.status === 401 || (axios.isAxiosError(err) && err?.code =="Network Error")
         ? toast.error(err.response.data.message || 
             "You're unauthorized! Please check your credentials and try again.",
             {
@@ -96,7 +96,7 @@ export const login = (email, password) => async (dispatch) => {
               style: { width: "400px" },
             }
           )
-        : err.response.status == 500
+        : err.response?.status == 500
           ? toast.error("You're  not connected To server", {
               position: "bottom-left",
               autoClose: 3000,
