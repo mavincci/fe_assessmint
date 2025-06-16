@@ -13,7 +13,7 @@ const AuthLayout = () => {
             <img
               src={logo}
               alt="logo"
-              className="absolute rounded-full inset-0 w-10 h-10 max-w-24 max-h-24 md:top-7 md:left-7  top-1 left-2"
+              className="absolute rounded-full inset-0 w-10 h-10 md:w-24 md:h-24 md:top-7 md:left-7  top-1 left-2"
             />
           </div>
           <Outlet />
