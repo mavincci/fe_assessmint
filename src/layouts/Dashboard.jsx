@@ -7,7 +7,6 @@ import Menus from "../components/Menu";
 import { Outlet, useLocation } from "react-router-dom";
 import useAuthCheck from "../hooks/useAuthCheck";
 import { motion, AnimatePresence } from "framer-motion";
-import chatIcon from "../assets/chatAi.png";
 const Dashboard = () => {
   // consts
   const location = useLocation();

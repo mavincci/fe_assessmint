@@ -3,7 +3,7 @@ import { Bot, CornerDownLeft } from "lucide-react";
 import ResponseDisplay from "../../components/ResponseDisplay";
 import ChatInput from "../../components/ChatInput";
 import { API_BASE_URL } from "../../action/Auth";
-import aiImage from "../../assets/chatAi.png";
+import aiImage from "../../assets/chatAi-min.png";
 import NoInternetPage from "../../layouts/NoInternet";
 
 export default function ChatInterface() {
