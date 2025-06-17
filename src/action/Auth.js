@@ -1965,7 +1965,7 @@ export const create_send_invitation =
     } catch (err) {
       {
         err.response || err.response.status === 409
-          ? toast.error("Error with Adding Question", {
+          ? toast.error("Error with sending Invitation", {
               position: "bottom-left",
               autoClose: 3000,
               hideProgressBar: false,
